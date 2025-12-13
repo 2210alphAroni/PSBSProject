@@ -1,0 +1,50 @@
+<div class="login-wrapper">
+
+  <div class="login-left"></div>
+
+  <div class="login-right">
+    <div class="login-content">
+
+      <p class="login-subtitle">Log in to continue</p>
+
+      <form (ngSubmit)="login(loginForm)" #loginForm="ngForm">
+
+        <div class="mb-3">
+          <label>Email / Username</label>
+          <input type="text"
+            class="login-input"
+            [(ngModel)]="user.emailOrUsername"
+            name="emailOrUsername"
+            placeholder="Enter your email or username"
+            required>
+        </div>
+
+        <div class="mb-3">
+          <label>Password</label>
+          <input type="password"
+            class="login-input"
+            [(ngModel)]="user.password"
+            name="password"
+            placeholder="Enter your password"
+            required>
+        </div>
+
+        <div class="mb-3 forgot">
+          <input type="checkbox"><span class="ms-2">Remember me</span>
+          <a routerLink="/forgot-password">Forgot password</a>
+        </div>
+
+        <button type="submit" class="login-btn" [disabled]="isLoading">{{
+          isLoading ? 'Processing...' : 'Log in'}}</button>
+
+        <p class="login-register-text mt-3">
+          Don't have an account?
+          <a routerLink="/registration" class="login-register-link">Register
+            here</a>
+        </p>
+
+      </form>
+
+    </div>
+  </div>
+</div>

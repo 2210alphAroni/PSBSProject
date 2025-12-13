@@ -1,0 +1,117 @@
+<!-- TOP NAVBAR -->
+<nav class="nav-area navbar px-3">
+  <!-- HAMBURGER (MOBILE ONLY) -->
+  <button
+    type="button"
+    class="hamburger-btn d-lg-none me-3"
+    (click)="toggleSidebar()"
+    aria-label="Open menu">
+    &#9776;
+  </button>
+
+  <span class="navbar-brand text-white fw-semibold">
+    Admin Dashboard
+  </span>
+
+  <div class="ms-auto d-flex align-items-center">
+    <span class="text-white me-3 d-none d-md-inline">
+      Welcome, Admin
+    </span>
+    <button class="btn btn-outline-light btn-sm" (click)="logout()">
+      Logout
+    </button>
+  </div>
+</nav>
+
+<!-- OVERLAY (MOBILE ONLY) -->
+<div class="overlay" *ngIf="sidebarOpen" (click)="toggleSidebar()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" [class.active]="sidebarOpen">
+  <div class="sidebar-header">
+    <h5 class="m-0">PSBS Admin</h5>
+    <span class="close-btn d-lg-none" (click)="toggleSidebar()">&times;</span>
+  </div>
+
+  <nav class="sidebar-menu">
+    <a routerLink="/admin-dashboard">Dashboard</a>
+    <a routerLink="/admin/users">Users</a>
+    <a routerLink="/admin/photographers">Photographers</a>
+    <a routerLink="/admin/categories">Service Categories</a>
+    <a routerLink="/admin/packages">Packages</a>
+    <a routerLink="/admin/timeslots">Time Slots</a>
+    <a routerLink="/admin/reviews">Reviews</a>
+    <a routerLink="/admin/bookings">Bookings</a>
+    <a routerLink="/admin/payments">Payments</a>
+    <a routerLink="/admin/settings">Settings</a>
+  </nav>
+</aside>
+
+<!-- MAIN CONTENT -->
+<main class="content-area">
+  <h3 class="fw-bold mb-4">Dashboard Overview</h3>
+
+  <!-- DASHBOARD STATS -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+      <div class="stat-card">
+        <p>Total Users</p>
+        <h3>120</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="stat-card">
+        <p>Bookings</p>
+        <h3>45</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="stat-card">
+        <p>Photographers</p>
+        <h3>18</h3>
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="stat-card">
+        <p>Revenue</p>
+        <h3>৳200k</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECENT ACTIVITY / TRACK -->
+  <div class="card recent-card">
+    <h5 class="fw-semibold mb-3">Recent Activity</h5>
+
+    <ul class="activity-list">
+      <li>
+        <span class="dot success"></span>
+        New booking created by <b>Kamrul</b>
+        <small>2 minutes ago</small>
+      </li>
+
+      <li>
+        <span class="dot warning"></span>
+        Photographer <b>Rafi</b> updated package
+        <small>15 minutes ago</small>
+      </li>
+
+      <li>
+        <span class="dot danger"></span>
+        Booking cancelled by <b>Nabila</b>
+        <small>1 hour ago</small>
+      </li>
+
+      <li>
+        <span class="dot info"></span>
+        New user registered as <b>Client</b>
+        <small>Today</small>
+      </li>
+    </ul>
+  </div>
+
+  <!-- Your cards, charts, tables go here -->
+</main>

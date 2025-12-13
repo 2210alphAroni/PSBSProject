@@ -1,0 +1,118 @@
+/* ===== GLOBAL ===== */
+:host {
+  display: block;
+  background: #f4f6f9;
+  min-height: 100vh;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ===== NAVBAR ===== */
+.nav-area {
+  height: 60px;
+  background: linear-gradient(135deg, #4e73df, #224abe);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+}
+
+/* ===== HAMBURGER BUTTON ===== */
+.hamburger-btn {
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 26px;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: 8px;
+}
+
+.hamburger-btn:active {
+  transform: scale(0.95);
+}
+
+/* ===== OVERLAY ===== */
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 1500;
+}
+
+/* ===== SIDEBAR ===== */
+.sidebar {
+  position: fixed;
+  top: 60px;
+  left: -280px;
+  width: 280px;
+  height: calc(100vh - 60px);
+  background: #1e1e2d;
+  color: #fff;
+  transition: left 0.3s ease;
+  z-index: 1600;
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar.active {
+  left: 0;
+}
+
+.sidebar-header {
+  padding: 16px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.close-btn {
+  font-size: 26px;
+  cursor: pointer;
+}
+
+/* ===== SIDEBAR MENU ===== */
+.sidebar-menu {
+  padding: 15px;
+}
+
+.sidebar-menu a {
+  display: block;
+  padding: 12px 16px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  color: #cfd2dc;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.2s ease;
+}
+
+.sidebar-menu a:hover {
+  background: #4e73df;
+  color: #fff;
+}
+
+/* ===== CONTENT ===== */
+.content-area {
+  margin-top: 80px;
+  padding: 20px;
+  transition: margin-left 0.3s ease;
+}
+
+/* ===== DESKTOP MODE ===== */
+@media (min-width: 992px) {
+  .sidebar {
+    left: 0;
+  }
+
+  .overlay {
+    display: none;
+  }
+
+  .content-area {
+    margin-left: 280px;
+  }
+}

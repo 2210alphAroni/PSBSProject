@@ -1,0 +1,13 @@
+INSERT INTO UsersRegistration
+    (RegisterAs, FullName, Email, Phone, UserName, Password, ConfirmPassword, Gender, CreatedAt)
+VALUES
+    ('Admin', 'System Admin', 'admin@psbs.com', '0000000000', 'admin', 'Admin@123', 'Admin@123', 'Other', GETDATE());
+
+
+
+// for reset password token generate
+
+ALTER TABLE UsersRegistration
+ADD ResetToken NVARCHAR(200),
+    ResetTokenExpiry DATETIME;
+

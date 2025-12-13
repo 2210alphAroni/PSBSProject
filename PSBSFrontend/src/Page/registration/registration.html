@@ -1,0 +1,90 @@
+<div class="reg-wrapper">
+
+  <!-- Left image section -->
+  <div class="reg-left">
+  </div>
+
+  <!-- Right form section -->
+  <div class="reg-right">
+    <div class="reg-content">
+
+      <h2 class="reg-title">Create Your Account</h2>
+      <p class="reg-subtitle">Join our photography booking platform</p>
+
+      <form (ngSubmit)="register(regForm)" #regForm="ngForm">
+
+        <div class="mb-3">
+          <label>Register As</label>
+          <select [(ngModel)]="user.registerAs" name="registerAs"
+            class="reg-input" required>
+            <option disabled selected value>Select role</option>
+            <option value="Photographer">Photographer</option>
+            <option value="Client">Client</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Full Name</label>
+          <input type="text" class="reg-input"
+            [(ngModel)]="user.fullName" name="fullName"
+            placeholder="Enter your name" required>
+        </div>
+
+        <div class="mb-3">
+          <label>Email</label>
+          <input type="email" class="reg-input"
+            [(ngModel)]="user.email" name="email" placeholder="Enter your email"
+            required>
+        </div>
+
+        <div class="mb-3">
+          <label>Phone</label>
+          <input type="text" class="reg-input"
+            [(ngModel)]="user.phone" name="phone" placeholder="Enter your phone"
+            required>
+        </div>
+
+        <div class="mb-3">
+          <label>Username</label>
+          <input type="text" class="reg-input"
+            [(ngModel)]="user.userName" name="userName"
+            placeholder="Choose a username" required>
+        </div>
+
+        <div class="mb-3">
+          <label>Password</label>
+          <input type="password" class="reg-input"
+            [(ngModel)]="user.password" name="password"
+            placeholder="Enter password" required>
+        </div>
+
+        <div class="mb-3">
+          <label>Confirm Password</label>
+          <input type="password" class="reg-input"
+            [(ngModel)]="user.confirmPassword" name="confirmPassword"
+            placeholder="Re-enter password" required>
+        </div>
+
+        <div class="mb-3">
+          <label>Gender</label>
+          <select class="reg-input" [(ngModel)]="user.gender" name="gender"
+            required>
+            <option disabled selected value>Select gender</option>
+            <option>Male</option>
+            <option>Female</option>
+            <option>Other</option>
+          </select>
+        </div>
+
+        <button type="submit" class="reg-btn" [disabled]="isLoading">{{
+          isLoading ? "Processing..." : "Create Account" }}</button>
+
+        <p class="reg-login-text">Already have an account?
+          <a routerLink="/login" class="reg-login-link">Log in</a>
+        </p>
+
+      </form>
+    </div>
+
+  </div>
+</div>
