@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterOutlet, RouterLink } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterOutlet, RouterLink],
   templateUrl: './admin-dashboard.html',
   styleUrl: './admin-dashboard.css'
 })
@@ -24,7 +24,7 @@ export class AdminDashboard {
   userCount: any[] = [];
   recentActivities: any[] = [];
 
-  constructor(private httpRequest: HttpClient, private router: Router, private cdr: ChangeDetectorRef) {
+  constructor(private httpRequest: HttpClient, public router: Router, private cdr: ChangeDetectorRef) {
     this.loadDashboard();
   }
 

@@ -35,9 +35,9 @@
 
   <nav class="sidebar-menu">
     <a routerLink="/admin-dashboard">Dashboard</a>
-    <a routerLink="/admin/users">Users</a>
-    <a routerLink="/admin/photographers">Photographers</a>
-    <a routerLink="/admin/categories">Service Categories</a>
+    <a routerLink="/admin-dashboard/users">Users</a>
+    <a routerLink="/admin-dashboard/photographers">Photographers</a>
+    <a routerLink="/admin-dashboard/categories">Service Categories</a>
     <a routerLink="/admin/packages">Packages</a>
     <a routerLink="/admin/timeslots">Time Slots</a>
     <a routerLink="/admin/reviews">Reviews</a>
@@ -49,26 +49,37 @@
 
 <!-- MAIN CONTENT -->
 <main class="content-area">
-  <h3 class="fw-bold mb-4">Dashboard Overview</h3>
 
-  <!-- DASHBOARD STATS -->
-  <h3 *ngFor="let data of userCount">{{data.RegisterAS}} :
-    {{data.personCount}}</h3>
+  <!-- DASHBOARD CONTENT (ONLY FOR /admin-dashboard) -->
+  <ng-container *ngIf="router.url === '/admin-dashboard'">
 
-  <!-- RECENT ACTIVITY / TRACK -->
-  <ul class="activity-list">
-    <h2>Recent Activity:</h2>
+    <h3 class="fw-bold mb-4">Dashboard Overview</h3>
 
-    <li *ngFor="let activity of recentActivities">
-      <span class="dot info"></span>
-      <strong>{{ activity.message }}</strong>
-      <span>Name is: {{activity.fullName}}</span>
-      <small>DateTime: {{ activity.createdAt | date:'short' }}</small>
-    </li>
-    <li *ngIf="recentActivities.length === 0" class="text-muted">
-      No recent activity found.
-    </li>
-  </ul>
+    <!-- DASHBOARD STATS -->
+    <h3 *ngFor="let data of userCount">
+      {{ data.RegisterAS }} : {{ data.personCount }}
+    </h3>
 
-  <!-- Your cards, charts, tables go here -->
+    <!-- RECENT ACTIVITY -->
+    <ul class="activity-list">
+      <h2>Recent Activity:</h2>
+
+      <li *ngFor="let activity of recentActivities">
+        <span class="dot info"></span>
+        <strong>{{ activity.message }}</strong>
+        <span>Name is: {{ activity.fullName }}</span>
+        <small>DateTime: {{ activity.createdAt | date:'short' }}</small>
+      </li>
+
+      <li *ngIf="recentActivities.length === 0" class="text-muted">
+        No recent activity found.
+      </li>
+    </ul>
+
+  </ng-container>
+
+  <!-- CHILD ROUTES (users, photographers, etc.) -->
+  <router-outlet></router-outlet>
+
 </main>
+
