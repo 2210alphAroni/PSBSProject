@@ -52,66 +52,22 @@
   <h3 class="fw-bold mb-4">Dashboard Overview</h3>
 
   <!-- DASHBOARD STATS -->
-  <div class="row g-3 mb-4">
-    <div class="col-md-3 col-sm-6">
-      <div class="stat-card">
-        <p>Total Users</p>
-        <h3>120</h3>
-      </div>
-    </div>
+  <h3 *ngFor="let data of userCount">{{data.RegisterAS}}  : {{data.personCount}}</h3>
 
-    <div class="col-md-3 col-sm-6">
-      <div class="stat-card">
-        <p>Bookings</p>
-        <h3>45</h3>
-      </div>
-    </div>
 
-    <div class="col-md-3 col-sm-6">
-      <div class="stat-card">
-        <p>Photographers</p>
-        <h3>18</h3>
-      </div>
-    </div>
-
-    <div class="col-md-3 col-sm-6">
-      <div class="stat-card">
-        <p>Revenue</p>
-        <h3>৳200k</h3>
-      </div>
-    </div>
-  </div>
+ 
 
   <!-- RECENT ACTIVITY / TRACK -->
-  <div class="card recent-card">
-    <h5 class="fw-semibold mb-3">Recent Activity</h5>
+<ul class="activity-list">
+  <h2>Recent Activity:</h2>
 
-    <ul class="activity-list">
-      <li>
-        <span class="dot success"></span>
-        New booking created by <b>Kamrul</b>
-        <small>2 minutes ago</small>
-      </li>
+  <li *ngFor="let activity of recentActivities">
+    <span class="dot info"></span>
+    {{ activity.message }}
+    <small>{{ activity.createdAt | date:'short' }}</small>
+  </li>
+</ul>
 
-      <li>
-        <span class="dot warning"></span>
-        Photographer <b>Rafi</b> updated package
-        <small>15 minutes ago</small>
-      </li>
-
-      <li>
-        <span class="dot danger"></span>
-        Booking cancelled by <b>Nabila</b>
-        <small>1 hour ago</small>
-      </li>
-
-      <li>
-        <span class="dot info"></span>
-        New user registered as <b>Client</b>
-        <small>Today</small>
-      </li>
-    </ul>
-  </div>
 
   <!-- Your cards, charts, tables go here -->
 </main>

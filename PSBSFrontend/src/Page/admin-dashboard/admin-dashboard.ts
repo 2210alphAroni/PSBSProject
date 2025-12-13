@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -13,7 +14,19 @@ export class AdminDashboard {
 
   sidebarOpen = false;
 
-  constructor(private router: Router) {}
+  // Dashboard data
+  stats = {
+    totalUsers: 0,
+    photographers: 0,
+    bookings: 0,
+    revenue: 0
+  };
+  userCount: any[] = [];
+  recentActivities: any[] = [];
+
+  constructor(private httpRequest: HttpClient, private router: Router, private cdr: ChangeDetectorRef) {
+    this.loadDashboard();
+  }
 
   toggleSidebar() {
     this.sidebarOpen = !this.sidebarOpen;
@@ -23,4 +36,26 @@ export class AdminDashboard {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
+
+  loadDashboard() {
+    this.loadStats();
+    this.loadRecentActivity();
+  }
+
+  loadStats() {
+    this.httpRequest.get<any>('https://localhost:7272/api/Dashboard/dashboard')
+      .subscribe(res => {
+        this.userCount = res.user;
+        this.cdr.detectChanges();
+      });
+  }
+
+  loadRecentActivity() {
+    this.httpRequest.get<any[]>('https://localhost:7272/api/Admin/recent-activity')
+      .subscribe(res => {
+        this.userCount = res;
+        this.cdr.detectChanges();
+      });
+  }
 }
+

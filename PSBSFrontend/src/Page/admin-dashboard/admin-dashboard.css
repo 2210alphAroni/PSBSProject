@@ -1,4 +1,6 @@
-/* ===== GLOBAL ===== */
+/* ===============================
+   GLOBAL
+================================ */
 :host {
   display: block;
   background: #f4f6f9;
@@ -6,7 +8,9 @@
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
-/* ===== NAVBAR ===== */
+/* ===============================
+   NAVBAR
+================================ */
 .nav-area {
   height: 60px;
   background: linear-gradient(135deg, #4e73df, #224abe);
@@ -19,7 +23,14 @@
   align-items: center;
 }
 
-/* ===== HAMBURGER BUTTON ===== */
+.navbar-brand {
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* ===============================
+   HAMBURGER BUTTON
+================================ */
 .hamburger-btn {
   border: none;
   background: transparent;
@@ -34,7 +45,9 @@
   transform: scale(0.95);
 }
 
-/* ===== OVERLAY ===== */
+/* ===============================
+   OVERLAY (MOBILE)
+================================ */
 .overlay {
   position: fixed;
   inset: 0;
@@ -42,7 +55,9 @@
   z-index: 1500;
 }
 
-/* ===== SIDEBAR ===== */
+/* ===============================
+   SIDEBAR
+================================ */
 .sidebar {
   position: fixed;
   top: 60px;
@@ -74,7 +89,9 @@
   cursor: pointer;
 }
 
-/* ===== SIDEBAR MENU ===== */
+/* ===============================
+   SIDEBAR MENU
+================================ */
 .sidebar-menu {
   padding: 15px;
 }
@@ -87,7 +104,7 @@
   color: #cfd2dc;
   text-decoration: none;
   font-size: 14px;
-  transition: 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .sidebar-menu a:hover {
@@ -95,14 +112,115 @@
   color: #fff;
 }
 
-/* ===== CONTENT ===== */
+/* ===============================
+   MAIN CONTENT
+================================ */
 .content-area {
   margin-top: 80px;
   padding: 20px;
   transition: margin-left 0.3s ease;
 }
 
-/* ===== DESKTOP MODE ===== */
+.content-area h3.fw-bold {
+  font-size: 22px;
+  margin-bottom: 20px;
+  color: #2c2c2c;
+}
+
+/* ===============================
+   DASHBOARD STATS (USER COUNT)
+================================ */
+.content-area h3[ng-reflect-ng-for-of],
+.content-area > h3:not(.fw-bold) {
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  margin-bottom: 14px;
+  font-size: 17px;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.content-area > h3:not(.fw-bold)::after {
+  content: attr(data-value);
+  font-weight: 700;
+  color: #4e73df;
+}
+
+/* ===============================
+   RECENT ACTIVITY
+================================ */
+.activity-list {
+  list-style: none;
+  padding: 20px;
+  margin-top: 30px;
+  background: #ffffff;
+  border-radius: 16px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+}
+
+.activity-list h2 {
+  margin-bottom: 18px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #2c2c2c;
+}
+
+.activity-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+  font-size: 14px;
+  color: #333;
+}
+
+.activity-list li:last-child {
+  border-bottom: none;
+}
+
+.activity-list small {
+  display: block;
+  color: #999;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* ===============================
+   ACTIVITY DOTS
+================================ */
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 6px;
+  flex-shrink: 0;
+}
+
+.dot.info {
+  background: #36b9cc;
+}
+
+.dot.success {
+  background: #1cc88a;
+}
+
+.dot.warning {
+  background: #f6c23e;
+}
+
+.dot.danger {
+  background: #e74a3b;
+}
+
+/* ===============================
+   DESKTOP MODE
+================================ */
 @media (min-width: 992px) {
   .sidebar {
     left: 0;
@@ -114,5 +232,27 @@
 
   .content-area {
     margin-left: 280px;
+  }
+
+  .close-btn {
+    display: none;
+  }
+}
+
+/* ===============================
+   MOBILE
+================================ */
+@media (max-width: 576px) {
+  .content-area h3:not(.fw-bold) {
+    font-size: 15px;
+    padding: 14px 16px;
+  }
+
+  .activity-list {
+    padding: 16px;
+  }
+
+  .activity-list h2 {
+    font-size: 16px;
   }
 }
