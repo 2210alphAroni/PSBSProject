@@ -85,7 +85,18 @@ namespace PSBS.Controllers
 
                 await connection.ExecuteAsync(query, Users);
 
-                // ⭐ SEND EMAIL
+                // for recent acctivity will show in admin dashboard after registration 
+                await connection.ExecuteAsync(
+                @"INSERT INTO RecentActivities (Message, ActivityType, FullName)
+                 VALUES (@Message, @ActivityType, @FullName)",
+                 new
+                 {
+                     Message = $"New {Users.RegisterAs} registered",
+                     ActivityType = "User",
+                     FullName = Users.FullName
+                 });
+
+                //  SEND EMAIL
                 await _emailService.SendRegistrationEmail(
                 Users.Email,
                 Users.FullName,
@@ -94,6 +105,7 @@ namespace PSBS.Controllers
 
 
                 return Ok(new { Message = "User created successfully and email notification sent." });
+
             }
             catch (Exception ex)
             {

@@ -52,22 +52,23 @@
   <h3 class="fw-bold mb-4">Dashboard Overview</h3>
 
   <!-- DASHBOARD STATS -->
-  <h3 *ngFor="let data of userCount">{{data.RegisterAS}}  : {{data.personCount}}</h3>
-
-
- 
+  <h3 *ngFor="let data of userCount">{{data.RegisterAS}} :
+    {{data.personCount}}</h3>
 
   <!-- RECENT ACTIVITY / TRACK -->
-<ul class="activity-list">
-  <h2>Recent Activity:</h2>
+  <ul class="activity-list">
+    <h2>Recent Activity:</h2>
 
-  <li *ngFor="let activity of recentActivities">
-    <span class="dot info"></span>
-    {{ activity.message }}
-    <small>{{ activity.createdAt | date:'short' }}</small>
-  </li>
-</ul>
-
+    <li *ngFor="let activity of recentActivities">
+      <span class="dot info"></span>
+      <strong>{{ activity.message }}</strong>
+      <span>Name is: {{activity.fullName}}</span>
+      <small>DateTime: {{ activity.createdAt | date:'short' }}</small>
+    </li>
+    <li *ngIf="recentActivities.length === 0" class="text-muted">
+      No recent activity found.
+    </li>
+  </ul>
 
   <!-- Your cards, charts, tables go here -->
 </main>

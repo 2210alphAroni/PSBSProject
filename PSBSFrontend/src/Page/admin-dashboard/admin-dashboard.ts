@@ -50,12 +50,15 @@ export class AdminDashboard {
       });
   }
 
-  loadRecentActivity() {
-    this.httpRequest.get<any[]>('https://localhost:7272/api/Admin/recent-activity')
-      .subscribe(res => {
-        this.userCount = res;
-        this.cdr.detectChanges();
-      });
-  }
+ loadRecentActivity() {
+  this.httpRequest
+    .get<any[]>('https://localhost:7272/api/Dashboard/recent-activity')
+    .subscribe(res => {
+      this.recentActivities = res; 
+      console.log('Recent Activities:', res); //debug
+    });
+}
+
+
 }
 

@@ -3,8 +3,8 @@
 ================================ */
 :host {
   display: block;
-  background: #f4f6f9;
   min-height: 100vh;
+  background: #f4f6f9;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
@@ -15,9 +15,7 @@
   height: 60px;
   background: linear-gradient(135deg, #4e73df, #224abe);
   position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+  inset: 0 0 auto 0;
   z-index: 2000;
   display: flex;
   align-items: center;
@@ -26,19 +24,20 @@
 .navbar-brand {
   font-size: 18px;
   font-weight: 600;
+  color: #fff;
 }
 
 /* ===============================
-   HAMBURGER BUTTON
+   HAMBURGER
 ================================ */
 .hamburger-btn {
   border: none;
   background: transparent;
   color: #fff;
   font-size: 26px;
-  cursor: pointer;
   padding: 6px 10px;
   border-radius: 8px;
+  cursor: pointer;
 }
 
 .hamburger-btn:active {
@@ -46,7 +45,7 @@
 }
 
 /* ===============================
-   OVERLAY (MOBILE)
+   OVERLAY
 ================================ */
 .overlay {
   position: fixed;
@@ -78,10 +77,10 @@
 
 .sidebar-header {
   padding: 16px 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .close-btn {
@@ -93,7 +92,7 @@
    SIDEBAR MENU
 ================================ */
 .sidebar-menu {
-  padding: 15px;
+  padding: 16px;
 }
 
 .sidebar-menu a {
@@ -102,8 +101,8 @@
   margin-bottom: 8px;
   border-radius: 8px;
   color: #cfd2dc;
-  text-decoration: none;
   font-size: 14px;
+  text-decoration: none;
   transition: all 0.2s ease;
 }
 
@@ -117,38 +116,39 @@
 ================================ */
 .content-area {
   margin-top: 80px;
-  padding: 20px;
-  transition: margin-left 0.3s ease;
+  padding: 24px;
+  animation: fadeInUp 0.35s ease-in-out;
 }
 
 .content-area h3.fw-bold {
-  font-size: 22px;
-  margin-bottom: 20px;
-  color: #2c2c2c;
+  font-size: 24px;
+  font-weight: 700;
+  color: #1f2937;
+  margin-bottom: 24px;
 }
 
 /* ===============================
-   DASHBOARD STATS (USER COUNT)
+   DASHBOARD STATS (GRID)
 ================================ */
-.content-area h3[ng-reflect-ng-for-of],
 .content-area > h3:not(.fw-bold) {
-  background: #ffffff;
-  padding: 16px 20px;
-  border-radius: 14px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-  margin-bottom: 14px;
-  font-size: 17px;
+  background: linear-gradient(135deg, #ffffff, #f8faff);
+  border-radius: 18px;
+  padding: 20px 22px;
+  margin-bottom: 18px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  font-size: 18px;
   font-weight: 600;
-  color: #333;
+  color: #2c2c2c;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-left: 6px solid #4e73df;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
-.content-area > h3:not(.fw-bold)::after {
-  content: attr(data-value);
-  font-weight: 700;
-  color: #4e73df;
+.content-area > h3:not(.fw-bold):hover {
+  transform: translateY(-4px);
+  box-shadow: 0 14px 30px rgba(0, 0, 0, 0.12);
 }
 
 /* ===============================
@@ -156,70 +156,102 @@
 ================================ */
 .activity-list {
   list-style: none;
-  padding: 20px;
-  margin-top: 30px;
+  margin-top: 36px;
+  padding: 24px;
   background: #ffffff;
-  border-radius: 16px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+  border-radius: 22px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.08);
 }
 
 .activity-list h2 {
-  margin-bottom: 18px;
-  font-size: 18px;
+  font-size: 19px;
   font-weight: 700;
-  color: #2c2c2c;
+  color: #1f2937;
+  margin-bottom: 22px;
 }
 
 .activity-list li {
+  background: #f9fafc;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
   display: flex;
+  gap: 14px;
   align-items: flex-start;
-  gap: 12px;
-  padding: 12px 0;
-  border-bottom: 1px solid #eee;
-  font-size: 14px;
-  color: #333;
+  border-left: 4px solid #36b9cc;
+  transition: all 0.25s ease;
 }
 
-.activity-list li:last-child {
-  border-bottom: none;
+.activity-list li:hover {
+  background: #ffffff;
+  transform: translateX(6px);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
 }
 
-.activity-list small {
+.activity-list li strong {
+  font-size: 15px;
+  color: #111827;
   display: block;
-  color: #999;
+}
+
+.activity-list li span {
+  font-size: 13px;
+  color: #4b5563;
+  display: block;
+  margin-top: 2px;
+}
+
+.activity-list li small {
   font-size: 12px;
+  color: #6b7280;
   margin-top: 4px;
+  display: block;
 }
 
 /* ===============================
-   ACTIVITY DOTS
+   ACTIVITY DOT
 ================================ */
 .dot {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   margin-top: 6px;
   flex-shrink: 0;
 }
 
 .dot.info {
-  background: #36b9cc;
-}
-
-.dot.success {
-  background: #1cc88a;
-}
-
-.dot.warning {
-  background: #f6c23e;
-}
-
-.dot.danger {
-  background: #e74a3b;
+  background: linear-gradient(135deg, #36b9cc, #1cc88a);
+  box-shadow: 0 0 0 4px rgba(54, 185, 204, 0.18);
 }
 
 /* ===============================
-   DESKTOP MODE
+   EMPTY STATE
+================================ */
+.activity-list li.text-muted {
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  text-align: center;
+  font-style: italic;
+  color: #9ca3af;
+}
+
+/* ===============================
+   ANIMATION
+================================ */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ===============================
+   DESKTOP
 ================================ */
 @media (min-width: 992px) {
   .sidebar {
@@ -240,19 +272,23 @@
 }
 
 /* ===============================
-   MOBILE
+   MOBILE & TABLET
 ================================ */
-@media (max-width: 576px) {
-  .content-area h3:not(.fw-bold) {
-    font-size: 15px;
-    padding: 14px 16px;
-  }
-
-  .activity-list {
+@media (max-width: 768px) {
+  .content-area {
     padding: 16px;
   }
 
-  .activity-list h2 {
+  .content-area > h3:not(.fw-bold) {
     font-size: 16px;
+    padding: 16px;
+  }
+
+  .activity-list {
+    padding: 18px;
+  }
+
+  .activity-list h2 {
+    font-size: 17px;
   }
 }

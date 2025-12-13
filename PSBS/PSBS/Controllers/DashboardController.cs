@@ -26,5 +26,24 @@ namespace PSBS.Controllers
 
             return Ok(new { message = "Data Get Successfully.", user });
         }
+
+
+        [HttpGet("recent-activity")]
+        public async Task<IActionResult> GetRecentActivities()
+        {
+            using var connection = _context.CreateConnection();
+
+            var activities = await connection.QueryAsync(
+                @"SELECT TOP 10
+            Message      AS message,
+            ActivityType AS activityType,
+             FullName     AS fullName,
+            CreatedAt    AS createdAt
+          FROM RecentActivities
+          WHERE CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE)
+          ORDER BY CreatedAt DESC");
+
+            return Ok(activities);
+        }
     }
 }
