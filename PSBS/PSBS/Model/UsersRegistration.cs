@@ -33,9 +33,14 @@ namespace PSBS.Model
         public string UserName { get; set; }
 
         [Required(ErrorMessage = "Password is required.")]
-        [StringLength(100, MinimumLength = 6,
-            ErrorMessage = "Password must be at least 6 characters.")]
+        [StringLength(9, MinimumLength = 6,
+        ErrorMessage = "Password must be between 6 and 9 characters.")]
+            [RegularExpression(
+        @"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,9}$",
+        ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character."
+    )]
         public string Password { get; set; }
+
 
         [Required(ErrorMessage = "Confirm password is required.")]
         [Compare("Password", ErrorMessage = "Passwords do not match.")]
