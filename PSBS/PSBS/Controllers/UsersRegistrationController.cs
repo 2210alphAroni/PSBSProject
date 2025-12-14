@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PSBS.Context;
 using PSBS.Model;
@@ -114,6 +113,123 @@ namespace PSBS.Controllers
                     Message = "An error occurred while processing your request.",
                     Error = ex.Message
                 });
+            }
+        }
+
+
+
+        // For Add Users
+        [HttpPost("add")]
+        public async Task<IActionResult> AddUser([FromBody] AddUserDto user)
+        {
+            if (user == null)
+                return BadRequest("Invalid user data.");
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+
+                // CHECK DUPLICATE EMAIL
+                var emailExists = await connection.ExecuteScalarAsync<int>(
+                    "SELECT COUNT(*) FROM UsersRegistration WHERE Email = @Email",
+                    new { user.Email });
+
+                if (emailExists > 0)
+                    return BadRequest(new { error = "Email already exists." });
+
+                // INSERT USER (ADMIN)
+                var query = @"
+            INSERT INTO UsersRegistration
+            (RegisterAS, FullName, Email, CreatedAT)
+            VALUES
+            (@RegisterAS, @FullName, @Email, GETDATE());
+        ";
+
+                await connection.ExecuteAsync(query, user);
+
+                // INSERT RECENT ACTIVITY
+                await connection.ExecuteAsync(
+                    @"INSERT INTO RecentActivities (Message, ActivityType, FullName)
+              VALUES (@Message, @ActivityType, @FullName)",
+                    new
+                    {
+                        Message = $"Admin added a new {user.RegisterAs}",
+                        ActivityType = "User",
+                        FullName = user.FullName
+                    });
+
+                return Ok(new { message = "User added successfully by admin." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+
+
+        // For update users
+        [HttpPut("update/{id}")]
+        public async Task<IActionResult> UpdateUser(
+    int id,
+    [FromBody] UpdateUserDto user
+)
+        {
+            if (user == null)
+                return BadRequest("Invalid user data.");
+
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+
+                var rows = await connection.ExecuteAsync(@"
+            UPDATE UsersRegistration
+            SET 
+                FullName = @FullName,
+                Email = @Email,
+                RegisterAS = @RegisterAS
+            WHERE Id = @Id",
+                    new
+                    {
+                        Id = id,
+                        user.FullName,
+                        user.Email,
+                        user.RegisterAs
+                    });
+
+                if (rows == 0)
+                    return NotFound(new { error = "User not found." });
+
+                return Ok(new { message = "User updated successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
+        }
+
+
+
+    // For Delete User
+    [HttpDelete("delete/{id}")]
+        public async Task<IActionResult> DeleteUser(int id)
+        {
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+
+                var rows = await connection.ExecuteAsync(
+                    "DELETE FROM UsersRegistration WHERE Id = @Id",
+                    new { Id = id });
+
+                if (rows == 0)
+                    return NotFound(new { error = "User not found." });
+
+                return Ok(new { message = "User deleted successfully." });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
             }
         }
 
