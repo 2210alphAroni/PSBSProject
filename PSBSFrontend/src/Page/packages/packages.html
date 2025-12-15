@@ -1,1 +1,267 @@
-<p>packages works!</p>
+<!-- Admin Packages Page -->
+<section class="py-4">
+  <div class="container-fluid">
+
+    <!-- Page Header -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between mb-4">
+      <div>
+        <h4 class="mb-1">Photography Categories or Packages</h4>
+        <p class="text-muted mb-0">
+          Manage services, package details, pricing & add-ons
+        </p>
+      </div>
+
+      <button class="btn btn-primary">
+        <i class="bi bi-plus-lg me-1"></i> Add New Package
+      </button>
+    </div>
+
+    <!-- Search & Filters -->
+    <div class="card shadow-sm border-0 mb-4">
+      <div class="card-body">
+        <div class="row g-3 align-items-end">
+          <div class="col-md-4">
+            <label class="form-label small">Search</label>
+            <input type="text" class="form-control" placeholder="Search package name">
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label small">Category</label>
+            <select class="form-select">
+              <option value="">All Categories</option>
+              <option>Wedding Photography</option>
+              <option>Reception Photography</option>
+              <option>Birthday Event</option>
+              <option>Corporate Event</option>
+              <option>Pre-wedding Shoot</option>
+              <option>Baby Shoot</option>
+              <option>Product Photography</option>
+              <option>Fashion Photography</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <label class="form-label small">Raw Files</label>
+            <select class="form-select">
+              <option value="">All</option>
+              <option>Included</option>
+              <option>Not Included</option>
+            </select>
+          </div>
+
+          <div class="col-md-2 d-grid">
+            <button class="btn btn-outline-primary">
+              <i class="bi bi-funnel"></i> Apply
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Packages Table -->
+    <div class="card shadow-sm border-0">
+      <div class="card-body table-responsive">
+        <table class="table align-middle table-hover">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Service / Package</th>
+              <th>Duration</th>
+              <th>Edited Photos</th>
+              <th>Raw Files</th>
+              <th>Add-ons</th>
+              <th>Price</th>
+              <th class="text-end">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+
+            <!-- Wedding Photography -->
+            <tr>
+              <td>1</td>
+              <td>
+                <strong>Wedding Photography</strong>
+                <div class="small text-muted">Full wedding day coverage</div>
+              </td>
+              <td>8 Hours</td>
+              <td>300+</td>
+              <td>
+                <span class="badge bg-danger-subtle text-danger">No</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary me-1">Drone</span>
+                <span class="badge bg-secondary me-1">Cinematic Video</span>
+                <span class="badge bg-secondary">Extra Hours</span>
+              </td>
+              <td class="fw-semibold">₹60,000</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </td>
+            </tr>
+
+            <!-- Reception Photography -->
+            <tr>
+              <td>2</td>
+              <td>
+                <strong>Reception Photography</strong>
+                <div class="small text-muted">Stage & guest moments</div>
+              </td>
+              <td>4 Hours</td>
+              <td>150+</td>
+              <td>
+                <span class="badge bg-success-subtle text-success">Yes</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary">Extra Hours</span>
+              </td>
+              <td class="fw-semibold">₹25,000</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </td>
+            </tr>
+
+            <!-- Birthday Event -->
+            <tr>
+              <td>3</td>
+              <td>
+                <strong>Birthday Event</strong>
+                <div class="small text-muted">Kids & family parties</div>
+              </td>
+              <td>3 Hours</td>
+              <td>80+</td>
+              <td>
+                <span class="badge bg-success-subtle text-success">Yes</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary me-1">Extra Hours</span>
+                <span class="badge bg-secondary">Cinematic Video</span>
+              </td>
+              <td class="fw-semibold">₹8,000</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </td>
+            </tr>
+
+            <!-- Corporate Event -->
+            <tr>
+              <td>4</td>
+              <td>
+                <strong>Corporate Event</strong>
+                <div class="small text-muted">Professional coverage</div>
+              </td>
+              <td>5 Hours</td>
+              <td>200+</td>
+              <td>
+                <span class="badge bg-danger-subtle text-danger">No</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary">Cinematic Video</span>
+              </td>
+              <td class="fw-semibold">₹30,000</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </td>
+            </tr>
+
+            <!-- Pre-wedding Shoot -->
+            <tr>
+              <td>5</td>
+              <td>
+                <strong>Pre-wedding Shoot</strong>
+                <div class="small text-muted">Concept-based couple shoot</div>
+              </td>
+              <td>1 Day</td>
+              <td>120+</td>
+              <td>
+                <span class="badge bg-danger-subtle text-danger">No</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary me-1">Drone</span>
+                <span class="badge bg-secondary">Cinematic Video</span>
+              </td>
+              <td class="fw-semibold">₹40,000</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </td>
+            </tr>
+
+            <!-- Baby Shoot -->
+            <tr>
+              <td>6</td>
+              <td>
+                <strong>Baby Shoot</strong>
+                <div class="small text-muted">Indoor / home setup</div>
+              </td>
+              <td>2 Hours</td>
+              <td>50+</td>
+              <td>
+                <span class="badge bg-success-subtle text-success">Yes</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary">Extra Props</span>
+              </td>
+              <td class="fw-semibold">₹6,000</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </td>
+            </tr>
+
+            <!-- Product Photography -->
+            <tr>
+              <td>7</td>
+              <td>
+                <strong>Product Photography</strong>
+                <div class="small text-muted">E-commerce products</div>
+              </td>
+              <td>Per Product</td>
+              <td>5 / Product</td>
+              <td>
+                <span class="badge bg-danger-subtle text-danger">No</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary me-1">Lifestyle</span>
+                <span class="badge bg-secondary">Background Change</span>
+              </td>
+              <td class="fw-semibold">₹1,500</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </td>
+            </tr>
+
+            <!-- Fashion Photography -->
+            <tr>
+              <td>8</td>
+              <td>
+                <strong>Fashion Photography</strong>
+                <div class="small text-muted">Studio & outdoor shoots</div>
+              </td>
+              <td>6 Hours</td>
+              <td>200+</td>
+              <td>
+                <span class="badge bg-danger-subtle text-danger">No</span>
+              </td>
+              <td>
+                <span class="badge bg-secondary me-1">Styling</span>
+                <span class="badge bg-secondary">Cinematic Video</span>
+              </td>
+              <td class="fw-semibold">₹35,000</td>
+              <td class="text-end">
+                <button class="btn btn-sm btn-outline-primary me-1">Edit</button>
+                <button class="btn btn-sm btn-outline-danger">Delete</button>
+              </td>
+            </tr>
+
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</section>
