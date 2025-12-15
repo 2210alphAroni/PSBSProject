@@ -5,6 +5,7 @@ import { AdminDashboard } from '../Page/admin-dashboard/admin-dashboard';
 import { ForgotPassword } from '../Page/forgot-password/forgot-password';
 import { ResetPassword } from '../Page/reset-password/reset-password';
 import { AdminUsers } from '../Page/admin-users/admin-users';
+import { Packages } from '../Page/packages/packages';
 
 export const routes: Routes = [
   {
@@ -31,6 +32,10 @@ export const routes: Routes = [
     {
       path: 'users',
       component: AdminUsers
+    },
+    {
+      path: 'packages',
+      component: Packages
     }
   ]
 }
