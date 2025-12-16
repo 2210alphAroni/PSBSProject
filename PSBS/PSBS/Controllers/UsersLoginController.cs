@@ -37,7 +37,6 @@ namespace PSBS.Controllers
 
     public class LoginRequest
     {
-        //public string registerAs { get; set; }
         public string emailOruserName { get; set; }
         public string Password { get; set; }
     }
