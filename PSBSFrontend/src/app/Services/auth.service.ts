@@ -8,10 +8,6 @@ export class AuthService {
 
   constructor(private router: Router) {}
 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('user');
-  }
-
   getUser() {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
@@ -19,11 +15,15 @@ export class AuthService {
 
   getUserName(): string {
     const user = this.getUser();
-    return user?.FullName || user?.fullName || 'User';
+    return user?.FullName || 'User';
   }
 
-  logout(): void {
-    localStorage.removeItem('user');
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('user');
+  }
+
+  logout() {
+    localStorage.clear();
     this.router.navigate(['/login']);
   }
 }

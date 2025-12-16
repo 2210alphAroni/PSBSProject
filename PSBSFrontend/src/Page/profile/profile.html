@@ -1,0 +1,52 @@
+<div class="container mt-5 pt-5">
+
+  <div class="row justify-content-center">
+    <div class="col-md-8">
+
+      <div class="card shadow-lg border-0">
+        <div class="card-header bg-dark text-white text-center">
+          <h4 class="mb-0">My Profile</h4>
+        </div>
+
+        <div class="card-body">
+
+          <div class="text-center mb-4">
+            <i class="bi bi-person-circle display-1 text-primary"></i>
+            <h5 class="mt-2">{{ user?.FullName }}</h5>
+            <small class="text-muted">{{ user?.RegisterAs }}</small>
+          </div>
+
+          <table class="table table-bordered">
+            <tr>
+              <th>Username</th>
+              <td>{{ user?.UserName }}</td>
+            </tr>
+            <tr>
+              <th>Email</th>
+              <td>{{ user?.Email }}</td>
+            </tr>
+            <tr>
+              <th>Phone</th>
+              <td>{{ user?.Phone }}</td>
+            </tr>
+            <tr>
+              <th>Gender</th>
+              <td>{{ user?.Gender }}</td>
+            </tr>
+            <tr>
+              <th>Joined</th>
+              <td>{{ user?.CreatedAT | date }}</td>
+            </tr>
+          </table>
+
+        </div>
+
+      </div>
+      <div class="py-4">
+        <button class="btn btn-lg" (click)="goHome()">Back to Home</button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

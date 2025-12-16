@@ -3,10 +3,12 @@
   <div class="container">
 
     <a class="navbar-brand fw-bold" routerLink="/home">
-      <i class="bi bi-camera"></i> PhotoBook
+      <img src="/assets/img/Application_logo.png" alt="Logo" width="70" height="70"
+        class="d-inline-block align-text-top me-2">
     </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+      data-bs-target="#navbarNav">
       <span class="navbar-toggler-icon"></span>
     </button>
 
@@ -42,16 +44,16 @@
           <a
             class="nav-link dropdown-toggle"
             role="button"
-            data-bs-toggle="dropdown"
-          >
+            data-bs-toggle="dropdown">
             {{ auth.getUserName() }}
           </a>
 
           <ul class="dropdown-menu dropdown-menu-end">
             <li>
-              <a class="dropdown-item" routerLink="/profile">
+              <a class="dropdown-item" (click)="goProfile()">
                 <i class="bi bi-person me-2"></i> My Profile
               </a>
+
             </li>
 
             <li>
@@ -76,7 +78,8 @@
   <div class="container text-center">
     <h1 class="display-4 fw-bold">Capture Your Moments</h1>
     <p class="lead mt-3">
-      Professional Photography Services for Weddings, Events, Portraits and more.
+      Professional Photography Services for Weddings, Events, Portraits and
+      more.
     </p>
     <a routerLink="/booking" class="btn btn-primary btn-lg mt-3">
       Get Started
@@ -129,9 +132,12 @@
     </div>
 
     <div class="row g-3">
-      <div class="col-md-4"><img src="image1.jpg" class="img-fluid rounded"></div>
-      <div class="col-md-4"><img src="image2.jpg" class="img-fluid rounded"></div>
-      <div class="col-md-4"><img src="image3.jpg" class="img-fluid rounded"></div>
+      <div class="col-md-4"><img src="image1.jpg"
+          class="img-fluid rounded"></div>
+      <div class="col-md-4"><img src="image2.jpg"
+          class="img-fluid rounded"></div>
+      <div class="col-md-4"><img src="image3.jpg"
+          class="img-fluid rounded"></div>
     </div>
   </div>
 </section>
@@ -143,7 +149,8 @@
       <div class="col-md-6">
         <h2 class="fw-bold">About Us</h2>
         <p class="text-muted">
-          We are a professional photography service offering premium quality shoots with experienced photographers.
+          We are a professional photography service offering premium quality
+          shoots with experienced photographers.
         </p>
       </div>
       <div class="col-md-6">

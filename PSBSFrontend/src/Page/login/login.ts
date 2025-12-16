@@ -56,6 +56,8 @@ export class Login {
         ------------------------------ */
         const loggedUser = res.user;
         localStorage.setItem('user', JSON.stringify(loggedUser));
+        localStorage.setItem('user', JSON.stringify(res.user));
+
 
         /* -----------------------------
            ROLE DETECTION (SAFE)

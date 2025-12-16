@@ -7,6 +7,7 @@ import { ResetPassword } from '../Page/reset-password/reset-password';
 import { AdminUsers } from '../Page/admin-users/admin-users';
 import { Packages } from '../Page/packages/packages';
 import { Home } from '../Page/home/home';
+import { Profile } from '../Page/profile/profile';
 
 export const routes: Routes = [
   {
@@ -21,6 +22,10 @@ export const routes: Routes = [
   {
     path: 'login',
     component: Login
+  },
+  {
+    path: 'profile',
+    component: Profile
   },
   {
     path: 'registration',
