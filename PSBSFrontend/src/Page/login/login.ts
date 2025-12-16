@@ -13,7 +13,7 @@ import { AuthService } from '../../app/Services/auth.service';
 })
 export class Login {
 
-  // 🔥 MUST MATCH BACKEND LoginRequest
+  // MUST MATCH BACKEND LoginRequest
   user = {
     emailOruserName: '',
     Password: ''
@@ -45,7 +45,6 @@ export class Login {
         console.log('Login response:', res);
 
         /* -----------------------------
-           ✅ CRITICAL FIX #1
            SAVE TOKEN (YOU MISSED THIS)
         ------------------------------ */
         if (res.token) {
@@ -53,14 +52,13 @@ export class Login {
         }
 
         /* -----------------------------
-           ✅ CRITICAL FIX #2
            SAVE USER PROPERLY
         ------------------------------ */
         const loggedUser = res.user;
         localStorage.setItem('user', JSON.stringify(loggedUser));
 
         /* -----------------------------
-           🔐 ROLE DETECTION (SAFE)
+           ROLE DETECTION (SAFE)
         ------------------------------ */
         const role = (
           loggedUser.RegisterAS ??
@@ -72,7 +70,7 @@ export class Login {
         this.isLoading = false;
 
         /* -----------------------------
-           🚦 REDIRECT
+           REDIRECT
         ------------------------------ */
         if (role === 'admin') {
           this.router.navigate(['/admin-dashboard']);
