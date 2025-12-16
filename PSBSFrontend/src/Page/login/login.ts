@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../app/Services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -22,7 +23,8 @@ export class Login {
 
   constructor(
     private http: HttpClient,
-    private router: Router
+    private router: Router,
+    public auth: AuthService
   ) {}
 
   login(form: NgForm) {

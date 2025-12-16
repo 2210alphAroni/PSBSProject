@@ -1,13 +1,16 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { AuthService } from '../../app/Services/auth.service';
 
 @Component({
   selector: 'app-home',
+  standalone: true,
   imports: [CommonModule],
   templateUrl: './home.html',
-  styleUrl: './home.css',
+  styleUrls: ['./home.css']
 })
 export class Home {
-auth: any;
+
+  constructor(public auth: AuthService) {}
 
 }

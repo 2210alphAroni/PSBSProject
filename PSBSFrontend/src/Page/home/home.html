@@ -25,6 +25,13 @@
           <a class="nav-link" href="#about">About</a>
         </li>
 
+        <!-- Book Now -->
+        <li class="nav-item ms-2">
+          <a class="btn btn-primary px-3" routerLink="/booking">
+            Book Now
+          </a>
+        </li>
+
         <!-- 🔐 NOT LOGGED IN -->
         <li class="nav-item" *ngIf="!auth.isLoggedIn()">
           <a class="nav-link" routerLink="/login">Login</a>
@@ -57,13 +64,6 @@
               </a>
             </li>
           </ul>
-        </li>
-
-        <!-- Book Now -->
-        <li class="nav-item ms-2">
-          <a class="btn btn-primary px-3" routerLink="/booking">
-            Book Now
-          </a>
         </li>
 
       </ul>
