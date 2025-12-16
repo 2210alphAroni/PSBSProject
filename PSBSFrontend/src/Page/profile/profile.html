@@ -1,49 +1,70 @@
-<div class="container mt-5 pt-5">
+<div class="container py-5 mt-5 bg-secondary bg-opacity-10 rounded-4">
 
   <div class="row justify-content-center">
-    <div class="col-md-8">
+    <div class="col-lg-8">
 
-      <div class="card shadow-lg border-0">
-        <div class="card-header bg-dark text-white text-center">
-          <h4 class="mb-0">My Profile</h4>
+      <!-- Profile Card -->
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+        <!-- Header -->
+        <div class="card-header bg-dark text-white text-center py-4">
+          <h4 class="mb-1">My Profile</h4>
+          <small class="opacity-75">Account Information</small>
         </div>
 
-        <div class="card-body">
+        <!-- Body -->
+        <div class="card-body p-4">
 
+          <!-- Profile Summary -->
           <div class="text-center mb-4">
-            <i class="bi bi-person-circle display-1 text-primary"></i>
-            <h5 class="mt-2">{{ user?.FullName }}</h5>
-            <small class="text-muted">{{ user?.RegisterAs }}</small>
+            <div class="mb-2">
+              <i class="bi bi-person-circle display-1 text-primary"></i>
+            </div>
+            <h5 class="fw-bold mb-0">{{ user?.FullName }}</h5>
+            <span class="badge bg-secondary mt-2 px-3 py-2">
+              {{ user?.RegisterAs }}
+            </span>
           </div>
 
-          <table class="table table-bordered">
-            <tr>
-              <th>Username</th>
-              <td>{{ user?.UserName }}</td>
-            </tr>
-            <tr>
-              <th>Email</th>
-              <td>{{ user?.Email }}</td>
-            </tr>
-            <tr>
-              <th>Phone</th>
-              <td>{{ user?.Phone }}</td>
-            </tr>
-            <tr>
-              <th>Gender</th>
-              <td>{{ user?.Gender }}</td>
-            </tr>
-            <tr>
-              <th>Joined</th>
-              <td>{{ user?.CreatedAT | date }}</td>
-            </tr>
-          </table>
+          <!-- Info Table -->
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle text-center mb-0">
+              <tbody>
+                <tr>
+                  <th class="bg-light">Username</th>
+                  <td>{{ user?.UserName }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Email</th>
+                  <td>{{ user?.Email }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Phone</th>
+                  <td>{{ user?.Phone }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Gender</th>
+                  <td>{{ user?.Gender }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Joined</th>
+                  <td>{{ user?.CreatedAT | date }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
 
         </div>
 
-      </div>
-      <div class="py-4">
-        <button class="btn btn-lg" (click)="goHome()">Back to Home</button>
+        <!-- Footer -->
+        <div class="card-footer bg-transparent border-0 text-center py-4">
+          <button class="btn btn-warning btn-lg px-5 shadow"
+                  (click)="goHome()">
+            <i class="bi bi-arrow-left-circle me-2"></i>
+            Back to Home
+          </button>
+        </div>
+
       </div>
 
     </div>
