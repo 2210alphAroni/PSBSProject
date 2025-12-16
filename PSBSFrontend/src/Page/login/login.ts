@@ -1,76 +1,89 @@
-import { ChangeDetectorRef, Component } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
+  standalone: true,
   imports: [FormsModule, RouterModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
 export class Login {
 
+  // 🔥 MUST MATCH BACKEND LoginRequest
   user = {
-    emailOrUsername: '',
-    password: ''
+    emailOruserName: '',
+    Password: ''
   };
 
-  isLoading=false;
+  isLoading = false;
 
-  constructor(private httpRequest: HttpClient, private router: Router) { }
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   login(form: NgForm) {
+
     if (form.invalid) {
-      alert("Please fill all fields!");
-      window.location.reload();
+      alert('Please fill all fields!');
       return;
     }
 
-    this.isLoading=true;
-    this.httpRequest.post("https://localhost:7272/api/UsersLogin/auth", this.user)
-      .subscribe({
-        next: (res: any) => {
-          alert("Login successful!");
-          console.log("Full Response:", res);
+    this.isLoading = true;
 
-          let loggedUser = res.user;
-          console.log("Logged User:", loggedUser);
+    this.http.post<any>(
+      'https://localhost:7272/api/UsersLogin/auth',
+      this.user
+    ).subscribe({
 
-          // Save user
-          localStorage.setItem('user', JSON.stringify(loggedUser));
+      next: (res) => {
+        console.log('Login response:', res);
 
-          // Extract role safely from ANY naming format
-          const roleRaw =
-            loggedUser.RegisterAs ||
-            loggedUser.registerAs ||
-            loggedUser.RegisterAS ||
-            loggedUser.registerAS ||
-            loggedUser.registeras ||
-            '';
-
-          const role = roleRaw.toString().toLowerCase().trim();
-
-          console.log("Detected Role:", role);
-
-          //  Admin redirect
-          if (role === 'admin') {
-            this.router.navigate(['/admin-dashboard']);
-            return;
-          }
-
-          setTimeout(() =>{
-            this.isLoading=false;
-            window.location.reload(); 
-          },2000)
-
-        },
-
-        error: (err) => {
-          alert("Login failed!\n" + (err.error?.error || "Invalid credentials"));
-          console.error(err);
-          window.location.reload();
+        /* -----------------------------
+           ✅ CRITICAL FIX #1
+           SAVE TOKEN (YOU MISSED THIS)
+        ------------------------------ */
+        if (res.token) {
+          localStorage.setItem('token', res.token);
         }
-      });
+
+        /* -----------------------------
+           ✅ CRITICAL FIX #2
+           SAVE USER PROPERLY
+        ------------------------------ */
+        const loggedUser = res.user;
+        localStorage.setItem('user', JSON.stringify(loggedUser));
+
+        /* -----------------------------
+           🔐 ROLE DETECTION (SAFE)
+        ------------------------------ */
+        const role = (
+          loggedUser.RegisterAS ??
+          loggedUser.RegisterAs ??
+          loggedUser.registerAs ??
+          ''
+        ).toString().toLowerCase().trim();
+
+        this.isLoading = false;
+
+        /* -----------------------------
+           🚦 REDIRECT
+        ------------------------------ */
+        if (role === 'admin') {
+          this.router.navigate(['/admin-dashboard']);
+        } else {
+          this.router.navigate(['/home']);
+        }
+      },
+
+      error: (err) => {
+        this.isLoading = false;
+        alert(err.error?.error || 'Invalid credentials');
+        console.error(err);
+      }
+    });
   }
 }

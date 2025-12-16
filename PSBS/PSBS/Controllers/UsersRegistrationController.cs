@@ -95,10 +95,16 @@ namespace PSBS.Controllers
                      FullName = Users.FullName
                  });
 
+                if (string.IsNullOrWhiteSpace(Users.RegisterAs))
+                {
+                    return BadRequest("User role is required.");
+                }
+
+
                 //  SEND EMAIL
                 await _emailService.SendRegistrationEmail(
-                Users.Email,
-                Users.FullName,
+                Users.Email!,
+                Users.FullName!,
                 Users.RegisterAs
             );
 

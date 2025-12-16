@@ -1,1 +1,162 @@
-<p>home works!</p>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+  <div class="container">
+
+    <a class="navbar-brand fw-bold" routerLink="/home">
+      <i class="bi bi-camera"></i> PhotoBook
+    </a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto align-items-center">
+
+        <li class="nav-item">
+          <a class="nav-link" href="#services">Services</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#gallery">Gallery</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
+
+        <!-- 🔐 NOT LOGGED IN -->
+        <li class="nav-item" *ngIf="!auth.isLoggedIn()">
+          <a class="nav-link" routerLink="/login">Login</a>
+        </li>
+
+        <!-- 🔓 LOGGED IN -->
+        <li class="nav-item dropdown" *ngIf="auth.isLoggedIn()">
+          <a
+            class="nav-link dropdown-toggle"
+            role="button"
+            data-bs-toggle="dropdown"
+          >
+            {{ auth.getUserName() }}
+          </a>
+
+          <ul class="dropdown-menu dropdown-menu-end">
+            <li>
+              <a class="dropdown-item" routerLink="/profile">
+                <i class="bi bi-person me-2"></i> My Profile
+              </a>
+            </li>
+
+            <li>
+              <hr class="dropdown-divider">
+            </li>
+
+            <li>
+              <a class="dropdown-item text-danger" (click)="auth.logout()">
+                <i class="bi bi-box-arrow-right me-2"></i> Logout
+              </a>
+            </li>
+          </ul>
+        </li>
+
+        <!-- Book Now -->
+        <li class="nav-item ms-2">
+          <a class="btn btn-primary px-3" routerLink="/booking">
+            Book Now
+          </a>
+        </li>
+
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero Section -->
+<section class="hero mt-5 pt-5">
+  <div class="container text-center">
+    <h1 class="display-4 fw-bold">Capture Your Moments</h1>
+    <p class="lead mt-3">
+      Professional Photography Services for Weddings, Events, Portraits and more.
+    </p>
+    <a routerLink="/booking" class="btn btn-primary btn-lg mt-3">
+      Get Started
+    </a>
+  </div>
+</section>
+
+<!-- Services -->
+<section id="services" class="py-5">
+  <div class="container">
+    <div class="text-center mb-5">
+      <h2 class="fw-bold">Our Services</h2>
+      <p class="text-muted">Premium photography solutions</p>
+    </div>
+
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="card shadow-sm text-center p-4">
+          <i class="bi bi-heart feature-icon"></i>
+          <h5 class="mt-3">Wedding Photography</h5>
+          <p class="text-muted">Capture every special moment beautifully.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card shadow-sm text-center p-4">
+          <i class="bi bi-people feature-icon"></i>
+          <h5 class="mt-3">Event Coverage</h5>
+          <p class="text-muted">Professional coverage for all events.</p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="card shadow-sm text-center p-4">
+          <i class="bi bi-camera-reels feature-icon"></i>
+          <h5 class="mt-3">Portrait Shoots</h5>
+          <p class="text-muted">Studio and outdoor portrait sessions.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section id="gallery" class="py-5 bg-light">
+  <div class="container">
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">Gallery</h2>
+      <p class="text-muted">Upload and showcase your work</p>
+    </div>
+
+    <div class="row g-3">
+      <div class="col-md-4"><img src="image1.jpg" class="img-fluid rounded"></div>
+      <div class="col-md-4"><img src="image2.jpg" class="img-fluid rounded"></div>
+      <div class="col-md-4"><img src="image3.jpg" class="img-fluid rounded"></div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about" class="py-5">
+  <div class="container">
+    <div class="row align-items-center">
+      <div class="col-md-6">
+        <h2 class="fw-bold">About Us</h2>
+        <p class="text-muted">
+          We are a professional photography service offering premium quality shoots with experienced photographers.
+        </p>
+      </div>
+      <div class="col-md-6">
+        <img src="about.jpg" class="img-fluid rounded shadow">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="bg-dark text-white py-4">
+  <div class="container text-center">
+    <p class="mb-1">© 2025 PhotoBook Photography</p>
+    <small>Email: info@photobook.com | Phone: +880-123456789</small>
+  </div>
+</footer>

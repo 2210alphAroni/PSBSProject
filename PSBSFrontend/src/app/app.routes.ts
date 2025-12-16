@@ -6,12 +6,17 @@ import { ForgotPassword } from '../Page/forgot-password/forgot-password';
 import { ResetPassword } from '../Page/reset-password/reset-password';
 import { AdminUsers } from '../Page/admin-users/admin-users';
 import { Packages } from '../Page/packages/packages';
+import { Home } from '../Page/home/home';
 
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'home',
     pathMatch: 'full'
+  },
+  {
+    path:'home',
+    component: Home
   },
   {
     path: 'login',

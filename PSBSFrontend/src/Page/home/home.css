@@ -1,0 +1,14 @@
+ body {
+      font-family: 'Segoe UI', sans-serif;
+    }
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/assets/img/1.jpg') center/cover no-repeat;
+      height: 90vh;
+      color: #fff;
+      display: flex;
+      align-items: center;
+    }
+    .feature-icon {
+      font-size: 2.5rem;
+      color: #0d6efd;
+    }

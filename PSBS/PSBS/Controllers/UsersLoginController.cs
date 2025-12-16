@@ -2,7 +2,11 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using PSBS.Context;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
 
 namespace PSBS.Controllers
 {
@@ -11,10 +15,13 @@ namespace PSBS.Controllers
     public class UsersLoginController : ControllerBase
     {
         private readonly DapperContext _context;
+        private readonly IConfiguration _config;
 
-        public UsersLoginController(DapperContext context)
+
+        public UsersLoginController(DapperContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
 
         [HttpPost("auth")]
@@ -33,12 +40,43 @@ namespace PSBS.Controllers
 
             return Ok(new { message = "Login successful!", user });
         }
+
+        private string GenerateJwtToken(dynamic user)
+        {
+            var claims = new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Role, user.RegisterAS)
+            };
+
+            var key = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(_config["Jwt:Key"])
+            );
+
+            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+
+            var token = new JwtSecurityToken(
+                issuer: _config["Jwt:Issuer"],
+                audience: _config["Jwt:Audience"],
+                claims: claims,
+                expires: DateTime.Now.AddMinutes(
+                    Convert.ToDouble(_config["Jwt:DurationInMinutes"])
+                ),
+                signingCredentials: creds
+            );
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
+        }
     }
+}
+
+
 
     public class LoginRequest
     {
-        public string emailOruserName { get; set; }
-        public string Password { get; set; }
+        public required string? emailOruserName { get; set; }
+        public  required string? Password { get; set; }
     }
 
-}
