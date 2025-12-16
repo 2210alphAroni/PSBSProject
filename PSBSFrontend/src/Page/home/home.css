@@ -1,14 +1,171 @@
- body {
-      font-family: 'Segoe UI', sans-serif;
-    }
-    .hero {
-      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('/assets/img/1.jpg') center/cover no-repeat;
-      height: 90vh;
-      color: #fff;
-      display: flex;
-      align-items: center;
-    }
-    .feature-icon {
-      font-size: 2.5rem;
-      color: #0d6efd;
-    }
+/* ================================
+   GLOBAL STYLES
+================================ */
+body {
+  font-family: 'Segoe UI', sans-serif;
+  scroll-behavior: smooth;
+}
+
+/* ================================
+   NAVBAR
+================================ */
+.navbar {
+  animation: slideDown 0.8s ease forwards;
+}
+
+.navbar .nav-link {
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.navbar .nav-link:hover {
+  color: #ffc107 !important;
+  transform: translateY(-2px);
+}
+
+/* ================================
+   HERO SECTION
+================================ */
+.hero {
+  background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url('/assets/img/1.jpg') center/cover no-repeat;
+  height: 90vh;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  animation: fadeIn 1.2s ease forwards;
+}
+
+.hero h1 {
+  animation: fadeUp 1s ease forwards;
+}
+
+.hero p {
+  animation: fadeUp 1.2s ease forwards;
+}
+
+.hero .btn {
+  animation: fadeUp 1.4s ease forwards;
+}
+
+/* ================================
+   SECTIONS
+================================ */
+section {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Section reveal animation */
+section .container {
+  animation: sectionReveal 0.9s ease forwards;
+}
+
+/* ================================
+   CARDS
+================================ */
+.card {
+  transition: all 0.35s ease;
+}
+
+.card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 1.2rem 2rem rgba(0,0,0,0.15);
+}
+
+/* Feature icons */
+.feature-icon {
+  font-size: 2.5rem;
+  color: #0d6efd;
+}
+
+/* Icon boxes */
+.card-body i {
+  transition: transform 0.3s ease;
+}
+
+.card:hover i {
+  transform: scale(1.15);
+}
+
+/* ================================
+   BADGES
+================================ */
+.badge {
+  transition: transform 0.3s ease;
+}
+
+.badge:hover {
+  transform: scale(1.08);
+}
+
+/* ================================
+   BUTTONS
+================================ */
+.btn {
+  transition: all 0.3s ease;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 .75rem 1.5rem rgba(0,0,0,0.2);
+}
+
+/* ================================
+   TEXT UTILITIES
+================================ */
+.text-purple {
+  color: #6d28d9 !important;
+}
+
+/* ================================
+   FOOTER
+================================ */
+footer {
+  animation: fadeIn 1.5s ease forwards;
+}
+
+/* ================================
+   ANIMATIONS
+================================ */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes sectionReveal {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
