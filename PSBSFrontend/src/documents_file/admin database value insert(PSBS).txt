@@ -11,3 +11,9 @@ ALTER TABLE UsersRegistration
 ADD ResetToken NVARCHAR(200),
     ResetTokenExpiry DATETIME;
 
+
+// for login using google account
+
+Google → User approves → Google returns token → 
+Angular sends token → Backend verifies → 
+Your app creates/logs in user

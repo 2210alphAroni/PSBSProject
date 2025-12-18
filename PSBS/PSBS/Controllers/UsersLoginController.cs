@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity.Data;
 using Microsoft.AspNetCore.Mvc;
@@ -69,6 +70,33 @@ namespace PSBS.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+        [HttpPost("google")]
+        public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
+        {
+            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            {
+                Audience = new[] { "501889184170-hvi2lbi392aonfl8iqihudbr9hqc2ldg.apps.googleusercontent.com" }
+            };
+
+            var payload = await GoogleJsonWebSignature.ValidateAsync(dto.Token, settings);
+
+            // payload.Email, payload.Name
+            // check if user exists
+            // if not, create user
+            // generate JWT
+
+            return Ok(new
+            {
+                token = "d9F#7@kL2x!M8R0ZpW1sEoYH4TqC6bVJ"
+            });
+        }
+
+    }
+
+    public class GoogleLoginDto
+    {
+        public string? Token { get; internal set; }
     }
 }
 

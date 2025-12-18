@@ -37,13 +37,22 @@
         <button type="submit" class="login-btn" [disabled]="isLoading">{{
           isLoading ? 'Processing...' : 'Log in'}}</button>
 
-        <p class="login-register-text mt-3">
-          Don't have an account?
-          <a routerLink="/registration" class="login-register-link">Register
-            here</a>
-        </p>
-
       </form>
+
+      <div class="py-5">
+        <button
+        type="button"
+        class="btn btn-light w-100"
+        (click)="loginWithGoogle()">
+        <i class="fa-brands fa-google"></i> Continue with Google
+      </button>
+
+      <p class="login-register-text mt-3">
+        Don't have an account?
+        <a routerLink="/registration" class="login-register-link">Register
+          here</a>
+      </p>
+      </div>
 
     </div>
   </div>

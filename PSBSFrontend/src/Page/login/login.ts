@@ -4,6 +4,8 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../app/Services/auth.service';
 
+declare var google: any; // IMPORTANT for Google Identity
+
 @Component({
   selector: 'app-login',
   standalone: true,
@@ -27,6 +29,9 @@ export class Login {
     public auth: AuthService
   ) {}
 
+  /* =====================================
+     NORMAL LOGIN (EMAIL / PASSWORD)
+  ====================================== */
   login(form: NgForm) {
 
     if (form.invalid) {
@@ -44,24 +49,13 @@ export class Login {
       next: (res) => {
         console.log('Login response:', res);
 
-        /* -----------------------------
-           SAVE TOKEN (YOU MISSED THIS)
-        ------------------------------ */
         if (res.token) {
           localStorage.setItem('token', res.token);
         }
 
-        /* -----------------------------
-           SAVE USER PROPERLY
-        ------------------------------ */
         const loggedUser = res.user;
         localStorage.setItem('user', JSON.stringify(loggedUser));
-        localStorage.setItem('user', JSON.stringify(res.user));
 
-
-        /* -----------------------------
-           ROLE DETECTION (SAFE)
-        ------------------------------ */
         const role = (
           loggedUser.RegisterAS ??
           loggedUser.RegisterAs ??
@@ -71,9 +65,6 @@ export class Login {
 
         this.isLoading = false;
 
-        /* -----------------------------
-           REDIRECT
-        ------------------------------ */
         if (role === 'admin') {
           this.router.navigate(['/admin-dashboard']);
         } else {
@@ -88,4 +79,52 @@ export class Login {
       }
     });
   }
+
+  /* =====================================
+     GOOGLE LOGIN
+  ====================================== */
+  loginWithGoogle() {
+    google.accounts.id.initialize({
+      client_id: '501889184170-hvi2lbi392aonfl8iqihudbr9hqc2ldg.apps.googleusercontent.com',
+      callback: (response: any) => {
+        this.handleGoogleResponse(response);
+      }
+    });
+
+    google.accounts.id.prompt();
+  }
+
+  handleGoogleResponse(response: any) {
+    const googleToken = response.credential;
+
+    this.isLoading = true;
+
+    this.http.post<any>(
+      'https://localhost:7272/api/UsersLogin/google',
+      { token: googleToken }
+    ).subscribe({
+
+      next: (res) => {
+        console.log('Google login success:', res);
+
+        if (res.token) {
+          localStorage.setItem('token', res.token);
+        }
+
+        if (res.user) {
+          localStorage.setItem('user', JSON.stringify(res.user));
+        }
+
+        this.isLoading = false;
+        this.router.navigate(['/home']);
+      },
+
+      error: (err) => {
+        this.isLoading = false;
+        alert('Google login failed');
+        console.error(err);
+      }
+    });
+  }
+
 }
