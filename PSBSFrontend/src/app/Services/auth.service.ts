@@ -1,3 +1,4 @@
+
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
@@ -8,22 +9,33 @@ export class AuthService {
 
   constructor(private router: Router) {}
 
-  getUser() {
+  getUser(): any {
     const user = localStorage.getItem('user');
     return user ? JSON.parse(user) : null;
   }
 
+  isLoggedIn(): boolean {
+    return !!localStorage.getItem('token');
+  }
+
+  // ✅ FIXED (Backend compatible)
   getUserName(): string {
     const user = this.getUser();
-    return user?.FullName || 'User';
+    return user?.FullName || user?.Email || 'User';
   }
 
-  isLoggedIn(): boolean {
-    return !!localStorage.getItem('user');
+  // ✅ ROLE CHECKS
+  getRole(): string {
+    return this.getUser()?.RegisterAS || '';
   }
 
-  logout() {
+  isAdmin(): boolean {
+    return this.getRole() === 'Admin';
+  }
+
+  logout(): void {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
 }
+
