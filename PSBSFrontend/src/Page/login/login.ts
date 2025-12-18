@@ -1,21 +1,23 @@
-import { Component } from '@angular/core';
+import { Component, AfterViewInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule, NgForm } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
-import { AuthService } from '../../app/Services/auth.service';
+import { CommonModule } from '@angular/common';
 
-declare var google: any; // IMPORTANT for Google Identity
+declare var google: any;
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.html',
   styleUrl: './login.css'
 })
-export class Login {
+export class Login implements AfterViewInit {
 
-  // MUST MATCH BACKEND LoginRequest
+  // ===============================
+  // NORMAL LOGIN MODEL
+  // ===============================
   user = {
     emailOruserName: '',
     Password: ''
@@ -25,17 +27,16 @@ export class Login {
 
   constructor(
     private http: HttpClient,
-    private router: Router,
-    public auth: AuthService
+    private router: Router
   ) {}
 
-  /* =====================================
-     NORMAL LOGIN (EMAIL / PASSWORD)
-  ====================================== */
+  // ===============================
+  // NORMAL LOGIN
+  // ===============================
   login(form: NgForm) {
 
     if (form.invalid) {
-      alert('Please fill all fields!');
+      alert('Please fill all fields');
       return;
     }
 
@@ -45,67 +46,70 @@ export class Login {
       'https://localhost:7272/api/UsersLogin/auth',
       this.user
     ).subscribe({
-
       next: (res) => {
-        console.log('Login response:', res);
-
         if (res.token) {
           localStorage.setItem('token', res.token);
         }
 
-        const loggedUser = res.user;
-        localStorage.setItem('user', JSON.stringify(loggedUser));
-
-        const role = (
-          loggedUser.RegisterAS ??
-          loggedUser.RegisterAs ??
-          loggedUser.registerAs ??
-          ''
-        ).toString().toLowerCase().trim();
+        if (res.user) {
+          localStorage.setItem('user', JSON.stringify(res.user));
+        }
 
         this.isLoading = false;
-
-        if (role === 'admin') {
-          this.router.navigate(['/admin-dashboard']);
-        } else {
-          this.router.navigate(['/home']);
-        }
+        this.router.navigate(['/home']);
       },
-
       error: (err) => {
         this.isLoading = false;
-        alert(err.error?.error || 'Invalid credentials');
+        alert(err.error?.error || 'Login failed');
         console.error(err);
       }
     });
   }
 
-  /* =====================================
-     GOOGLE LOGIN
-  ====================================== */
-  loginWithGoogle() {
+  // ===============================
+  // GOOGLE LOGIN INIT
+  // ===============================
+  ngAfterViewInit(): void {
+
+    if (typeof google === 'undefined') {
+      console.error('❌ Google Identity script not loaded');
+      return;
+    }
+
     google.accounts.id.initialize({
       client_id: '501889184170-hvi2lbi392aonfl8iqihudbr9hqc2ldg.apps.googleusercontent.com',
-      callback: (response: any) => {
-        this.handleGoogleResponse(response);
-      }
+      callback: this.handleGoogleResponse.bind(this)
     });
 
-    google.accounts.id.prompt();
+    google.accounts.id.renderButton(
+      document.getElementById('googleBtn'),
+      {
+        theme: 'outline',
+        size: 'large',
+        width: 380,
+        text: 'continue_with'
+      }
+    );
   }
 
-  handleGoogleResponse(response: any) {
-    const googleToken = response.credential;
+  // ===============================
+  // GOOGLE LOGIN CALLBACK
+  // ===============================
+  handleGoogleResponse(response: any): void {
+
+    if (!response?.credential) {
+      console.error('❌ No Google credential received');
+      return;
+    }
 
     this.isLoading = true;
 
     this.http.post<any>(
       'https://localhost:7272/api/UsersLogin/google',
-      { token: googleToken }
+      { token: response.credential }
     ).subscribe({
-
       next: (res) => {
-        console.log('Google login success:', res);
+        console.log('✅ Google login success', res);
 
         if (res.token) {
           localStorage.setItem('token', res.token);
@@ -118,7 +122,6 @@ export class Login {
         this.isLoading = false;
         this.router.navigate(['/home']);
       },
-
       error: (err) => {
         this.isLoading = false;
         alert('Google login failed');
@@ -126,5 +129,4 @@ export class Login {
       }
     });
   }
-
 }

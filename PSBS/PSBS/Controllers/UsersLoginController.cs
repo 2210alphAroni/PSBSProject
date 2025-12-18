@@ -96,7 +96,7 @@ namespace PSBS.Controllers
 
     public class GoogleLoginDto
     {
-        public string? Token { get; internal set; }
+        public string? Token { get; set; }
     }
 }
 
