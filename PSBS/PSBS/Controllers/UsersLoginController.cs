@@ -74,37 +74,76 @@ namespace PSBS.Controllers
         [HttpPost("google")]
         public async Task<IActionResult> GoogleLogin([FromBody] GoogleLoginDto dto)
         {
-            var settings = new GoogleJsonWebSignature.ValidationSettings()
+            var settings = new GoogleJsonWebSignature.ValidationSettings
             {
-                Audience = new[] { "501889184170-hvi2lbi392aonfl8iqihudbr9hqc2ldg.apps.googleusercontent.com" }
+                Audience = new[]
+                {
+            "501889184170-hvi2lbi392aonfl8iqihudbr9hqc2ldg.apps.googleusercontent.com"
+        }
             };
 
             var payload = await GoogleJsonWebSignature.ValidateAsync(dto.Token, settings);
 
-            // payload.Email, payload.Name
-            // check if user exists
-            // if not, create user
-            // generate JWT
+            using var connection = _context.CreateConnection();
 
+            // 🔍 user exists কিনা চেক
+            var user = await connection.QueryFirstOrDefaultAsync<dynamic>(
+                "SELECT * FROM UsersRegistration WHERE Email = @Email",
+                new { payload.Email }
+            );
+
+            // ➕ না থাকলে create করো
+            if (user == null)
+            {
+                var insertSql = @"
+            INSERT INTO UsersRegistration (FullName, Email, RegisterAS)
+            VALUES (@FullName, @Email, 'Client');
+            SELECT CAST(SCOPE_IDENTITY() AS INT);
+        ";
+
+                var newId = await connection.ExecuteScalarAsync<int>(insertSql, new
+                {
+                    FullName = payload.Name,
+                    Email = payload.Email
+                });
+
+                user = new
+                {
+                    Id = newId,
+                    FullName = payload.Name,
+                    Email = payload.Email,
+                    RegisterAS = "Client"
+                };
+            }
+
+            var token = GenerateJwtToken(user);
+
+            // 🔴 THIS IS THE FIX
             return Ok(new
             {
-                token = "d9F#7@kL2x!M8R0ZpW1sEoYH4TqC6bVJ"
+                token,
+                user = new
+                {
+                    user.Id,
+                    user.FullName,
+                    user.Email,
+                    user.RegisterAS
+                }
             });
         }
 
+        public class GoogleLoginDto
+        {
+            public string? Token { get; set; }
+        }
     }
-
-    public class GoogleLoginDto
-    {
-        public string? Token { get; set; }
-    }
-}
 
 
 
     public class LoginRequest
     {
         public required string? emailOruserName { get; set; }
-        public  required string? Password { get; set; }
-    }
+        public required string? Password { get; set; }
 
+    }
+}
