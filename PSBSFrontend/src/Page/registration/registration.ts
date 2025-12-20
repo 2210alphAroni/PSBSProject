@@ -2,11 +2,12 @@ import { HttpClient } from '@angular/common/http';
 import { ChangeDetectorRef, Component } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-registration',
   standalone: true,
-  imports: [FormsModule, RouterModule],
+  imports: [FormsModule, RouterModule,CommonModule],
   templateUrl: './registration.html',
   styleUrl: './registration.css',
 })
@@ -18,6 +19,7 @@ export class Registration {
     registerAs: '',
     fullName: '',
     email: '',
+    countryCode: '',
     phone: '',
     userName: '',
     password: '',
@@ -42,6 +44,19 @@ export class Registration {
       });
   }
 
+
+  countries = [
+    { name: 'Bangladesh', dialCode: '+880', flag: '🇧🇩' },
+    { name: 'India', dialCode: '+91', flag: '🇮🇳' },
+    { name: 'United States', dialCode: '+1', flag: '🇺🇸' },
+    { name: 'United Kingdom', dialCode: '+44', flag: '🇬🇧' },
+    { name: 'Canada', dialCode: '+1', flag: '🇨🇦' },
+    { name: 'Australia', dialCode: '+61', flag: '🇦🇺' },
+    { name: 'Germany', dialCode: '+49', flag: '🇩🇪' },
+    { name: 'France', dialCode: '+33', flag: '🇫🇷' },
+    { name: 'Japan', dialCode: '+81', flag: '🇯🇵' }
+  ];
+
   register(form: NgForm) {
 
      // ---------- REQUIRED FIELD CHECK ----------
@@ -50,6 +65,17 @@ export class Registration {
       window.location.reload();
       return;
     }
+
+    // for countrywise phone number formatting
+    const finalPhone = `${this.user.countryCode} ${this.user.phone}`;
+
+    const payload = {
+      ...this.user,
+      phone: finalPhone
+    };
+
+    console.log('REGISTER PAYLOAD:', payload);
+
 
     // ---------- PASSWORD VALIDATION FIRST ----------
     if (this.user.password.length < 6 || this.user.password.length > 9) {

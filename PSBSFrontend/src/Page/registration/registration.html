@@ -18,7 +18,7 @@
             name="registerAs"
             [(ngModel)]="user.registerAs"
             required>
-            <option value="" disabled>Select role</option>
+            <option value disabled>Select role</option>
             <option value="Photographer">Photographer</option>
             <option value="Client">Client</option>
           </select>
@@ -48,16 +48,35 @@
             required>
         </div>
 
-        <!-- Phone -->
+        <!-- Phone with Country Code -->
         <div class="mb-3">
           <label>Phone</label>
-          <input
-            type="text"
-            class="reg-input"
-            name="phone"
-            [(ngModel)]="user.phone"
-            placeholder="Enter your phone"
-            required>
+
+          <div style="display: flex; gap: 10px;">
+            <!-- Country Code -->
+            <select
+              class="reg-input"
+              style="max-width: 140px;"
+              name="countryCode"
+              [(ngModel)]="user.countryCode"
+              required>
+
+              <option value disabled>Code</option>
+              <option *ngFor="let c of countries" [value]="c.dialCode">
+                {{ c.flag }} {{ c.name }} ({{ c.dialCode }})
+              </option>
+            </select>
+
+            <!-- Phone Number -->
+            <input
+              type="tel"
+              class="reg-input"
+              name="phone"
+              [(ngModel)]="user.phone"
+              placeholder="Phone number"
+              pattern="[0-9]{6,15}"
+              required>
+          </div>
         </div>
 
         <!-- Username -->
@@ -104,7 +123,7 @@
             name="gender"
             [(ngModel)]="user.gender"
             required>
-            <option value="" disabled>Select gender</option>
+            <option value disabled>Select gender</option>
             <option>Male</option>
             <option>Female</option>
             <option>Other</option>
