@@ -21,7 +21,7 @@ export class AuthService {
   // ✅ FIXED (Backend compatible)
   getUserName(): string {
     const user = this.getUser();
-    return user?.FullName || user?.Email || 'User';
+    return user?.fullName || user?.Email || 'User';
   }
 
   // ✅ ROLE CHECKS
