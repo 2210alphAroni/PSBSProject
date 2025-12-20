@@ -61,10 +61,14 @@
               [(ngModel)]="user.countryCode"
               required>
 
-              <option value disabled>Code</option>
+              <!-- Correct placeholder -->
+              <option value="" disabled hidden>Code</option>
+
+              <!-- Dynamic options -->
               <option *ngFor="let c of countries" [value]="c.dialCode">
                 {{ c.flag }} {{ c.name }} ({{ c.dialCode }})
               </option>
+
             </select>
 
             <!-- Phone Number -->
