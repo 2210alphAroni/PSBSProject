@@ -32,10 +32,19 @@ namespace PSBS.Controllers
             using var connection = _context.CreateConnection();
 
             var user = await connection.QueryFirstOrDefaultAsync<dynamic>(
-                @"SELECT Id, FullName, Email, RegisterAS
-                  FROM UsersRegistration
-                  WHERE (Email = @Value OR UserName = @Value)
-                  AND Password = @Password",
+                @"SELECT 
+                    Id,
+                    FullName,
+                    UserName,
+                    Email,
+                    Phone,
+                    Gender,
+                    CreatedAt,
+                    RegisterAS
+                FROM UsersRegistration
+                WHERE (Email = @Value OR UserName = @Value)
+                AND Password = @Password
+                ",
                 new
                 {
                     Value = request.EmailOrUserName,
@@ -52,10 +61,14 @@ namespace PSBS.Controllers
                 token,
                 user = new
                 {
-                    user.Id,
-                    user.FullName,
-                    user.Email,
-                    user.RegisterAS
+                    UserId = user.Id,
+                    FullName = user.FullName,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    Gender = user.Gender,
+                    CreatedAt = user.CreatedAt,
+                    RegisterAS = user.RegisterAS
                 }
             });
         }
@@ -89,21 +102,32 @@ namespace PSBS.Controllers
             using var connection = _context.CreateConnection();
 
             var user = await connection.QueryFirstOrDefaultAsync<dynamic>(
-                @"SELECT Id, FullName, Email, RegisterAS
-                  FROM UsersRegistration
-                  WHERE Email = @Email",
+                @"SELECT 
+                    Id,
+                    FullName,
+                    UserName,
+                    Email,
+                    Phone,
+                    Gender,
+                    CreatedAt,
+                    RegisterAS
+                FROM UsersRegistration
+                WHERE Email = @Email",
                 new { Email = payload.Email });
 
             if (user == null)
             {
                 var newId = await connection.ExecuteScalarAsync<int>(
-                    @"INSERT INTO UsersRegistration (FullName, Email, RegisterAS)
-                      VALUES (@FullName, @Email, 'Client');
+                    @"INSERT INTO UsersRegistration 
+                      (FullName, Email, UserName, RegisterAS, CreatedAt)
+                      VALUES 
+                      (@FullName, @Email, @UserName, 'Client', GETDATE());
                       SELECT CAST(SCOPE_IDENTITY() AS INT);",
                     new
                     {
                         FullName = payload.Name,
-                        Email = payload.Email
+                        Email = payload.Email,
+                        UserName = payload.Email.Split('@')[0]
                     });
 
                 user = new
@@ -122,10 +146,14 @@ namespace PSBS.Controllers
                 token,
                 user = new
                 {
-                    user.Id,
-                    user.FullName,
-                    user.Email,
-                    user.RegisterAS
+                    UserId = user.Id,
+                    FullName = user.FullName,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Phone = user.Phone,
+                    Gender = user.Gender,
+                    CreatedAt = user.CreatedAt,
+                    RegisterAS = user.RegisterAS
                 }
             });
         }

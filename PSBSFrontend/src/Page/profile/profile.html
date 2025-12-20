@@ -22,7 +22,7 @@
             </div>
             <h5 class="fw-bold mb-0">{{ user?.fullName }}</h5>
             <span class="badge bg-secondary mt-2 px-3 py-2">
-              {{ user?.RegisterAs }}
+              {{ user?.registerAS }}
             </span>
           </div>
 
@@ -32,7 +32,7 @@
               <tbody>
                 <tr>
                   <th class="bg-light">Username</th>
-                  <td>{{ user?.UserName }}</td>
+                  <td>{{ user?.userName }}</td>
                 </tr>
                 <tr>
                   <th class="bg-light">Email</th>
@@ -40,15 +40,15 @@
                 </tr>
                 <tr>
                   <th class="bg-light">Phone</th>
-                  <td>{{ user?.Phone }}</td>
+                  <td>{{ user?.phone }}</td>
                 </tr>
                 <tr>
                   <th class="bg-light">Gender</th>
-                  <td>{{ user?.Gender }}</td>
+                  <td>{{ user?.gender }}</td>
                 </tr>
                 <tr>
                   <th class="bg-light">Joined</th>
-                  <td>{{ user?.CreatedAT | date }}</td>
+                  <td>{{ user?.createdAt | date }}</td>
                 </tr>
               </tbody>
             </table>
