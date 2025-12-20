@@ -38,6 +38,7 @@ export class Registration implements OnInit {
 ) {}
 
 ngOnInit(): void {
+  this.user.countryCode = '+880'; // default to Bangladesh
   this.getUsers();       
   this.detectCountry();
 }
@@ -82,7 +83,7 @@ ngOnInit(): void {
   this.http.get<any>('https://ipapi.co/json/')
     .subscribe({
       next: (res) => {
-        const countryCode = res.country; // e.g. "IN"
+        const countryCode = res.country;
 
         const matchedCountry = this.countries.find(
           c => c.code === countryCode
