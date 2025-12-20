@@ -50,7 +50,11 @@ export class Registration implements OnInit {
     { name: 'Canada', code: 'CA', dialCode: '+1', flag: '🇨🇦' },
     { name: 'Australia', code: 'AU', dialCode: '+61', flag: '🇦🇺' },
     { name: 'Germany', code: 'DE', dialCode: '+49', flag: '🇩🇪' },
-    { name: 'France', code: 'FR', dialCode: '+33', flag: '🇫🇷' }
+    { name: 'France', code: 'FR', dialCode: '+33', flag: '🇫🇷' },
+    { name: 'Japan', code: 'JP', dialCode: '+81', flag: '🇯🇵' },
+    { name: 'South Korea', code: 'KR', dialCode: '+82', flag: '🇰🇷' },
+    { name: 'Brazil', code: 'BR', dialCode: '+55', flag: '🇧🇷' },
+    { name: 'South Africa', code: 'ZA', dialCode: '+27', flag: '🇿🇦' },
   ];
 
   // ==============================
