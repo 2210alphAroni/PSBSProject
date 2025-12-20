@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -11,7 +11,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './registration.html',
   styleUrl: './registration.css',
 })
-export class Registration {
+export class Registration implements OnInit {
 
   userList: any[] = [];
 
@@ -32,9 +32,16 @@ export class Registration {
   passwordPattern =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,9}$/;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
-    this.getUsers();
-  }
+  constructor(
+  private http: HttpClient,
+  private cdr: ChangeDetectorRef
+) {}
+
+ngOnInit(): void {
+  this.getUsers();       
+  this.detectCountry();
+}
+
 
   getUsers() {
     this.http.get<any[]>('https://localhost:7272/api/UsersRegistration/get')
@@ -71,25 +78,29 @@ export class Registration {
 
 
   // 🌍 AUTO-DETECT COUNTRY
-  detectCountry() {
-    this.http.get<any>('https://ipapi.co/json/')
-      .subscribe({
-        next: (res) => {
-          const countryCode = res.country; // e.g. "IN"
+ detectCountry() {
+  this.http.get<any>('https://ipapi.co/json/')
+    .subscribe({
+      next: (res) => {
+        const countryCode = res.country; // e.g. "IN"
 
-          const matchedCountry = this.countries.find(
-            c => c.code === countryCode
-          );
+        const matchedCountry = this.countries.find(
+          c => c.code === countryCode
+        );
 
-          if (matchedCountry) {
-            this.user.countryCode = matchedCountry.dialCode;
-          }
-        },
-        error: () => {
-          console.warn('Country detection failed');
+        if (matchedCountry) {
+          this.user.countryCode = matchedCountry.dialCode;
+
+          // 🔁 ensure UI updates immediately
+          this.cdr.detectChanges();
         }
-      });
-  }
+      },
+      error: () => {
+        console.warn('Country detection failed');
+      }
+    });
+}
+
 
   register(form: NgForm) {
 

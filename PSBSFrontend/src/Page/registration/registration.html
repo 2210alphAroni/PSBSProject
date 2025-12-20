@@ -55,20 +55,14 @@
           <div style="display: flex; gap: 10px;">
             <!-- Country Code -->
             <select
-              class="reg-input"
-              style="max-width: 140px;"
+              class="form-select"
               name="countryCode"
               [(ngModel)]="user.countryCode"
               required>
-
-              <!-- Correct placeholder -->
-              <option value="" disabled hidden>Code</option>
-
-              <!-- Dynamic options -->
+              <option value>Select Country Code</option>
               <option *ngFor="let c of countries" [value]="c.dialCode">
                 {{ c.flag }} {{ c.name }} ({{ c.dialCode }})
               </option>
-
             </select>
 
             <!-- Phone Number -->
