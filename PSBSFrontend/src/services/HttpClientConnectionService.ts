@@ -9,10 +9,15 @@ import { createUrl } from '../utility/config';
 export class HttpClientConnectionService {
   constructor(private http: HttpClient) {}
 
-  GetData(_url: string) {
-    _url = createUrl(_url);
-    return this.http.get(_url, { withCredentials: true }).pipe(first());
-  }
+  // GetData(_url: string) {
+  //   _url = createUrl(_url);
+  //   return this.http.get(_url, { withCredentials: true }).pipe(first());
+  // }
+
+  GetData<T>(_url: string) {
+  _url = createUrl(_url);
+  return this.http.get<T>(_url, { withCredentials: true }).pipe(first());
+}
 
   GetDataById(_url: string, _id: string) {
     _url = createUrl(_url) + '/' + _id;

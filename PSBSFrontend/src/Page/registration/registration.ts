@@ -3,6 +3,7 @@ import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { FormsModule, NgForm } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { HttpClientConnectionService } from '../../services/HttpClientConnectionService';
 
 @Component({
   selector: 'app-registration',
@@ -34,7 +35,8 @@ export class Registration implements OnInit {
 
   constructor(
   private http: HttpClient,
-  private cdr: ChangeDetectorRef
+  private cdr: ChangeDetectorRef,
+  private dataservice: HttpClientConnectionService
 ) {}
 
 ngOnInit(): void {
@@ -47,11 +49,16 @@ ngOnInit(): void {
 
 
   getUsers() {
-    this.http.get<any[]>('https://localhost:7272/api/UsersRegistration/get')
-      .subscribe(res => {
-        this.userList = res;
-        this.cdr.detectChanges();
-      });
+  this.dataservice.GetData<any[]>('UsersRegistration/get')
+    .subscribe(res => {
+      this.userList = res;
+      this.cdr.detectChanges();
+    });
+    // this.http.get<any[]>('https://localhost:7272/api/UsersRegistration/get')
+    //   .subscribe(res => {
+    //     this.userList = res;
+    //     this.cdr.detectChanges();
+    //   });
   }
 
 
@@ -171,6 +178,25 @@ ngOnInit(): void {
     // ---------- API CALL ----------
     this.isLoading = true;
 
+    // this.dataservice.PostData('UsersRegistration/post', this.user)
+    //   .subscribe({
+    //     next: () => {
+    //       alert('User registered successfully!');
+    //       this.isLoading = false;
+    //       form.resetForm();
+    //       setTimeout(() => {
+    //         window.location.reload();
+    //       }, 1000);
+    //     },
+    //     error: (err) => {
+    //       this.isLoading = false;
+    //       alert(err.error?.error || 'Registration failed.');
+    //       setTimeout(() => {
+    //         window.location.reload();
+    //       },0);
+    //     }
+    //   });
+
     this.http
       .post('https://localhost:7272/api/UsersRegistration/post', this.user)
       .subscribe({
@@ -179,7 +205,6 @@ ngOnInit(): void {
           this.isLoading = false;
           form.resetForm();
 
-          // ✅ ONLY PLACE WHERE RELOAD IS ALLOWED
           setTimeout(() => {
             window.location.reload();
           }, 1000);
