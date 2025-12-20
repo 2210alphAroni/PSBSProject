@@ -38,7 +38,9 @@ export class Registration implements OnInit {
 ) {}
 
 ngOnInit(): void {
-  this.user.countryCode = '+880'; // default to Bangladesh
+  const defaultCountry = this.countries.find(c => c.code === 'BD');
+  this.user.countryCode = defaultCountry?.dialCode || '+880';
+  
   this.getUsers();       
   this.detectCountry();
 }
