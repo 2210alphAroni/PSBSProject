@@ -8,7 +8,7 @@ import { HttpClientConnectionService } from '../../services/HttpClientConnection
 @Component({
   selector: 'app-registration',
   standalone: true,
-  imports: [FormsModule, RouterModule,CommonModule],
+  imports: [FormsModule, RouterModule, CommonModule],
   templateUrl: './registration.html',
   styleUrl: './registration.css',
 })
@@ -34,26 +34,26 @@ export class Registration implements OnInit {
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,9}$/;
 
   constructor(
-  private http: HttpClient,
-  private cdr: ChangeDetectorRef,
-  private dataservice: HttpClientConnectionService
-) {}
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private dataservice: HttpClientConnectionService
+  ) { }
 
-ngOnInit(): void {
-  const defaultCountry = this.countries.find(c => c.code === 'BD');
-  this.user.countryCode = defaultCountry?.dialCode || '+880';
-  
-  this.getUsers();       
-  this.detectCountry();
-}
+  ngOnInit(): void {
+    const defaultCountry = this.countries.find(c => c.code === 'BD');
+    this.user.countryCode = defaultCountry?.dialCode || '+880';
+
+    this.getUsers();
+    this.detectCountry();
+  }
 
 
   getUsers() {
-  this.dataservice.GetData<any[]>('UsersRegistration/get')
-    .subscribe(res => {
-      this.userList = res;
-      this.cdr.detectChanges();
-    });
+    this.dataservice.GetData<any[]>('UsersRegistration/get')
+      .subscribe(res => {
+        this.userList = res;
+        this.cdr.detectChanges();
+      });
     // this.http.get<any[]>('https://localhost:7272/api/UsersRegistration/get')
     //   .subscribe(res => {
     //     this.userList = res;
@@ -88,33 +88,33 @@ ngOnInit(): void {
 
 
   // 🌍 AUTO-DETECT COUNTRY
- detectCountry() {
-  this.http.get<any>('https://ipapi.co/json/')
-    .subscribe({
-      next: (res) => {
-        const countryCode = res.country;
+  detectCountry() {
+    this.http.get<any>('https://ipapi.co/json/')
+      .subscribe({
+        next: (res) => {
+          const countryCode = res.country;
 
-        const matchedCountry = this.countries.find(
-          c => c.code === countryCode
-        );
+          const matchedCountry = this.countries.find(
+            c => c.code === countryCode
+          );
 
-        if (matchedCountry) {
-          this.user.countryCode = matchedCountry.dialCode;
+          if (matchedCountry) {
+            this.user.countryCode = matchedCountry.dialCode;
 
-          // 🔁 ensure UI updates immediately
-          this.cdr.detectChanges();
+            // 🔁 ensure UI updates immediately
+            this.cdr.detectChanges();
+          }
+        },
+        error: () => {
+          console.warn('Country detection failed');
         }
-      },
-      error: () => {
-        console.warn('Country detection failed');
-      }
-    });
-}
+      });
+  }
 
 
   register(form: NgForm) {
 
-     // ---------- REQUIRED FIELD CHECK ----------
+    // ---------- REQUIRED FIELD CHECK ----------
     if (form.invalid) {
       alert('Please fill in all required fields correctly.');
       window.location.reload();
@@ -169,6 +169,12 @@ ngOnInit(): void {
       return;
     }
 
+    if (this.userList.some(u => u.phone === payload.phone)) {
+      alert('This phone number is already registered.');
+      return;
+    }
+
+
     if (this.userList.some(u => u.userName === this.user.userName)) {
       alert('This username is already taken.');
       window.location.reload();
@@ -178,40 +184,40 @@ ngOnInit(): void {
     // ---------- API CALL ----------
     this.isLoading = true;
 
-    // this.dataservice.PostData('UsersRegistration/post', this.user)
+    // this.dataservice.PostData<any>('UsersRegistration/post', payload)
     //   .subscribe({
     //     next: () => {
-    //       alert('User registered successfully!');
+    //       alert('User registered successfully! Please Login.');
     //       this.isLoading = false;
     //       form.resetForm();
-    //       setTimeout(() => {
-    //         window.location.reload();
-    //       }, 1000);
+    //       window.location.href = '/login';
     //     },
     //     error: (err) => {
     //       this.isLoading = false;
-    //       alert(err.error?.error || 'Registration failed.');
+    //       alert(err?.error?.error || 'Registration failed');
     //       setTimeout(() => {
     //         window.location.reload();
-    //       },0);
+    //       }, 1000);
     //     }
     //   });
+
 
     this.http
       .post('https://localhost:7272/api/UsersRegistration/post', this.user)
       .subscribe({
         next: () => {
-          alert('User registered successfully!');
+          alert('User registered successfully! please Login.');
           this.isLoading = false;
           form.resetForm();
 
-          setTimeout(() => {
-            window.location.reload();
-          }, 1000);
+          window.location.href = '/login';
         },
         error: (err) => {
           this.isLoading = false;
           alert(err.error?.error || 'Registration failed.');
+          setTimeout(() => {
+            window.location.reload();
+          }, 1000);
         }
       });
   }

@@ -7,7 +7,7 @@ import { createUrl } from '../utility/config';
   providedIn: 'root',
 })
 export class HttpClientConnectionService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // GetData(_url: string) {
   //   _url = createUrl(_url);
@@ -15,9 +15,9 @@ export class HttpClientConnectionService {
   // }
 
   GetData<T>(_url: string) {
-  _url = createUrl(_url);
-  return this.http.get<T>(_url, { withCredentials: true }).pipe(first());
-}
+    _url = createUrl(_url);
+    return this.http.get<T>(_url, { withCredentials: true }).pipe(first());
+  }
 
   GetDataById(_url: string, _id: string) {
     _url = createUrl(_url) + '/' + _id;
@@ -31,12 +31,23 @@ export class HttpClientConnectionService {
       .get(_url, { params: _params, withCredentials: true })
       .pipe(catchError(this.handleError));
   }
-  PostData(_url: string, _postdata: any) {
+  // PostData(_url: string, _postdata: any) {
+  //   _url = createUrl(_url);
+  //   return this.http
+  //     .post(_url, _postdata, { withCredentials: true })
+  //     .pipe(catchError(this.handleError));
+  // }
+
+  PostData<T>(_url: string, _postdata: any) {
     _url = createUrl(_url);
     return this.http
-      .post(_url, _postdata, { withCredentials: true })
-      .pipe(catchError(this.handleError));
+      .post<T>(_url, _postdata, { withCredentials: true })
+      .pipe(
+        catchError(this.handleError)
+      );
   }
+
+
 
   PostDataWithFile(_url: string, _postdata: any) {
     const httpOptions = {
