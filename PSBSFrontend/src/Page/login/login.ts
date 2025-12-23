@@ -25,7 +25,15 @@ export class Login implements AfterViewInit {
   constructor(
     private http: HttpClient,
     private router: Router
-  ) {}
+  ) { }
+
+
+  // show / hide password
+  showPassword = false;
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
 
   // ================= NORMAL LOGIN =================
   login(form: NgForm) {
@@ -64,6 +72,7 @@ export class Login implements AfterViewInit {
         this.isLoading = false;
         alert(err.error?.error || 'Login failed');
         console.error(err);
+        window.location.reload();
       }
     });
   }

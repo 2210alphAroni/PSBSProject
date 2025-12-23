@@ -19,14 +19,29 @@
             required>
         </div>
 
-        <div class="mb-3">
+        <div class="mb-3 position-relative">
           <label>Password</label>
-          <input type="password"
-            class="login-input"
-            [(ngModel)]="user.Password"
+
+          <input
+            [type]="showPassword ? 'text' : 'password'"
+            class="reg-input"
             name="password"
-            placeholder="Enter your password"
-            required>
+            [(ngModel)]="user.Password"
+            placeholder="Enter password"
+            required />
+
+          <i
+            class="fa-solid"
+            [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+            (click)="togglePassword()"
+            style="
+            position: absolute;
+            right: 12px;
+            top: 45px;
+            cursor: pointer;
+            color: #666;
+          ">
+          </i>
         </div>
 
         <div class="mb-3 forgot">
