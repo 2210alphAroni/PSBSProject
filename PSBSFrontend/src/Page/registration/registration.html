@@ -90,15 +90,29 @@
         </div>
 
         <!-- Password -->
-        <div class="mb-3">
+        <div class="mb-3 position-relative">
           <label>Password</label>
+
           <input
-            type="password"
+            [type]="showPassword ? 'text' : 'password'"
             class="reg-input"
             name="password"
             [(ngModel)]="user.password"
             placeholder="Enter password"
-            required>
+            required />
+
+          <i
+            class="fa-solid"
+            [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
+            (click)="togglePassword()"
+            style="
+            position: absolute;
+            right: 12px;
+            top: 45px;
+            cursor: pointer;
+            color: #666;
+          ">
+          </i>
         </div>
 
         <!-- Confirm Password -->

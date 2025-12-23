@@ -87,6 +87,15 @@ export class Registration implements OnInit {
   ];
 
 
+  // show / hide password
+  showPassword = false;
+
+  togglePassword(): void {
+    this.showPassword = !this.showPassword;
+  }
+
+
+
   // 🌍 AUTO-DETECT COUNTRY
   detectCountry() {
     this.http.get<any>('https://ipapi.co/json/')
