@@ -4,7 +4,6 @@ import { FormsModule, NgForm } from '@angular/forms';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
-
 /* ================= PACKAGE MODEL ================= */
 export interface Package {
   id: number;
@@ -16,16 +15,19 @@ export interface Package {
   price: number;
   category: string;
   addOns: string[];
+  isActive: boolean;
 }
 
 /* ================= BOOKING MODEL ================= */
 export interface Booking {
   packageId: number | null;
   category: string;
+  description: string;
+  duration: string;
+  editedPhotos: string;
+  rawFiles: boolean;
   eventDate: string;
   location: string;
-  duration: string;
-  rawFiles: boolean;
   notes: string;
   price: number;
 }
@@ -45,10 +47,12 @@ export class BookingPackage implements OnInit {
   booking: Booking = {
     packageId: null,
     category: '',
+    description: '',
+    duration: '',
+    editedPhotos: '',
+    rawFiles: false,
     eventDate: '',
     location: '',
-    duration: '',
-    rawFiles: false,
     notes: '',
     price: 0
   };
@@ -57,7 +61,7 @@ export class BookingPackage implements OnInit {
 
   /* ================= API URLs ================= */
   private packagesApiUrl = 'https://localhost:7272/api/packages';
-  private bookingApiUrl = 'https://localhost:7272/api/bookings'; // (create later)
+  private bookingApiUrl = 'https://localhost:7272/api/bookings'; // create later
 
   constructor(private http: HttpClient) {}
 
@@ -70,11 +74,12 @@ export class BookingPackage implements OnInit {
   loadPackages(): void {
     this.http.get<Package[]>(this.packagesApiUrl).subscribe({
       next: (res) => {
-        // ensure addOns is always an array (strict-safe)
-        this.packages = (res ?? []).map(p => ({
-          ...p,
-          addOns: p.addOns ?? []
-        }));
+        this.packages = (res ?? [])
+          .filter(p => p.isActive) // only active packages
+          .map(p => ({
+            ...p,
+            addOns: p.addOns ?? []
+          }));
       },
       error: (err) => {
         console.error('Failed to load packages', err);
@@ -90,16 +95,18 @@ export class BookingPackage implements OnInit {
 
     if (!selected) return;
 
-    // auto-fill fields from selected package
+    // auto-fill booking fields from selected package
     this.booking.category = selected.category;
+    this.booking.description = selected.description;
     this.booking.duration = selected.duration;
+    this.booking.editedPhotos = selected.editedPhotos;
     this.booking.rawFiles = selected.rawFiles;
     this.booking.price = selected.price;
   }
 
   /* ================= SUBMIT BOOKING ================= */
   submitBooking(form: NgForm): void {
-    if (form.invalid) return;
+    if (form.invalid || !this.booking.packageId) return;
 
     this.isLoading = true;
 
@@ -122,10 +129,12 @@ export class BookingPackage implements OnInit {
     this.booking = {
       packageId: null,
       category: '',
+      description: '',
+      duration: '',
+      editedPhotos: '',
+      rawFiles: false,
       eventDate: '',
       location: '',
-      duration: '',
-      rawFiles: false,
       notes: '',
       price: 0
     };

@@ -14,22 +14,23 @@
 
       <form #bookingForm="ngForm" (ngSubmit)="submitBooking(bookingForm)">
 
-        <!-- PACKAGE SELECTION -->
+        <!-- ================= PACKAGE SELECTION ================= -->
         <div class="mb-3">
           <label>Service Package</label>
           <select
             class="reg-input"
             name="packageId"
             [(ngModel)]="booking.packageId"
+            (change)="onPackageChange()"
             required>
-            <option value disabled>Select a package</option>
+            <option value="" disabled>Select a package</option>
             <option *ngFor="let p of packages" [value]="p.id">
               {{ p.name }} — ₹{{ p.price }}
             </option>
           </select>
         </div>
 
-        <!-- CATEGORY (AUTO / READONLY OPTIONAL) -->
+        <!-- ================= CATEGORY ================= -->
         <div class="mb-3">
           <label>Category</label>
           <input
@@ -37,11 +38,54 @@
             class="reg-input"
             name="category"
             [(ngModel)]="booking.category"
-            placeholder="Wedding / Event / Shoot"
             readonly>
         </div>
 
-        <!-- EVENT DATE -->
+        <!-- ================= DESCRIPTION ================= -->
+        <div class="mb-3">
+          <label>Package Description</label>
+          <textarea
+            rows="3"
+            class="reg-input"
+            name="description"
+            [(ngModel)]="booking.description"
+            readonly>
+          </textarea>
+        </div>
+
+        <!-- ================= DURATION ================= -->
+        <div class="mb-3">
+          <label>Duration</label>
+          <input
+            type="text"
+            class="reg-input"
+            name="duration"
+            [(ngModel)]="booking.duration"
+            readonly>
+        </div>
+
+        <!-- ================= EDITED PHOTOS ================= -->
+        <div class="mb-3">
+          <label>Edited Photos</label>
+          <input
+            type="text"
+            class="reg-input"
+            name="editedPhotos"
+            [(ngModel)]="booking.editedPhotos"
+            readonly>
+        </div>
+
+        <!-- ================= RAW FILES ================= -->
+        <div class="mb-3">
+          <label>Raw Files Included?</label>
+          <input
+            type="text"
+            class="reg-input"
+            [value]="booking.rawFiles ? 'Yes' : 'No'"
+            readonly>
+        </div>
+
+        <!-- ================= EVENT DATE ================= -->
         <div class="mb-3">
           <label>Event Date</label>
           <input
@@ -52,7 +96,7 @@
             required>
         </div>
 
-        <!-- EVENT LOCATION -->
+        <!-- ================= EVENT LOCATION ================= -->
         <div class="mb-3">
           <label>Event Location</label>
           <input
@@ -64,32 +108,7 @@
             required>
         </div>
 
-        <!-- DURATION -->
-        <div class="mb-3">
-          <label>Duration</label>
-          <input
-            type="text"
-            class="reg-input"
-            name="duration"
-            [(ngModel)]="booking.duration"
-            placeholder="e.g. 4 Hours / Full Day"
-            required>
-        </div>
-
-        <!-- RAW FILES -->
-        <div class="mb-3">
-          <label>Raw Files Required?</label>
-          <select
-            class="reg-input"
-            name="rawFiles"
-            [(ngModel)]="booking.rawFiles"
-            required>
-            <option [ngValue]="true">Yes</option>
-            <option [ngValue]="false">No</option>
-          </select>
-        </div>
-
-        <!-- ADDITIONAL NOTES -->
+        <!-- ================= ADDITIONAL NOTES ================= -->
         <div class="mb-3">
           <label>Additional Notes</label>
           <textarea
@@ -101,7 +120,7 @@
           </textarea>
         </div>
 
-        <!-- PRICE (AUTO / READONLY) -->
+        <!-- ================= PRICE ================= -->
         <div class="mb-3">
           <label>Total Price</label>
           <input
@@ -112,11 +131,11 @@
             readonly>
         </div>
 
-        <!-- SUBMIT -->
+        <!-- ================= SUBMIT ================= -->
         <button
           type="submit"
           class="reg-btn"
-          [disabled]="isLoading">
+          [disabled]="bookingForm.invalid || isLoading">
           {{ isLoading ? 'Booking...' : 'Confirm Booking' }}
         </button>
 
