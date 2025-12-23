@@ -8,6 +8,7 @@ import { AdminUsers } from '../Page/admin-users/admin-users';
 import { Packages } from '../Page/packages/packages';
 import { Home } from '../Page/home/home';
 import { Profile } from '../Page/profile/profile';
+import { BookingPackage } from '../Page/booking-package/booking-package';
 
 export const routes: Routes = [
   {
@@ -22,6 +23,10 @@ export const routes: Routes = [
   {
     path: 'login',
     component: Login
+  },
+  {
+    path: 'booking-package',
+    component: BookingPackage
   },
   {
     path: 'profile',

@@ -1,0 +1,127 @@
+<div class="reg-wrapper">
+
+  <!-- LEFT IMAGE PANEL -->
+  <div class="reg-left"></div>
+
+  <!-- RIGHT FORM PANEL -->
+  <div class="reg-right">
+    <div class="reg-content">
+
+      <h2 class="reg-title">Book a Package</h2>
+      <p class="reg-subtitle">
+        Choose a package and confirm your booking details
+      </p>
+
+      <form #bookingForm="ngForm" (ngSubmit)="submitBooking(bookingForm)">
+
+        <!-- PACKAGE SELECTION -->
+        <div class="mb-3">
+          <label>Service Package</label>
+          <select
+            class="reg-input"
+            name="packageId"
+            [(ngModel)]="booking.packageId"
+            required>
+            <option value disabled>Select a package</option>
+            <option *ngFor="let p of packages" [value]="p.id">
+              {{ p.name }} — ₹{{ p.price }}
+            </option>
+          </select>
+        </div>
+
+        <!-- CATEGORY (AUTO / READONLY OPTIONAL) -->
+        <div class="mb-3">
+          <label>Category</label>
+          <input
+            type="text"
+            class="reg-input"
+            name="category"
+            [(ngModel)]="booking.category"
+            placeholder="Wedding / Event / Shoot"
+            readonly>
+        </div>
+
+        <!-- EVENT DATE -->
+        <div class="mb-3">
+          <label>Event Date</label>
+          <input
+            type="date"
+            class="reg-input"
+            name="eventDate"
+            [(ngModel)]="booking.eventDate"
+            required>
+        </div>
+
+        <!-- EVENT LOCATION -->
+        <div class="mb-3">
+          <label>Event Location</label>
+          <input
+            type="text"
+            class="reg-input"
+            name="location"
+            [(ngModel)]="booking.location"
+            placeholder="Enter event location"
+            required>
+        </div>
+
+        <!-- DURATION -->
+        <div class="mb-3">
+          <label>Duration</label>
+          <input
+            type="text"
+            class="reg-input"
+            name="duration"
+            [(ngModel)]="booking.duration"
+            placeholder="e.g. 4 Hours / Full Day"
+            required>
+        </div>
+
+        <!-- RAW FILES -->
+        <div class="mb-3">
+          <label>Raw Files Required?</label>
+          <select
+            class="reg-input"
+            name="rawFiles"
+            [(ngModel)]="booking.rawFiles"
+            required>
+            <option [ngValue]="true">Yes</option>
+            <option [ngValue]="false">No</option>
+          </select>
+        </div>
+
+        <!-- ADDITIONAL NOTES -->
+        <div class="mb-3">
+          <label>Additional Notes</label>
+          <textarea
+            rows="3"
+            class="reg-input"
+            name="notes"
+            [(ngModel)]="booking.notes"
+            placeholder="Any special requirements?">
+          </textarea>
+        </div>
+
+        <!-- PRICE (AUTO / READONLY) -->
+        <div class="mb-3">
+          <label>Total Price</label>
+          <input
+            type="text"
+            class="reg-input"
+            name="price"
+            [(ngModel)]="booking.price"
+            readonly>
+        </div>
+
+        <!-- SUBMIT -->
+        <button
+          type="submit"
+          class="reg-btn"
+          [disabled]="isLoading">
+          {{ isLoading ? 'Booking...' : 'Confirm Booking' }}
+        </button>
+
+      </form>
+
+    </div>
+  </div>
+</div>
