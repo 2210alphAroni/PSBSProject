@@ -62,6 +62,8 @@ export class Login implements AfterViewInit {
           this.router.navigate(['/admin-dashboard']);
         } else if (role === 'Photographer') {
           this.router.navigate(['/photographer-dashboard']);
+          alert( 'Photographer Login Successful! Please wait for the page to reload.');
+          window.location.reload();
         } else {
           this.router.navigate(['/home']);
         }
