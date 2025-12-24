@@ -1,5 +1,4 @@
 ﻿using Dapper;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PSBS.Context;
 using PSBS.Model;
@@ -17,54 +16,100 @@ namespace PSBS.Controllers
             _context = context;
         }
 
+        // ✅ GET ALL PACKAGES WITH ADD-ONS
         [HttpGet]
         public async Task<IActionResult> GetPackages()
         {
             var sql = @"
-            SELECT p.*, a.AddOnName 
-            FROM Packages p
-            LEFT JOIN PackageAddOns a ON p.Id = a.PackageId";
+                SELECT
+                    p.id,
+                    p.package_name AS Name,
+                    p.description,
+                    p.coverage_duration_hours AS CoverageDurationHours,
+                    p.max_edited_photos AS MaxEditedPhotos,
+                    p.raw_files_available AS RawFilesAvailable,
+                    p.base_price AS BasePrice,
 
-            var dict = new Dictionary<int, Package>();
+                    a.id AS AddOnId,
+                    a.addon_name AS Name,
+                    a.addon_price AS Price
+                FROM Packages p
+                LEFT JOIN PackageAddOns pa ON p.id = pa.package_id
+                LEFT JOIN AddOns a ON pa.addon_id = a.id
+                ORDER BY p.id;
+            ";
 
-            var result = await _context.CreateConnection()
-                .QueryAsync<Package, string, Package>(
+            var packageDict = new Dictionary<int, Package>();
+
+            var packages = await _context.CreateConnection()
+                .QueryAsync<Package, AddOn, Package>(
                     sql,
                     (pkg, addon) =>
                     {
-                        if (!dict.TryGetValue(pkg.Id, out var current))
+                        if (!packageDict.TryGetValue(pkg.Id, out var current))
                         {
                             current = pkg;
-                            current.AddOns = new List<string?>();
-                            dict.Add(pkg.Id, current);
+                            current.AddOns = new List<AddOn>();
+                            packageDict.Add(current.Id, current);
                         }
-                        if (addon != null)
+
+                        if (addon != null && addon.Id != 0)
+                        {
                             current.AddOns.Add(addon);
+                        }
+
                         return current;
                     },
-                    splitOn: "AddOnName"
+                    splitOn: "AddOnId"
                 );
 
-            return Ok(dict.Values);
+            return Ok(packageDict.Values);
         }
 
+        // ✅ ADD PACKAGE (without add-ons for now)
         [HttpPost]
         public async Task<IActionResult> AddPackage(Package package)
         {
-            // Insert Package + AddOns
-            return Ok();
+            var sql = @"
+                INSERT INTO Packages
+                (package_name, description, coverage_duration_hours, max_edited_photos, raw_files_available, base_price)
+                VALUES
+                (@Name, @Description, @CoverageDurationHours, @MaxEditedPhotos, @RawFilesAvailable, @BasePrice);
+            ";
+
+            await _context.CreateConnection().ExecuteAsync(sql, package);
+            return Ok("Package added successfully");
         }
 
+        // ✅ UPDATE PACKAGE
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdatePackage(int id, Package package)
         {
-            return Ok();
+            var sql = @"
+                UPDATE Packages SET
+                    package_name = @Name,
+                    description = @Description,
+                    coverage_duration_hours = @CoverageDurationHours,
+                    max_edited_photos = @MaxEditedPhotos,
+                    raw_files_available = @RawFilesAvailable,
+                    base_price = @BasePrice
+                WHERE id = @Id;
+            ";
+
+            package.Id = id;
+            await _context.CreateConnection().ExecuteAsync(sql, package);
+
+            return Ok("Package updated successfully");
         }
 
+        // ✅ DELETE PACKAGE
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePackage(int id)
         {
-            return Ok();
+            var sql = "DELETE FROM Packages WHERE id = @Id";
+            await _context.CreateConnection().ExecuteAsync(sql, new { Id = id });
+
+            return Ok("Package deleted successfully");
         }
     }
 }
