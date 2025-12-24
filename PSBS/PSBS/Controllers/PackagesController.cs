@@ -17,7 +17,7 @@ namespace PSBS.Controllers
         }
 
         // ================= GET ALL PACKAGES WITH ADD-ONS =================
-        [HttpGet]
+        [HttpGet("get")]
         public async Task<IActionResult> GetPackages()
         {
             var sql = @"
@@ -68,7 +68,7 @@ namespace PSBS.Controllers
         }
 
         // ================= ADD PACKAGE =================
-        [HttpPost]
+        [HttpPost("post")]
         public async Task<IActionResult> AddPackage([FromBody] Package package)
         {
             var sql = @"

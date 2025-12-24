@@ -23,7 +23,7 @@ export class AllPackages implements OnInit {
   }
 
   loadPackages(): void {
-    this.http.get<Package[]>('https://localhost:7272/api/Packages')
+    this.http.get<Package[]>('https://localhost:7272/api/Packages/get')
       .subscribe({
         next: (res) => {
           console.log('Packages:', res); // helpful debug
