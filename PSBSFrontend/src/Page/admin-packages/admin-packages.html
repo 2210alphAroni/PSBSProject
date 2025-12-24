@@ -1,1 +1,119 @@
-<p>admin-packages works!</p>
+<div class="container py-4">
+
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h3 class="m-0">Admin: Packages</h3>
+
+    <button class="btn btn-primary" (click)="addNew()">
+      ➕ Add Package
+    </button>
+  </div>
+
+  <!-- FORM -->
+  <div class="card mb-4" *ngIf="showForm">
+    <div class="card-body">
+      <h5 class="mb-3">{{ isEditMode ? 'Edit Package' : 'Add Package' }}</h5>
+
+      <form (ngSubmit)="save()" #f="ngForm">
+
+        <div class="mb-2">
+          <label class="form-label">Package Name *</label>
+          <input class="form-control"
+                 name="packageName"
+                 [(ngModel)]="formModel.packageName"
+                 required />
+        </div>
+
+        <div class="mb-2">
+          <label class="form-label">Description</label>
+          <textarea class="form-control"
+                    name="description"
+                    [(ngModel)]="formModel.description"></textarea>
+        </div>
+
+        <div class="row">
+          <div class="col-md-4 mb-2">
+            <label class="form-label">Coverage Hours</label>
+            <input type="number" class="form-control"
+                   name="coverageDurationHours"
+                   [(ngModel)]="formModel.coverageDurationHours" />
+          </div>
+
+          <div class="col-md-4 mb-2">
+            <label class="form-label">Max Edited Photos</label>
+            <input type="number" class="form-control"
+                   name="maxEditedPhotos"
+                   [(ngModel)]="formModel.maxEditedPhotos" />
+          </div>
+
+          <div class="col-md-4 mb-2">
+            <label class="form-label">Base Price</label>
+            <input type="number" class="form-control"
+                   name="basePrice"
+                   [(ngModel)]="formModel.basePrice" />
+          </div>
+        </div>
+
+        <div class="form-check mb-3">
+          <input class="form-check-input"
+                 type="checkbox"
+                 name="rawFilesAvailable"
+                 [(ngModel)]="formModel.rawFilesAvailable" />
+          <label class="form-check-label">Raw Files Available</label>
+        </div>
+
+        <button class="btn btn-success me-2"
+                type="submit"
+                [disabled]="saving || f.invalid">
+          {{ saving ? 'Saving...' : 'Save' }}
+        </button>
+
+        <button class="btn btn-secondary" type="button" (click)="cancel()">
+          Cancel
+        </button>
+
+      </form>
+    </div>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-responsive">
+    <table class="table table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Hours</th>
+          <th>Photos</th>
+          <th>Price</th>
+          <th>Raw</th>
+          <th style="width: 180px;">Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <tr *ngFor="let pkg of packages">
+          <td>{{ pkg.packageName }}</td>
+          <td>{{ pkg.coverageDurationHours }}</td>
+          <td>{{ pkg.maxEditedPhotos }}</td>
+          <td>৳{{ pkg.basePrice | number }}</td>
+          <td>
+            <span class="badge" [ngClass]="pkg.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
+              {{ pkg.rawFilesAvailable ? 'Yes' : 'No' }}
+            </span>
+          </td>
+          <td>
+            <button class="btn btn-sm btn-warning me-2" (click)="edit(pkg)">Edit</button>
+            <button class="btn btn-sm btn-danger" (click)="delete(pkg)">Delete</button>
+          </td>
+        </tr>
+
+        <tr *ngIf="!packages.length">
+          <td colspan="6" class="text-center text-muted py-4">
+            No packages found.
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <router-outlet></router-outlet>
+</div>

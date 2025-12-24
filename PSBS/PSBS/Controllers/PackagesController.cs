@@ -17,7 +17,7 @@ namespace PSBS.Controllers
         }
 
         // ================= GET ALL PACKAGES WITH ADD-ONS =================
-        [HttpGet("get")]
+        [HttpGet]
         public async Task<IActionResult> GetPackages()
         {
             var sql = @"
@@ -68,35 +68,24 @@ namespace PSBS.Controllers
         }
 
         // ================= ADD PACKAGE =================
-        [HttpPost("post")]
+        [HttpPost]
         public async Task<IActionResult> AddPackage([FromBody] Package package)
         {
             var sql = @"
-                INSERT INTO Packages
-                (
-                    package_name,
-                    description,
-                    coverage_duration_hours,
-                    max_edited_photos,
-                    raw_files_available,
-                    base_price
-                )
-                VALUES
-                (
-                    @PackageName,
-                    @Description,
-                    @CoverageDurationHours,
-                    @MaxEditedPhotos,
-                    @RawFilesAvailable,
-                    @BasePrice
-                );
-            ";
+        INSERT INTO Packages
+        (package_name, description, coverage_duration_hours, max_edited_photos, raw_files_available, base_price)
+        VALUES
+        (@PackageName, @Description, @CoverageDurationHours, @MaxEditedPhotos, @RawFilesAvailable, @BasePrice);
+        SELECT CAST(SCOPE_IDENTITY() as int);
+    ";
 
             using var connection = _context.CreateConnection();
-            await connection.ExecuteAsync(sql, package);
+            var newId = await connection.QuerySingleAsync<int>(sql, package);
 
-            return Ok("Package added successfully");
+            package.Id = newId;
+            return Ok(package); // return created object
         }
+
 
         // ================= UPDATE PACKAGE =================
         [HttpPut("{id}")]
