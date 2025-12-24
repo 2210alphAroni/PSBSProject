@@ -1,550 +1,110 @@
-
-
-<!-- ================= PACKAGES ================= -->
 <div class="container py-5">
 
-    <div class="text-center mb-5 py-5">
-        <h1 class="fw-bold py-5">Photography Packages</h1>
-        <p class="text-muted">Click any package to see full details</p>
+  <div class="text-center mb-5 py-5">
+    <h1 class="fw-bold py-5">Photography Packages</h1>
+    <p class="text-muted">Click any package to see full details</p>
+  </div>
+
+  <!-- ================= CARDS ================= -->
+  <div class="row g-4">
+
+    <div class="col-md-6 col-lg-4" *ngFor="let pkg of packages">
+      <div class="card shadow-sm h-100"
+           data-bs-toggle="modal"
+           data-bs-target="#packageModal"
+           (click)="openModal(pkg)">
+
+        <div class="card-body">
+          <h5 class="fw-bold">{{ pkg.name }}</h5>
+          <p class="text-muted">{{ pkg.description }}</p>
+
+          <ul class="list-unstyled">
+            <li>⏱ {{ pkg.coverageDurationHours }} Hours</li>
+            <li>📸 Up to {{ pkg.maxEditedPhotos }} Photos</li>
+            <li>
+              📁 Raw Files:
+              <span class="badge"
+                    [ngClass]="pkg.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
+                {{ pkg.rawFilesAvailable ? 'Available' : 'Not Included' }}
+              </span>
+            </li>
+          </ul>
+
+          <h4 class="text-primary">৳{{ pkg.basePrice | number }}</h4>
+        </div>
+      </div>
     </div>
 
-    <div class="row g-4">
-
-        <!-- Wedding -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100" data-bs-toggle="modal"
-                data-bs-target="#weddingModal">
-                <div class="card-body">
-                    <h5 class="fw-bold">Wedding Photography</h5>
-                    <p class="text-muted">Complete wedding day premium
-                        coverage</p>
-                    <ul class="list-unstyled">
-                        <li>⏱ 6 Hours</li>
-                        <li>📸 Up to 200 Photos</li>
-                        <li>📁 Raw Files Included</li>
-                    </ul>
-                    <h4 class="text-primary">৳45,000</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Reception -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100" data-bs-toggle="modal"
-                data-bs-target="#receptionModal">
-                <div class="card-body">
-                    <h5 class="fw-bold">Reception Photography</h5>
-                    <p class="text-muted">Elegant reception moments</p>
-                    <ul class="list-unstyled">
-                        <li>⏱ 4 Hours</li>
-                        <li>📸 Up to 150 Photos</li>
-                        <li>📁 Raw Optional</li>
-                    </ul>
-                    <h4 class="text-primary">৳30,000</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Birthday -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100" data-bs-toggle="modal"
-                data-bs-target="#birthdayModal">
-                <div class="card-body">
-                    <h5 class="fw-bold">Birthday Event</h5>
-                    <p class="text-muted">Fun & candid birthday coverage</p>
-                    <ul class="list-unstyled">
-                        <li>⏱ 3 Hours</li>
-                        <li>📸 Up to 100 Photos</li>
-                        <li>📁 Raw Not Included</li>
-                    </ul>
-                    <h4 class="text-primary">৳15,000</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Corporate -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100" data-bs-toggle="modal"
-                data-bs-target="#corporateModal">
-                <div class="card-body">
-                    <h5 class="fw-bold">Corporate Event</h5>
-                    <p class="text-muted">Professional corporate coverage</p>
-                    <ul class="list-unstyled">
-                        <li>⏱ 4 Hours</li>
-                        <li>📸 Up to 120 Photos</li>
-                        <li>📁 Raw Included</li>
-                    </ul>
-                    <h4 class="text-primary">৳25,000</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pre Wedding -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100" data-bs-toggle="modal"
-                data-bs-target="#preWeddingModal">
-                <div class="card-body">
-                    <h5 class="fw-bold">Pre-wedding Shoot</h5>
-                    <p class="text-muted">Romantic cinematic shoots</p>
-                    <ul class="list-unstyled">
-                        <li>⏱ 3 Hours</li>
-                        <li>📸 Up to 120 Photos</li>
-                        <li>📁 Raw Included</li>
-                    </ul>
-                    <h4 class="text-primary">৳20,000</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Baby -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100" data-bs-toggle="modal"
-                data-bs-target="#babyModal">
-                <div class="card-body">
-                    <h5 class="fw-bold">Baby Shoot</h5>
-                    <p class="text-muted">Soft & safe baby photography</p>
-                    <ul class="list-unstyled">
-                        <li>⏱ 2 Hours</li>
-                        <li>📸 Up to 80 Photos</li>
-                        <li>📁 Raw Not Included</li>
-                    </ul>
-                    <h4 class="text-primary">৳12,000</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Product -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100" data-bs-toggle="modal"
-                data-bs-target="#productModal">
-                <div class="card-body">
-                    <h5 class="fw-bold">Product Photography</h5>
-                    <p class="text-muted">E-commerce & branding shots</p>
-                    <ul class="list-unstyled">
-                        <li>📸 Up to 50 Photos</li>
-                        <li>📁 Raw Included</li>
-                    </ul>
-                    <h4 class="text-primary">৳10,000</h4>
-                </div>
-            </div>
-        </div>
-
-        <!-- Fashion -->
-        <div class="col-md-6 col-lg-4">
-            <div class="card shadow-sm h-100" data-bs-toggle="modal"
-                data-bs-target="#fashionModal">
-                <div class="card-body">
-                    <h5 class="fw-bold">Fashion Photography</h5>
-                    <p class="text-muted">Model & brand fashion shoots</p>
-                    <ul class="list-unstyled">
-                        <li>⏱ 4 Hours</li>
-                        <li>📸 Up to 150 Photos</li>
-                        <li>📁 Raw Included</li>
-                    </ul>
-                    <h4 class="text-primary">৳28,000</h4>
-                </div>
-            </div>
-        </div>
-
-    </div>
+  </div>
 </div>
 
-<!-- ================= MODALS ================= -->
+<!-- ================= SINGLE DYNAMIC MODAL ================= -->
+<div class="modal fade" id="packageModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content" *ngIf="selectedPackage">
 
-<!-- wedding Modal -->
+      <div class="modal-header">
+        <h5 class="fw-bold">
+          {{ selectedPackage.name }} – Full Details
+        </h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
 
-<div class="modal fade" id="weddingModal" tabindex="-1">
-    <div
-        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="fw-bold">Wedding Photography – Full Details</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
+      <div class="modal-body">
 
-            <div class="modal-body">
-                <p class="text-muted">
-                    We capture every ritual, emotion, and candid moment of your
-                    wedding
-                    using a cinematic storytelling approach with professional
-                    lighting
-                    and composition.
-                </p>
+        <p class="text-muted">
+          {{ selectedPackage.description }}
+        </p>
 
-                <ul class="list-group mb-3">
-                    <li class="list-group-item"><strong>Coverage
-                            Duration:</strong> 6 Hours</li>
-                    <li class="list-group-item"><strong>Edited Photos:</strong>
-                        Up to 200</li>
-                    <li class="list-group-item">
-                        <strong>Raw Files:</strong>
-                        <select class="form-select d-inline-block w-auto ms-2">
-                            <option value>Select</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </li>
+        <ul class="list-group mb-3">
+          <li class="list-group-item">
+            <strong>Coverage Duration:</strong>
+            {{ selectedPackage.coverageDurationHours }} Hours
+          </li>
 
-                    <li class="list-group-item"><strong>Base Price:</strong>
-                        ₹45,000</li>
-                </ul>
+          <li class="list-group-item">
+            <strong>Edited Photos:</strong>
+            Up to {{ selectedPackage.maxEditedPhotos }}
+          </li>
 
-                <h6 class="fw-bold">Available Add-ons</h6>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Drone Shoot
-                        (+৳8,000)</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Cinematic Highlight Video
-                        (+৳12,000)</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Extra Hour Coverage
-                        (+৳3,000)</label>
-                </div>
-            </div>
+          <li class="list-group-item">
+            <strong>Raw Files:</strong>
+            <span class="badge ms-2"
+              [ngClass]="selectedPackage.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
+              {{ selectedPackage.rawFilesAvailable ? 'Yes' : 'No' }}
+            </span>
+          </li>
 
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-dark">Proceed to Booking</button>
-            </div>
+          <li class="list-group-item">
+            <strong>Base Price:</strong>
+            ৳{{ selectedPackage.basePrice | number }}
+          </li>
+        </ul>
+
+        <!-- ADD-ONS -->
+        <h6 class="fw-bold" *ngIf="selectedPackage.addOns?.length">
+          Available Add-ons
+        </h6>
+
+        <div class="form-check"
+             *ngFor="let addon of selectedPackage.addOns">
+          <input class="form-check-input" type="checkbox">
+          <label class="form-check-label">
+            {{ addon.name }} (+৳{{ addon.price | number }})
+          </label>
         </div>
+
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Close
+        </button>
+        <button class="btn btn-dark">
+          Proceed to Booking
+        </button>
+      </div>
+
     </div>
-</div>
-
-<!-- Reception Modal -->
-<div class="modal fade" id="receptionModal" tabindex="-1">
-    <div
-        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="fw-bold">Reception Photography – Full Details</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <p class="text-muted">
-                    Elegant reception photography covering stage moments,
-                    guest interactions, décor details, and candid expressions.
-                </p>
-
-                <ul class="list-group mb-3">
-                    <li class="list-group-item"><strong>Coverage
-                            Duration:</strong> 4 Hours</li>
-                    <li class="list-group-item"><strong>Edited Photos:</strong>
-                        Up to 150</li>
-                    <li class="list-group-item">
-                        <strong>Raw Files:</strong>
-                        <select class="form-select d-inline-block w-auto ms-2">
-                            <option value>Select</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </li>
-                    <li class="list-group-item"><strong>Base Price:</strong>
-                        ৳30,000</li>
-                </ul>
-
-                <h6 class="fw-bold">Available Add-ons</h6>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Drone Coverage
-                        (+৳6,000)</label>
-                </div>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Extra Hour (+৳2,500)</label>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-dark">Proceed to Booking</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Birthday Modal -->
-<div class="modal fade" id="birthdayModal" tabindex="-1">
-    <div
-        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="fw-bold">Birthday Event – Full Details</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <p class="text-muted">
-                    Fun and lively birthday photography capturing cake cutting,
-                    games, family moments, and joyful candid expressions.
-                </p>
-
-                <ul class="list-group mb-3">
-                    <li class="list-group-item"><strong>Coverage
-                            Duration:</strong> 3 Hours</li>
-                    <li class="list-group-item"><strong>Edited Photos:</strong>
-                        Up to 100</li>
-                    <li class="list-group-item">
-                        <strong>Raw Files:</strong>
-                        <select class="form-select d-inline-block w-auto ms-2">
-                            <option value>Select</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </li>
-                    <li class="list-group-item"><strong>Base Price:</strong>
-                        ৳15,000</li>
-                </ul>
-
-                <h6 class="fw-bold">Available Add-ons</h6>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Extra Hour (+৳2,000)</label>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-dark">Proceed to Booking</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Corporate Modal -->
-<div class="modal fade" id="corporateModal" tabindex="-1">
-    <div
-        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="fw-bold">Corporate Event – Full Details</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <p class="text-muted">
-                    Professional corporate photography suitable for conferences,
-                    seminars, meetings, product launches, and brand events.
-                </p>
-
-                <ul class="list-group mb-3">
-                    <li class="list-group-item"><strong>Coverage
-                            Duration:</strong> 4 Hours</li>
-                    <li class="list-group-item"><strong>Edited Photos:</strong>
-                        Up to 120</li>
-                    <li class="list-group-item">
-                        <strong>Raw Files:</strong>
-                        <select class="form-select d-inline-block w-auto ms-2">
-                            <option value>Select</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </li>
-                    <li class="list-group-item"><strong>Base Price:</strong>
-                        ৳25,000</li>
-                </ul>
-
-                <h6 class="fw-bold">Available Add-ons</h6>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Extra Hour (+৳2,500)</label>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-dark">Proceed to Booking</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Pre-wedding Modal -->
-<div class="modal fade" id="preWeddingModal" tabindex="-1">
-    <div
-        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="fw-bold">Pre-wedding Shoot – Full Details</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <p class="text-muted">
-                    Romantic and cinematic pre-wedding shoots at outdoor or
-                    destination
-                    locations with creative poses and storytelling frames.
-                </p>
-
-                <ul class="list-group mb-3">
-                    <li class="list-group-item"><strong>Coverage
-                            Duration:</strong> 3 Hours</li>
-                    <li class="list-group-item"><strong>Edited Photos:</strong>
-                        Up to 120</li>
-                    <li class="list-group-item">
-                        <strong>Raw Files:</strong>
-                        <select class="form-select d-inline-block w-auto ms-2">
-                            <option value>Select</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </li>
-                    <li class="list-group-item"><strong>Base Price:</strong>
-                        ৳20,000</li>
-                </ul>
-
-                <h6 class="fw-bold">Available Add-ons</h6>
-                <div class="form-check">
-                    <input class="form-check-input" type="checkbox">
-                    <label class="form-check-label">Drone Shoot
-                        (+৳6,000)</label>
-                </div>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-dark">Proceed to Booking</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Baby Modal -->
-<div class="modal fade" id="babyModal" tabindex="-1">
-    <div
-        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="fw-bold">Baby Shoot – Full Details</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <p class="text-muted">
-                    Safe, gentle, and comfortable baby photography sessions
-                    focusing on natural expressions and soft lighting.
-                </p>
-
-                <ul class="list-group mb-3">
-                    <li class="list-group-item"><strong>Coverage
-                            Duration:</strong> 2 Hours</li>
-                    <li class="list-group-item"><strong>Edited Photos:</strong>
-                        Up to 80</li>
-                    <li class="list-group-item">
-                        <strong>Raw Files:</strong>
-                        <select class="form-select d-inline-block w-auto ms-2">
-                            <option value>Select</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </li>
-                    <li class="list-group-item"><strong>Base Price:</strong>
-                        ৳12,000</li>
-                </ul>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-dark">Proceed to Booking</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Product Modal -->
-<div class="modal fade" id="productModal" tabindex="-1">
-    <div
-        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="fw-bold">Product Photography – Full Details</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <p class="text-muted">
-                    High-quality product photography designed for e-commerce,
-                    catalogs, advertisements, and brand promotions.
-                </p>
-
-                <ul class="list-group mb-3">
-                    <li class="list-group-item"><strong>Coverage:</strong> Per
-                        Product</li>
-                    <li class="list-group-item"><strong>Edited Photos:</strong>
-                        Up to 50</li>
-                    <li class="list-group-item">
-                        <strong>Raw Files:</strong>
-                        <select class="form-select d-inline-block w-auto ms-2">
-                            <option value>Select</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </li>
-                    <li class="list-group-item"><strong>Base Price:</strong>
-                        ৳10,000</li>
-                </ul>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-dark">Proceed to Booking</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Fashion Modal -->
-<div class="modal fade" id="fashionModal" tabindex="-1">
-    <div
-        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="fw-bold">Fashion Photography – Full Details</h5>
-                <button class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-
-            <div class="modal-body">
-                <p class="text-muted">
-                    Creative fashion photography for models, designers, and
-                    brands,
-                    suitable for portfolios, campaigns, and social media.
-                </p>
-
-                <ul class="list-group mb-3">
-                    <li class="list-group-item"><strong>Coverage
-                            Duration:</strong> 4 Hours</li>
-                    <li class="list-group-item"><strong>Edited Photos:</strong>
-                        Up to 150</li>
-                    <li class="list-group-item">
-                        <strong>Raw Files:</strong>
-                        <select class="form-select d-inline-block w-auto ms-2">
-                            <option value>Select</option>
-                            <option value="yes">Yes</option>
-                            <option value="no">No</option>
-                        </select>
-                    </li>
-                    <li class="list-group-item"><strong>Base Price:</strong>
-                        ৳28,000</li>
-                </ul>
-            </div>
-
-            <div class="modal-footer">
-                <button class="btn btn-secondary"
-                    data-bs-dismiss="modal">Close</button>
-                <button class="btn btn-dark">Proceed to Booking</button>
-            </div>
-        </div>
-    </div>
+  </div>
 </div>

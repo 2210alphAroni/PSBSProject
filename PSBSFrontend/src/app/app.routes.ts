@@ -68,7 +68,7 @@ import { PublicLayoutComponent } from './shared/layout/layout';
 
 // PUBLIC PAGES
 import { Home } from '../Page/home/home';
-import { AllPackages } from '../Page/all-packages/all-packages';
+import { AllPackagesComponent } from '../Page/all-packages/all-packages';
 import { BookingPackage } from '../Page/booking-package/booking-package';
 import { Profile } from '../Page/profile/profile';
 
@@ -92,7 +92,7 @@ export const routes: Routes = [
     children: [
       { path: '', component: Home },
       { path: 'home', component: Home },
-      { path: 'all-packages', component: AllPackages },
+      { path: 'all-packages', component: AllPackagesComponent },
     ]
   },
 
