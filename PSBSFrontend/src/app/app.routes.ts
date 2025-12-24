@@ -9,6 +9,7 @@ import { AdminPackages } from '../Page/admin-packages/admin-packages';
 import { Home } from '../Page/home/home';
 import { Profile } from '../Page/profile/profile';
 import { BookingPackage } from '../Page/booking-package/booking-package';
+import { AllPackages } from '../Page/all-packages/all-packages';
 
 export const routes: Routes = [
   {
@@ -27,6 +28,10 @@ export const routes: Routes = [
   {
     path: 'booking-package',
     component: BookingPackage
+  },
+  {
+    path: 'all-packages',
+    component: AllPackages
   },
   {
     path: 'profile',
