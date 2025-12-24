@@ -16,14 +16,14 @@ namespace PSBS.Controllers
             _context = context;
         }
 
-        // ✅ GET ALL PACKAGES WITH ADD-ONS
+        // ================= GET ALL PACKAGES WITH ADD-ONS =================
         [HttpGet]
         public async Task<IActionResult> GetPackages()
         {
             var sql = @"
                 SELECT
                     p.id,
-                    p.package_name AS Name,
+                    p.package_name AS PackageName,
                     p.description,
                     p.coverage_duration_hours AS CoverageDurationHours,
                     p.max_edited_photos AS MaxEditedPhotos,
@@ -31,7 +31,7 @@ namespace PSBS.Controllers
                     p.base_price AS BasePrice,
 
                     a.id AS AddOnId,
-                    a.addon_name AS Name,
+                    a.addon_name AS AddOnName,
                     a.addon_price AS Price
                 FROM Packages p
                 LEFT JOIN PackageAddOns pa ON p.id = pa.package_id
@@ -41,53 +41,70 @@ namespace PSBS.Controllers
 
             var packageDict = new Dictionary<int, Package>();
 
-            var packages = await _context.CreateConnection()
-                .QueryAsync<Package, AddOn, Package>(
-                    sql,
-                    (pkg, addon) =>
+            using var connection = _context.CreateConnection();
+
+            await connection.QueryAsync<Package, AddOn, Package>(
+                sql,
+                (pkg, addon) =>
+                {
+                    if (!packageDict.TryGetValue(pkg.Id, out var current))
                     {
-                        if (!packageDict.TryGetValue(pkg.Id, out var current))
-                        {
-                            current = pkg;
-                            current.AddOns = new List<AddOn>();
-                            packageDict.Add(current.Id, current);
-                        }
+                        current = pkg;
+                        current.AddOns = new List<AddOn>();
+                        packageDict.Add(current.Id, current);
+                    }
 
-                        if (addon != null && addon.Id != 0)
-                        {
-                            current.AddOns.Add(addon);
-                        }
+                    if (addon != null && addon.Id != 0)
+                    {
+                        current.AddOns.Add(addon);
+                    }
 
-                        return current;
-                    },
-                    splitOn: "AddOnId"
-                );
+                    return current;
+                },
+                splitOn: "AddOnId"
+            );
 
             return Ok(packageDict.Values);
         }
 
-        // ✅ ADD PACKAGE (without add-ons for now)
+        // ================= ADD PACKAGE =================
         [HttpPost]
-        public async Task<IActionResult> AddPackage(Package package)
+        public async Task<IActionResult> AddPackage([FromBody] Package package)
         {
             var sql = @"
                 INSERT INTO Packages
-                (package_name, description, coverage_duration_hours, max_edited_photos, raw_files_available, base_price)
+                (
+                    package_name,
+                    description,
+                    coverage_duration_hours,
+                    max_edited_photos,
+                    raw_files_available,
+                    base_price
+                )
                 VALUES
-                (@Name, @Description, @CoverageDurationHours, @MaxEditedPhotos, @RawFilesAvailable, @BasePrice);
+                (
+                    @PackageName,
+                    @Description,
+                    @CoverageDurationHours,
+                    @MaxEditedPhotos,
+                    @RawFilesAvailable,
+                    @BasePrice
+                );
             ";
 
-            await _context.CreateConnection().ExecuteAsync(sql, package);
+            using var connection = _context.CreateConnection();
+            await connection.ExecuteAsync(sql, package);
+
             return Ok("Package added successfully");
         }
 
-        // ✅ UPDATE PACKAGE
+        // ================= UPDATE PACKAGE =================
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePackage(int id, Package package)
+        public async Task<IActionResult> UpdatePackage(int id, [FromBody] Package package)
         {
             var sql = @"
                 UPDATE Packages SET
-                    package_name = @Name,
+                    package_name = @PackageName,
                     description = @Description,
                     coverage_duration_hours = @CoverageDurationHours,
                     max_edited_photos = @MaxEditedPhotos,
@@ -97,17 +114,21 @@ namespace PSBS.Controllers
             ";
 
             package.Id = id;
-            await _context.CreateConnection().ExecuteAsync(sql, package);
+
+            using var connection = _context.CreateConnection();
+            await connection.ExecuteAsync(sql, package);
 
             return Ok("Package updated successfully");
         }
 
-        // ✅ DELETE PACKAGE
+        // ================= DELETE PACKAGE =================
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePackage(int id)
         {
             var sql = "DELETE FROM Packages WHERE id = @Id";
-            await _context.CreateConnection().ExecuteAsync(sql, new { Id = id });
+
+            using var connection = _context.CreateConnection();
+            await connection.ExecuteAsync(sql, new { Id = id });
 
             return Ok("Package deleted successfully");
         }

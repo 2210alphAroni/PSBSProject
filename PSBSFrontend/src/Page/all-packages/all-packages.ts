@@ -2,13 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Package } from '../../app/models/package.model';
+
 @Component({
   selector: 'app-all-packages',
   standalone: true,
   imports: [CommonModule, HttpClientModule],
-  templateUrl: './all-packages.html'
+  templateUrl: './all-packages.html',
+  styleUrls: ['./all-packages.css']
 })
-export class AllPackagesComponent implements OnInit {
+export class AllPackages implements OnInit {
 
   packages: Package[] = [];
   selectedPackage: Package | null = null;
@@ -19,15 +21,18 @@ export class AllPackagesComponent implements OnInit {
     this.loadPackages();
   }
 
-  loadPackages() {
+  loadPackages(): void {
     this.http.get<Package[]>('https://localhost:7272/api/Packages')
       .subscribe({
-        next: res => this.packages = res,
-        error: err => console.error(err)
+        next: (res) => {
+          console.log('Packages:', res); // helpful debug
+          this.packages = res;
+        },
+        error: (err) => console.error('API error:', err)
       });
   }
 
-  openModal(pkg: Package) {
+  openModal(pkg: Package): void {
     this.selectedPackage = pkg;
   }
 }

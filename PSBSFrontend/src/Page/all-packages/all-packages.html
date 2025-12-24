@@ -1,5 +1,6 @@
 <div class="container py-5">
 
+  <!-- ================= HEADER ================= -->
   <div class="text-center mb-5 py-5">
     <h1 class="fw-bold py-5">Photography Packages</h1>
     <p class="text-muted">Click any package to see full details</p>
@@ -15,12 +16,15 @@
            (click)="openModal(pkg)">
 
         <div class="card-body">
-          <h5 class="fw-bold">{{ pkg.name }}</h5>
+          <!-- ✅ FIXED -->
+          <h5 class="fw-bold">{{ pkg.packageName }}</h5>
+
           <p class="text-muted">{{ pkg.description }}</p>
 
           <ul class="list-unstyled">
             <li>⏱ {{ pkg.coverageDurationHours }} Hours</li>
             <li>📸 Up to {{ pkg.maxEditedPhotos }} Photos</li>
+
             <li>
               📁 Raw Files:
               <span class="badge"
@@ -30,7 +34,9 @@
             </li>
           </ul>
 
-          <h4 class="text-primary">৳{{ pkg.basePrice | number }}</h4>
+          <h4 class="text-primary">
+            ৳{{ pkg.basePrice | number }}
+          </h4>
         </div>
       </div>
     </div>
@@ -43,13 +49,15 @@
   <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
     <div class="modal-content" *ngIf="selectedPackage">
 
+      <!-- ================= MODAL HEADER ================= -->
       <div class="modal-header">
         <h5 class="fw-bold">
-          {{ selectedPackage.name }} – Full Details
+          {{ selectedPackage.packageName }} – Full Details
         </h5>
         <button class="btn-close" data-bs-dismiss="modal"></button>
       </div>
 
+      <!-- ================= MODAL BODY ================= -->
       <div class="modal-body">
 
         <p class="text-muted">
@@ -70,7 +78,7 @@
           <li class="list-group-item">
             <strong>Raw Files:</strong>
             <span class="badge ms-2"
-              [ngClass]="selectedPackage.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
+                  [ngClass]="selectedPackage.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
               {{ selectedPackage.rawFilesAvailable ? 'Yes' : 'No' }}
             </span>
           </li>
@@ -81,8 +89,9 @@
           </li>
         </ul>
 
-        <!-- ADD-ONS -->
-        <h6 class="fw-bold" *ngIf="selectedPackage.addOns?.length">
+        <!-- ================= ADD-ONS ================= -->
+        <h6 class="fw-bold"
+            *ngIf="selectedPackage.addOns && selectedPackage.addOns.length">
           Available Add-ons
         </h6>
 
@@ -90,12 +99,13 @@
              *ngFor="let addon of selectedPackage.addOns">
           <input class="form-check-input" type="checkbox">
           <label class="form-check-label">
-            {{ addon.name }} (+৳{{ addon.price | number }})
+            {{ addon.addOnName }} (+৳{{ addon.price | number }})
           </label>
         </div>
 
       </div>
 
+      <!-- ================= MODAL FOOTER ================= -->
       <div class="modal-footer">
         <button class="btn btn-secondary" data-bs-dismiss="modal">
           Close
