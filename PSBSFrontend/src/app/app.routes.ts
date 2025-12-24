@@ -114,6 +114,6 @@ export const routes: Routes = [
   },
 
   // 🔥 FIX REFRESH ISSUE (wildcard-route)
-  { path: '**', redirectTo: '', pathMatch: 'full' }
+  // { path: '**', redirectTo: '', pathMatch: 'full' }
 
 ];
