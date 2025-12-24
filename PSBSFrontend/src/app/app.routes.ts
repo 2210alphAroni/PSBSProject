@@ -44,7 +44,7 @@
 //   { path: 'forgot-password', component: ForgotPassword },
 //   { path: 'reset-password', component: ResetPassword },
 
-  
+
 //   {
 //   path: 'admin-dashboard',
 //   component: AdminDashboard,
@@ -90,7 +90,7 @@ export const routes: Routes = [
     path: '',
     component: PublicLayoutComponent,
     children: [
-      { path: '', component: Home },
+      { path: '', component: Home, pathMatch: 'full' },
       { path: 'home', component: Home },
       { path: 'all-packages', component: AllPackages },
     ]
@@ -111,5 +111,9 @@ export const routes: Routes = [
       { path: 'users', component: AdminUsers },
       { path: 'admin-packages', component: AdminPackages }
     ]
-  }
+  },
+
+  // 🔥 FIX REFRESH ISSUE (wildcard-route)
+  { path: '**', redirectTo: '', pathMatch: 'full' }
+
 ];
