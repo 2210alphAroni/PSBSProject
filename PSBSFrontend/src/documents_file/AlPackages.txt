@@ -1,0 +1,126 @@
+CREATE TABLE Packages (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    package_name NVARCHAR(100) NOT NULL,
+    description NVARCHAR(MAX) NOT NULL,
+
+    coverage_duration_hours INT NOT NULL,
+    max_edited_photos INT NOT NULL,
+
+    raw_files_available BIT NOT NULL DEFAULT 0,
+
+    base_price DECIMAL(10,2) NOT NULL,
+
+    created_at DATETIME2 NOT NULL DEFAULT GETDATE(),
+    updated_at DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+
+INSERT INTO Packages
+(package_name, description, coverage_duration_hours, max_edited_photos, raw_files_available, base_price)
+VALUES
+-- 1. Wedding Photography
+(
+  'Wedding Photography',
+  'We capture every ritual, emotion, and candid moment of your wedding using a cinematic storytelling approach with professional lighting and composition.',
+  6,
+  200,
+  1,
+  45000
+),
+
+-- 2. Reception Photography
+(
+  'Reception Photography',
+  'Elegant reception photography covering stage moments, guest interactions, décor details, and candid expressions.',
+  4,
+  150,
+  1,
+  30000
+),
+
+-- 3. Birthday Event
+(
+  'Birthday Event',
+  'Fun and lively birthday photography capturing cake cutting, games, family moments, and joyful candid expressions.',
+  3,
+  100,
+  0,
+  15000
+),
+
+-- 4. Corporate Event
+(
+  'Corporate Event',
+  'Professional corporate photography suitable for conferences, seminars, meetings, product launches, and brand events.',
+  4,
+  120,
+  1,
+  25000
+),
+
+-- 5. Pre-wedding Shoot
+(
+  'Pre-wedding Shoot',
+  'Romantic and cinematic pre-wedding shoots at outdoor or destination locations with creative poses and storytelling frames.',
+  3,
+  120,
+  1,
+  20000
+),
+
+-- 6. Baby Shoot
+(
+  'Baby Shoot',
+  'Safe, gentle, and comfortable baby photography sessions focusing on natural expressions and soft lighting.',
+  2,
+  80,
+  0,
+  12000
+),
+
+-- 7. Product Photography
+(
+  'Product Photography',
+  'High-quality product photography designed for e-commerce, catalogs, advertisements, and brand promotions.',
+  1,
+  50,
+  1,
+  10000
+),
+
+-- 8. Fashion Photography
+(
+  'Fashion Photography',
+  'Creative fashion photography for models, designers, and brands, suitable for portfolios, campaigns, and social media.',
+  4,
+  150,
+  1,
+  28000
+);
+
+
+
+CREATE TABLE AddOns (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    addon_name NVARCHAR(100) NOT NULL,
+    addon_description NVARCHAR(255),
+    addon_price DECIMAL(10,2) NOT NULL,
+
+    created_at DATETIME2 NOT NULL DEFAULT GETDATE()
+);
+
+
+
+CREATE TABLE PackageAddOns (
+    id INT IDENTITY(1,1) PRIMARY KEY,
+
+    package_id INT NOT NULL,
+    addon_id INT NOT NULL,
+
+    FOREIGN KEY (package_id) REFERENCES Packages(id) ON DELETE CASCADE,
+    FOREIGN KEY (addon_id) REFERENCES AddOns(id) ON DELETE CASCADE,
+
+    CONSTRAINT UQ_Package_AddOn UNIQUE (package_id, addon_id)
+);
