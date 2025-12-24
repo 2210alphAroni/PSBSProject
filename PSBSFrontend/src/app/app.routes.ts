@@ -5,7 +5,7 @@ import { AdminDashboard } from '../Page/admin-dashboard/admin-dashboard';
 import { ForgotPassword } from '../Page/forgot-password/forgot-password';
 import { ResetPassword } from '../Page/reset-password/reset-password';
 import { AdminUsers } from '../Page/admin-users/admin-users';
-import { Packages } from '../Page/packages/packages';
+import { AdminPackages } from '../Page/admin-packages/admin-packages';
 import { Home } from '../Page/home/home';
 import { Profile } from '../Page/profile/profile';
 import { BookingPackage } from '../Page/booking-package/booking-package';
@@ -49,8 +49,8 @@ export const routes: Routes = [
       component: AdminUsers
     },
     {
-      path: 'packages',
-      component: Packages
+      path: 'admin-packages',
+      component: AdminPackages
     }
   ]
 }
