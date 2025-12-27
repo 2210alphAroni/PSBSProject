@@ -51,6 +51,7 @@ export class AdminPackages implements OnInit {
     this.showForm = true;
     this.isEditMode = false;
     this.formModel = this.emptyPackage();
+    alert('Adding a new package. Fill in the form and click Save.');
   }
 
   // ============ OPEN EDIT ============
@@ -58,6 +59,7 @@ export class AdminPackages implements OnInit {
     this.showForm = true;
     this.isEditMode = true;
     this.formModel = { ...pkg };
+    alert(`Editing package "${pkg.packageName}". Modify the form and click Save.`);
   }
 
   // ============ SAVE (ADD/UPDATE) ============
@@ -82,6 +84,8 @@ export class AdminPackages implements OnInit {
           this.saving = false;
           this.cancel();
           this.loadPackages();
+          alert(`Package "${payload.packageName}" updated successfully.`);
+          window.location.reload();
         },
         error: (err) => {
           this.saving = false;
@@ -98,9 +102,10 @@ export class AdminPackages implements OnInit {
           // Fast UI update (no need to wait)
           if (created?.id) {
             this.packages = [created, ...this.packages];
+            alert(`Package "${created.packageName}" added successfully.`);
+            window.location.reload();
           } else {
-            this.loadPackages();
-          }
+            this.loadPackages();          }
         },
         error: (err) => {
           this.saving = false;
@@ -117,6 +122,8 @@ export class AdminPackages implements OnInit {
     this.http.delete(`${this.apiUrl}/${pkg.id}`).subscribe({
       next: () => {
         this.packages = this.packages.filter(p => p.id !== pkg.id);
+        alert(`Package "${pkg.packageName}" deleted successfully.`);
+        window.location.reload();
       },
       error: (err) => this.handleHttpError('Delete failed', err)
     });
@@ -145,7 +152,7 @@ export class AdminPackages implements OnInit {
     const e = err as HttpErrorResponse;
     console.error(title, e);
 
-    // This alert will show the REAL reason (400/500/CORS/etc.)
-    alert(`${title}\nStatus: ${e.status}\n${typeof e.error === 'string' ? e.error : JSON.stringify(e.error)}`);
+    window.location.reload();
+
   }
 }
