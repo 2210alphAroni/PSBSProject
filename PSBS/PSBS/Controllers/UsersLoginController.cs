@@ -1,5 +1,6 @@
 ﻿using Dapper;
 using Google.Apis.Auth;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using PSBS.Context;
@@ -161,13 +162,15 @@ namespace PSBS.Controllers
         // ================= JWT TOKEN =================
         private string GenerateJwtToken(dynamic user)
         {
-            var claims = new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Name, user.FullName),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Role, user.RegisterAS)
-            };
+            var claims = new List<Claim>
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.FullName ?? "User"),
+        new Claim(ClaimTypes.Role, user.RegisterAS ?? "Client")
+    };
+
+            if (!string.IsNullOrEmpty((string?)user.Email))
+                claims.Add(new Claim(ClaimTypes.Email, user.Email));
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
@@ -187,7 +190,38 @@ namespace PSBS.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
+
+
+
+        [Authorize]
+        [HttpDelete("delete-my-account")]
+        public async Task<IActionResult> DeleteMyAccount()
+        {
+            // 1️⃣ Get user id from JWT (CORRECT CLAIM)
+            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+            if (userIdClaim == null)
+                return Unauthorized("User ID not found in token");
+
+            int userId = int.Parse(userIdClaim);
+
+            using var connection = _context.CreateConnection();
+
+            // 2️⃣ DELETE FROM CORRECT TABLE
+            var rows = await connection.ExecuteAsync(
+                "DELETE FROM UsersRegistration WHERE Id = @UserId",
+                new { UserId = userId }
+            );
+
+            if (rows == 0)
+                return BadRequest("User not found");
+
+            return Ok("Account deleted successfully");
+        }
+
     }
+
+
 
     // ================= DTOs =================
     public class LoginRequest

@@ -1,5 +1,5 @@
-
 import { Injectable } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -7,7 +7,12 @@ import { Router } from '@angular/router';
 })
 export class AuthService {
 
-  constructor(private router: Router) {}
+  private apiUrl = 'https://localhost:7272/api/UsersLogin/delete-my-account';
+
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {}
 
   getUser(): any {
     const user = localStorage.getItem('user');
@@ -18,24 +23,26 @@ export class AuthService {
     return !!localStorage.getItem('token');
   }
 
-  // ✅ FIXED (Backend compatible)
   getUserName(): string {
     const user = this.getUser();
     return user?.fullName || user?.Email || 'User';
-  }
-
-  // ✅ ROLE CHECKS
-  getRole(): string {
-    return this.getUser()?.RegisterAS || '';
-  }
-
-  isAdmin(): boolean {
-    return this.getRole() === 'Admin';
   }
 
   logout(): void {
     localStorage.clear();
     this.router.navigate(['/login']);
   }
-}
 
+  deleteMyAccount() {
+  const token = localStorage.getItem('token');
+
+  const headers = new HttpHeaders({
+    Authorization: `Bearer ${token}`
+  });
+
+  return this.http.delete(this.apiUrl, {
+    headers,
+    responseType: 'text' // Expecting a text response
+  });
+}
+}
