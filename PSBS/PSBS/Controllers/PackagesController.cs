@@ -68,10 +68,11 @@ namespace PSBS.Controllers
         }
 
         // ================= ADD PACKAGE =================
+        // ================= ADD PACKAGE =================
         [HttpPost]
         public async Task<IActionResult> AddPackage([FromBody] Package package)
         {
-            var sql = @"
+            var packageSql = @"
         INSERT INTO Packages
         (package_name, description, coverage_duration_hours, max_edited_photos, raw_files_available, base_price)
         VALUES
@@ -80,11 +81,29 @@ namespace PSBS.Controllers
     ";
 
             using var connection = _context.CreateConnection();
-            var newId = await connection.QuerySingleAsync<int>(sql, package);
 
+            // 1️⃣ Insert package
+            var newId = await connection.QuerySingleAsync<int>(packageSql, package);
             package.Id = newId;
-            return Ok(package); // return created object
+
+            // 2️⃣ Insert recent activity (NEW)
+            var activitySql = @"
+            INSERT INTO RecentActivities
+            (Message, FullName)
+            VALUES
+            (@Message, @FullName);
+        ";
+
+            await connection.ExecuteAsync(activitySql, new
+            {
+                Message = $"New package added: {package.PackageName}",
+                FullName = "Admin",
+                CreatedAt = DateTime.Now
+            });
+
+            return Ok(package);
         }
+
 
 
         // ================= UPDATE PACKAGE =================
