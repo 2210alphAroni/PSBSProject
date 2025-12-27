@@ -23,6 +23,7 @@ export class AdminDashboard {
   };
   userCount: any[] = [];
   recentActivities: any[] = [];
+  packageCount: number = 0;
 
   constructor(private httpRequest: HttpClient, public router: Router, private cdr: ChangeDetectorRef) {
     this.loadDashboard();
@@ -42,6 +43,7 @@ export class AdminDashboard {
     this.loadRecentActivity();
   }
 
+
   loadStats() {
     this.httpRequest.get<any>('https://localhost:7272/api/Dashboard/dashboard')
       .subscribe(res => {
@@ -50,14 +52,26 @@ export class AdminDashboard {
       });
   }
 
- loadRecentActivity() {
-  this.httpRequest
-    .get<any[]>('https://localhost:7272/api/Dashboard/recent-activity')
-    .subscribe(res => {
-      this.recentActivities = res; 
-      console.log('Recent Activities:', res); //debug
-    });
-}
+  ngOnInit() {
+    this.loadPackageCount();
+  }
+
+  loadPackageCount() {
+    this.httpRequest.get<any[]>('https://localhost:7272/api/Packages')
+      .subscribe(res => {
+        this.packageCount = res.length;
+        this.cdr.detectChanges();
+      });
+  }
+
+  loadRecentActivity() {
+    this.httpRequest
+      .get<any[]>('https://localhost:7272/api/Dashboard/recent-activity')
+      .subscribe(res => {
+        this.recentActivities = res;
+        console.log('Recent Activities:', res);  // Debugging line
+      });
+  }
 
 
 }
