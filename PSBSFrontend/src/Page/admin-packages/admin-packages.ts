@@ -51,7 +51,8 @@ export class AdminPackages implements OnInit {
 
   return this.packages.filter(pkg =>
     pkg.packageName.toLowerCase().includes(text) ||
-    pkg.description.toLowerCase().includes(text)
+    pkg.description.toLowerCase().includes(text) ||
+    pkg.coverageDurationHours.toExponential().includes(text)
   );
 }
 
