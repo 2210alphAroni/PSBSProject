@@ -21,12 +21,15 @@ export class AdminUsers implements OnInit {
     registerAs: 'Client'
   };
 
+  // for search filter
+  searchText: string = '';
+
   private apiBaseUrl = 'https://localhost:7272/api/UsersRegistration';
 
   constructor(
     private http: HttpClient,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   // ===============================
   // INIT
@@ -59,6 +62,24 @@ export class AdminUsers implements OnInit {
         this.isLoading = false;
       }
     });
+  }
+
+
+  // ===============================
+  // SEARCH FILTER
+  // ===============================
+  filteredUsers() {
+    if (!this.searchText) {
+      return this.users;
+    }
+
+    const text = this.searchText.toLowerCase();
+
+    return this.users.filter(user =>
+      user.fullName.toLowerCase().includes(text) ||
+      user.email.toLowerCase().includes(text) ||
+      user.registerAs.toLowerCase().includes(text)
+    );
   }
 
   // ===============================
