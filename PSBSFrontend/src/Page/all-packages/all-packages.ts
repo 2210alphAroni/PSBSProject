@@ -36,4 +36,5 @@ export class AllPackages implements OnInit {
   openModal(pkg: Package): void {
     this.selectedPackage = pkg;
   }
+  
 }
