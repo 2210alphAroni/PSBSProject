@@ -71,6 +71,7 @@ import { Home } from '../Page/home/home';
 import { AllPackages } from '../Page/all-packages/all-packages';
 import { BookingPackage } from '../Page/booking-package/booking-package';
 import { Profile } from '../Page/profile/profile';
+import { About } from '../Page/about/about';
 
 
 // AUTH PAGES
@@ -93,6 +94,7 @@ export const routes: Routes = [
       { path: '', component: Home, pathMatch: 'full' },
       { path: 'home', component: Home },
       { path: 'all-packages', component: AllPackages },
+      { path: 'about', component: About }
     ]
   },
 
