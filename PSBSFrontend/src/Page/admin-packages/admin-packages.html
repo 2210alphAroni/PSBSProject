@@ -9,16 +9,16 @@
   </div>
 
   <!-- ================= SEARCH PACKAGES ================= -->
-<div class="row mb-4">
-  <div class="col-md-4 mx-auto">
-    <input
-      type="text"
-      class="form-control"
-      placeholder="Search packages by name or description..."
-      [(ngModel)]="searchText">
+  <div class="row mb-4">
+    <div class="col-md-4">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search packages by name or description..."
+        [(ngModel)]="searchText">
+    </div>
   </div>
-</div>
-
+  <!-- ================= END SEARCH PACKAGES ================= -->
 
   <!-- FORM -->
   <div class="card mb-4" *ngIf="showForm">
@@ -30,52 +30,52 @@
         <div class="mb-2">
           <label class="form-label">Package Name *</label>
           <input class="form-control"
-                 name="packageName"
-                 [(ngModel)]="formModel.packageName"
-                 required />
+            name="packageName"
+            [(ngModel)]="formModel.packageName"
+            required />
         </div>
 
         <div class="mb-2">
           <label class="form-label">Description</label>
           <textarea class="form-control"
-                    name="description"
-                    [(ngModel)]="formModel.description"></textarea>
+            name="description"
+            [(ngModel)]="formModel.description"></textarea>
         </div>
 
         <div class="row">
           <div class="col-md-4 mb-2">
             <label class="form-label">Coverage Hours</label>
             <input type="number" class="form-control"
-                   name="coverageDurationHours"
-                   [(ngModel)]="formModel.coverageDurationHours" />
+              name="coverageDurationHours"
+              [(ngModel)]="formModel.coverageDurationHours" />
           </div>
 
           <div class="col-md-4 mb-2">
             <label class="form-label">Max Edited Photos</label>
             <input type="number" class="form-control"
-                   name="maxEditedPhotos"
-                   [(ngModel)]="formModel.maxEditedPhotos" />
+              name="maxEditedPhotos"
+              [(ngModel)]="formModel.maxEditedPhotos" />
           </div>
 
           <div class="col-md-4 mb-2">
             <label class="form-label">Base Price</label>
             <input type="number" class="form-control"
-                   name="basePrice"
-                   [(ngModel)]="formModel.basePrice" />
+              name="basePrice"
+              [(ngModel)]="formModel.basePrice" />
           </div>
         </div>
 
         <div class="form-check mb-3">
           <input class="form-check-input"
-                 type="checkbox"
-                 name="rawFilesAvailable"
-                 [(ngModel)]="formModel.rawFilesAvailable" />
+            type="checkbox"
+            name="rawFilesAvailable"
+            [(ngModel)]="formModel.rawFilesAvailable" />
           <label class="form-check-label">Raw Files Available</label>
         </div>
 
         <button class="btn btn-success me-2"
-                type="submit"
-                [disabled]="saving || f.invalid">
+          type="submit"
+          [disabled]="saving || f.invalid">
           {{ saving ? 'Saving...' : 'Save' }}
         </button>
 
@@ -108,13 +108,16 @@
           <td>{{ pkg.maxEditedPhotos }}</td>
           <td>৳{{ pkg.basePrice | number }}</td>
           <td>
-            <span class="badge" [ngClass]="pkg.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
+            <span class="badge"
+              [ngClass]="pkg.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
               {{ pkg.rawFilesAvailable ? 'Yes' : 'No' }}
             </span>
           </td>
           <td>
-            <button class="btn btn-sm btn-warning me-2" (click)="edit(pkg)">Edit</button>
-            <button class="btn btn-sm btn-danger" (click)="delete(pkg)">Delete</button>
+            <button class="btn btn-sm btn-warning me-2"
+              (click)="edit(pkg)">Edit</button>
+            <button class="btn btn-sm btn-danger"
+              (click)="delete(pkg)">Delete</button>
           </td>
         </tr>
 
