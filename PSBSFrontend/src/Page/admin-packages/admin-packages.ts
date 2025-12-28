@@ -38,6 +38,23 @@ export class AdminPackages implements OnInit {
     this.loadPackages();
   }
 
+  // ============ FILTERING ============
+  searchText: string = '';
+
+  // Filter packages based on search text
+  filteredPackages(): Package[] {
+  if (!this.searchText) {
+    return this.packages;
+  }
+
+  const text = this.searchText.toLowerCase();
+
+  return this.packages.filter(pkg =>
+    pkg.packageName.toLowerCase().includes(text) ||
+    pkg.description.toLowerCase().includes(text)
+  );
+}
+
   // ============ LOAD ============
   loadPackages(): void {
     this.http.get<Package[]>(this.apiUrl).subscribe({

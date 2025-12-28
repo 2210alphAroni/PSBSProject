@@ -8,6 +8,18 @@
     </button>
   </div>
 
+  <!-- ================= SEARCH PACKAGES ================= -->
+<div class="row mb-4">
+  <div class="col-md-4 mx-auto">
+    <input
+      type="text"
+      class="form-control"
+      placeholder="Search packages by name or description..."
+      [(ngModel)]="searchText">
+  </div>
+</div>
+
+
   <!-- FORM -->
   <div class="card mb-4" *ngIf="showForm">
     <div class="card-body">
@@ -90,7 +102,7 @@
       </thead>
 
       <tbody>
-        <tr *ngFor="let pkg of packages">
+        <tr *ngFor="let pkg of filteredPackages()">
           <td>{{ pkg.packageName }}</td>
           <td>{{ pkg.coverageDurationHours }}</td>
           <td>{{ pkg.maxEditedPhotos }}</td>
@@ -106,7 +118,7 @@
           </td>
         </tr>
 
-        <tr *ngIf="!packages.length">
+        <tr *ngIf="!filteredPackages().length">
           <td colspan="6" class="text-center text-muted py-4">
             No packages found.
           </td>
