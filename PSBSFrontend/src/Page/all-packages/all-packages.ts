@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient} from '@angular/common/http';
 import { Package } from '../../app/models/package.model';
@@ -16,7 +16,7 @@ export class AllPackages implements OnInit {
   packages: Package[] = [];
   selectedPackage: Package | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadPackages();
@@ -28,6 +28,7 @@ export class AllPackages implements OnInit {
         next: (res) => {
           console.log('Packages:', res); // helpful debug
           this.packages = res;
+          this.cdr.detectChanges();
         },
         error: (err) => console.error('API error:', err)
       });
