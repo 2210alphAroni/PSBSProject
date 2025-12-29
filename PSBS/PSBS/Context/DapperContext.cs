@@ -14,6 +14,8 @@ namespace PSBS.Context
             _connectionString = _configuration.GetConnectionString("DefaultConnection"); // Or your preferred connection string name
         }
 
+        public object ContactMessages { get; internal set; }
+
         public IDbConnection CreateConnection() => new SqlConnection(_connectionString);
     }
 }
