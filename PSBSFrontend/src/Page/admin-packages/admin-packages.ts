@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
@@ -32,7 +32,7 @@ export class AdminPackages implements OnInit {
 
   private apiUrl = 'https://localhost:7272/api/Packages';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadPackages();
@@ -60,7 +60,8 @@ export class AdminPackages implements OnInit {
   loadPackages(): void {
     this.http.get<Package[]>(this.apiUrl).subscribe({
       next: (res) => this.packages = res,
-      error: (err) => this.handleHttpError('Load failed', err)
+      error: (err) => this.handleHttpError('Load failed', err),
+      complete: () => this.cdr.detectChanges()
     });
   }
 
