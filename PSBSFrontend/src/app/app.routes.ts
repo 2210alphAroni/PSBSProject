@@ -89,6 +89,7 @@ import { AdminPackages } from '../Page/admin-packages/admin-packages';
 
 //Photographer Dashboard can be added similarly
 import { PhotographerDashboard } from '../Page/photographer-dashboard/photographer-dashboard';
+import { PhotographerPortfolio } from '../Page/photographer-portfolio/photographer-portfolio';
 
 export const routes: Routes = [
 
@@ -127,7 +128,10 @@ export const routes: Routes = [
   // 📸 PHOTOGRAPHER PAGES → NO HEADER / FOOTER
   {
     path: 'photographer-dashboard',
-    component: PhotographerDashboard
+    component: PhotographerDashboard,
+    children: [
+      { path: 'photographer-portfolio', component: PhotographerPortfolio }
+    ]
   },
   
   // 🔥 FIX REFRESH ISSUE (wildcard-route)
