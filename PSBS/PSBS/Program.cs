@@ -1,7 +1,8 @@
-﻿using PSBS.Context;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.Extensions.FileProviders;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using PSBS.Context;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,7 +16,10 @@ builder.Services.AddControllers()
 
 builder.Services.AddEndpointsApiExplorer();
 
-// ✅ FIXED Swagger with JWT support
+// =========================
+// SWAGGER + JWT
+// =========================
+
 builder.Services.AddSwaggerGen(c =>
 {
     c.SwaggerDoc("v1", new OpenApiInfo
@@ -72,19 +76,19 @@ builder.Services.AddCors(options =>
 });
 
 // =========================
-// JWT CONFIG (NULL-SAFE)
+// JWT CONFIG
 // =========================
 
 var jwtSection = builder.Configuration.GetSection("Jwt");
 
 var jwtKey = jwtSection["Key"]
-    ?? throw new Exception("JWT Key is missing in appsettings.json");
+    ?? throw new Exception("JWT Key missing");
 
 var jwtIssuer = jwtSection["Issuer"]
-    ?? throw new Exception("JWT Issuer is missing in appsettings.json");
+    ?? throw new Exception("JWT Issuer missing");
 
 var jwtAudience = jwtSection["Audience"]
-    ?? throw new Exception("JWT Audience is missing in appsettings.json");
+    ?? throw new Exception("JWT Audience missing");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
@@ -111,6 +115,16 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 var app = builder.Build();
 
 // =========================
+// ENSURE wwwroot EXISTS
+// =========================
+
+if (string.IsNullOrEmpty(builder.Environment.WebRootPath))
+{
+    builder.Environment.WebRootPath =
+        Path.Combine(builder.Environment.ContentRootPath, "wwwroot");
+}
+
+// =========================
 // MIDDLEWARE PIPELINE
 // =========================
 
@@ -126,7 +140,25 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+// =========================
+// 🔥 STATIC FILES (THIS FIXES IMAGE LOADING)
+// =========================
+
+// Serve wwwroot normally
 app.UseStaticFiles();
+
+// Explicitly serve /uploads/*
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.WebRootPath, "uploads")
+    ),
+    RequestPath = "/uploads"
+});
+
+// =========================
+// CORS + AUTH
+// =========================
 
 app.UseCors("SpecificOrigins");
 
