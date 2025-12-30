@@ -1,1 +1,152 @@
-<p>photographer-dashboard works!</p>
+<!-- ================= TOP NAVBAR ================= -->
+<nav class="nav-area navbar px-3">
+  <!-- HAMBURGER (MOBILE ONLY) -->
+  <button
+    type="button"
+    class="hamburger-btn d-lg-none me-3"
+    (click)="toggleSidebar()"
+    aria-label="Open menu">
+    &#9776;
+  </button>
+
+  <span class="navbar-brand text-white fw-semibold">
+    Photographer Dashboard
+  </span>
+
+  <div class="ms-auto d-flex align-items-center">
+    <span class="text-white me-3 d-none d-md-inline">
+      Welcome, {{ photographerName }}
+    </span>
+    <button class="btn btn-outline-light btn-sm" (click)="logout()">
+      Logout
+    </button>
+  </div>
+</nav>
+
+<!-- ================= OVERLAY (MOBILE ONLY) ================= -->
+<div class="overlay" *ngIf="sidebarOpen" (click)="toggleSidebar()"></div>
+
+<!-- ================= SIDEBAR ================= -->
+<aside class="sidebar" [class.active]="sidebarOpen">
+  <div class="sidebar-header">
+    <h5 class="m-0">📸 PSBS Photographer</h5>
+    <span class="close-btn d-lg-none" (click)="toggleSidebar()">&times;</span>
+  </div>
+
+  <nav class="sidebar-menu">
+    <a routerLink="/photographer-dashboard" routerLinkActive="active">Dashboard</a>
+    <a routerLink="/photographer/profile">My Profile</a>
+    <a routerLink="/photographer/portfolio">Portfolio</a>
+    <a routerLink="/photographer/bookings">Bookings</a>
+    <a routerLink="/photographer/availability">Availability</a>
+    <a routerLink="/photographer/earnings">Earnings</a>
+    <a routerLink="/photographer/reviews">Reviews</a>
+    <a routerLink="/photographer/settings">Settings</a>
+  </nav>
+</aside>
+
+<!-- ================= MAIN CONTENT ================= -->
+<main class="content-area">
+
+  <!-- DASHBOARD CONTENT -->
+  <ng-container *ngIf="router.url === '/photographer-dashboard'">
+
+    <h3 class="fw-bold mb-4">Dashboard Overview</h3>
+
+    <!-- ================= STATS ================= -->
+    <div class="row g-4 mb-4">
+
+      <div class="col-md-3">
+        <div class="stat-card">
+          <h6>Total Bookings</h6>
+          <h2>{{ totalBookings }}</h2>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="stat-card">
+          <h6>Pending Requests</h6>
+          <h2>{{ pendingBookings }}</h2>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="stat-card">
+          <h6>Total Earnings</h6>
+          <h2>৳ {{ totalEarnings }}</h2>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="stat-card">
+          <h6>Rating</h6>
+          <h2>{{ averageRating }} ★</h2>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ================= RECENT BOOKINGS ================= -->
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Recent Bookings</h5>
+
+        <table class="table table-hover">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Date</th>
+              <th>Package</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let booking of recentBookings">
+              <td>{{ booking.clientName }}</td>
+              <td>{{ booking.eventDate | date:'mediumDate' }}</td>
+              <td>{{ booking.packageName }}</td>
+              <td>
+                <span class="badge bg-success" *ngIf="booking.status === 'Confirmed'">
+                  Confirmed
+                </span>
+                <span class="badge bg-warning text-dark" *ngIf="booking.status === 'Pending'">
+                  Pending
+                </span>
+              </td>
+            </tr>
+
+            <tr *ngIf="recentBookings.length === 0">
+              <td colspan="4" class="text-muted text-center">
+                No bookings found.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================= RECENT ACTIVITY ================= -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title mb-3">Recent Activity</h5>
+
+        <ul class="activity-list">
+          <li *ngFor="let activity of recentActivities">
+            <span class="dot info"></span>
+            <strong>{{ activity.message }}</strong>
+            <small>{{ activity.createdAt | date:'short' }}</small>
+          </li>
+
+          <li *ngIf="recentActivities.length === 0" class="text-muted">
+            No recent activity found.
+          </li>
+        </ul>
+      </div>
+    </div>
+
+  </ng-container>
+
+  <!-- ================= CHILD ROUTES ================= -->
+  <router-outlet></router-outlet>
+
+</main>
