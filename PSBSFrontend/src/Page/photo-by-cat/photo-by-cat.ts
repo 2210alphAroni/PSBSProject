@@ -12,10 +12,6 @@ import { ActivatedRoute } from '@angular/router';
 })
 export class PhotoByCat implements OnInit {
   apiUrl: string = '';
-  // apiUrl =
-  //   'https://localhost:7272/api/PhotographerPortfolio/by-category/Wedding';
-    // apiUrl =
-    // 'https://localhost:7272/api/PhotographerPortfolio/by-category?category=';
 
   weddingImages: any[] = [];
 
