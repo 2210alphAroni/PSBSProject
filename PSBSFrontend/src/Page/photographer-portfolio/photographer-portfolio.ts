@@ -36,7 +36,7 @@ export class PhotographerPortfolio implements OnInit {
     'Fashion'
   ];
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
     this.loadPortfolio();
@@ -84,21 +84,40 @@ export class PhotographerPortfolio implements OnInit {
     }
   }
 
+  // =========================
+  // EDIT (FIXED)
+  // =========================
   editPortfolio(item: any) {
-    this.portfolio = { ...item };
-    this.previewImage = item.imageUrl;
+    this.selectedFile = null; // important for update without image
+
+    this.portfolio = {
+      id: item.Id,                     // ✅ FIX (Id not id)
+      title: item.Title,
+      category: item.Category,
+      description: item.Description
+    };
+
+    this.previewImage = item.ImageUrl; // ✅ FIX
   }
 
+  // =========================
+  // DELETE (FIXED)
+  // =========================
   deletePortfolio(id: number) {
-    if (!confirm('Delete this photo?')) return;
+    if (!confirm('Delete this Portfolio Image?')) return;
 
-    this.http.delete(`${this.apiUrl}/${id}`)
-      .subscribe(() => this.loadPortfolio());
+    this.http.delete(`${this.apiUrl}/${id}`).subscribe(() => {
+      this.loadPortfolio();
+    });
   }
 
+  // =========================
+  // RESET (OK, unchanged)
+  // =========================
   reset() {
     this.portfolio = { id: 0, title: '', category: '', description: '' };
     this.selectedFile = null;
     this.previewImage = null;
   }
+
 }
