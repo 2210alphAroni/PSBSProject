@@ -26,14 +26,14 @@ export class PhotographerPortfolio implements OnInit {
   previewImage: string | null = null;
 
   categories: string[] = [
-    'Wedding Photography',
-    'Reception Photography',
-    'Birthday Event',
-    'Corporate Event',
-    'Pre-wedding Shoot',
-    'Baby Shoot',
-    'Product Photography',
-    'Fashion Photography'
+    'Wedding',
+    'Reception',
+    'Birthday',
+    'Corporate',
+    'Pre-wedding',
+    'Baby',
+    'Product',
+    'Fashion'
   ];
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
@@ -42,104 +42,61 @@ export class PhotographerPortfolio implements OnInit {
     this.loadPortfolio();
   }
 
-  // 🔄 Load portfolio list
-  loadPortfolio(): void {
-    this.http.get<any[]>(this.apiUrl).subscribe({
-      next: res => this.portfolios = res,
-      error: err => console.error('Load error:', err),
-      complete: () => this.cdr.detectChanges()
-    });
+  loadPortfolio() {
+    this.http.get<any[]>(this.apiUrl)
+      .subscribe(res => {
+        this.portfolios = res;
+        this.cdr.detectChanges();
+      });
   }
 
-  // 📁 File select + preview (FULL FIX)
-  onFileChange(event: Event): void {
-    const input = event.target as HTMLInputElement;
-
-    if (!input.files || input.files.length === 0) {
-      return;
-    }
-
-    const file: File = input.files[0];
-    this.selectedFile = file;
+  onFileChange(event: any) {
+    this.selectedFile = event.target.files[0];
 
     const reader = new FileReader();
-    reader.onload = () => {
-      this.previewImage = reader.result as string;
-    };
-    reader.readAsDataURL(file); // ✅ FIXED (no null error)
+    reader.onload = () => this.previewImage = reader.result as string;
+    reader.readAsDataURL(this.selectedFile!);
   }
 
-  // 💾 Create / Update
-  savePortfolio(): void {
-
-    if (!this.portfolio.title || !this.portfolio.category) {
-      return;
-    }
+  savePortfolio() {
 
     const formData = new FormData();
     formData.append('title', this.portfolio.title);
     formData.append('category', this.portfolio.category);
-    formData.append('description', this.portfolio.description ?? '');
+    formData.append('description', this.portfolio.description);
 
-    if (this.selectedFile) {
+    if (this.selectedFile)
       formData.append('image', this.selectedFile);
-    }
 
-    // ➕ CREATE
     if (this.portfolio.id === 0) {
-      this.http.post(this.apiUrl, formData).subscribe({
-        next: () => {
-          this.resetForm();
+      this.http.post(this.apiUrl, formData)
+        .subscribe(() => {
+          this.reset();
           this.loadPortfolio();
-        },
-        error: err => console.error('Create error:', err)
-      });
-    }
-    // ✏ UPDATE
-    else {
-      this.http.put(`${this.apiUrl}/${this.portfolio.id}`, formData).subscribe({
-        next: () => {
-          this.resetForm();
+        });
+    } else {
+      this.http.put(`${this.apiUrl}/${this.portfolio.id}`, formData)
+        .subscribe(() => {
+          this.reset();
           this.loadPortfolio();
-        },
-        error: err => console.error('Update error:', err)
-      });
+        });
     }
   }
 
-  // ✏ Edit
-  editPortfolio(item: any): void {
-    this.portfolio = {
-      id: item.id,
-      title: item.title,
-      category: item.category,
-      description: item.description
-    };
-
+  editPortfolio(item: any) {
+    this.portfolio = { ...item };
     this.previewImage = item.imageUrl;
-    this.selectedFile = null;
   }
 
-  // 🗑 Delete
-  deletePortfolio(id: number): void {
-    if (!confirm('Are you sure you want to delete this portfolio?')) {
-      return;
-    }
+  deletePortfolio(id: number) {
+    if (!confirm('Delete this photo?')) return;
 
-    this.http.delete(`${this.apiUrl}/${id}`).subscribe({
-      next: () => this.loadPortfolio(),
-      error: err => console.error('Delete error:', err)
-    });
+    this.http.delete(`${this.apiUrl}/${id}`)
+      .subscribe(() => this.loadPortfolio());
   }
 
-  // ♻ Reset form
-  resetForm(): void {
-    this.portfolio = {
-      id: 0,
-      title: '',
-      category: '',
-      description: ''
-    };
+  reset() {
+    this.portfolio = { id: 0, title: '', category: '', description: '' };
     this.selectedFile = null;
     this.previewImage = null;
   }
