@@ -73,6 +73,8 @@ import { BookingPackage } from '../Page/booking-package/booking-package';
 import { Profile } from '../Page/profile/profile';
 import { About } from '../Page/about/about';
 import { Contact } from '../Page/contact/contact';
+import { Wedding } from '../Page/Photography/wedding/wedding';
+import { Reception } from '../Page/Photography/reception/reception';
 
 
 // AUTH PAGES
@@ -99,7 +101,9 @@ export const routes: Routes = [
       { path: 'home', component: Home },
       { path: 'all-packages', component: AllPackages },
       { path: 'about', component: About },
-      { path: 'contact', component: Contact }
+      { path: 'contact', component: Contact },
+      { path: 'wedding', component: Wedding },
+      { path: 'reception', component: Reception }
     ]
   },
 
