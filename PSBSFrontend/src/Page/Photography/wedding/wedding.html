@@ -1,1 +1,28 @@
-<p>wedding works!</p>
+<!-- ================= WEDDING GALLERY SECTION ================= -->
+<section class="py-5 bg-light">
+  <div class="container py-5">
+
+    <!-- Section Header -->
+    <div class="text-center mb-5 py-5">
+      <h2 class="fw-bold">Wedding Photography</h2>
+      <p class="text-muted">
+        Capturing love, emotions & unforgettable moments
+      </p>
+    </div>
+
+    <!-- Gallery Grid -->
+    <div class="row g-4">
+
+      <div
+        class="col-6 col-md-4 col-lg-3"
+        *ngFor="let img of weddingImages">
+        <img
+          [src]="img"
+          class="img-fluid rounded shadow-sm"
+          alt="Wedding Photographys">
+      </div>
+
+    </div>
+
+  </div>
+</section>
