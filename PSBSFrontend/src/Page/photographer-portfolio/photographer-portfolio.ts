@@ -45,6 +45,7 @@ export class PhotographerPortfolio implements OnInit {
   loadPortfolio() {
     this.http.get<any[]>(this.apiUrl)
       .subscribe(res => {
+        console.log(res);
         this.portfolios = res;
         this.cdr.detectChanges();
       });

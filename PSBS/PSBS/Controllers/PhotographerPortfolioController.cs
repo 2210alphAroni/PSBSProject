@@ -32,7 +32,7 @@ namespace PSBS.Controllers
         }
 
         // ✅ GET BY CATEGORY
-        [HttpGet("by-category/{category}")]
+        [HttpGet("by-category")]
         public async Task<IActionResult> GetByCategory(string category)
         {
             var sql = @"SELECT * FROM PhotographerPortfolio

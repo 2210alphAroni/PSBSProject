@@ -73,8 +73,6 @@ import { BookingPackage } from '../Page/booking-package/booking-package';
 import { Profile } from '../Page/profile/profile';
 import { About } from '../Page/about/about';
 import { Contact } from '../Page/contact/contact';
-import { Wedding } from '../Page/Photography/wedding/wedding';
-import { Reception } from '../Page/Photography/reception/reception';
 
 
 // AUTH PAGES
@@ -90,6 +88,7 @@ import { AdminPackages } from '../Page/admin-packages/admin-packages';
 //Photographer Dashboard can be added similarly
 import { PhotographerDashboard } from '../Page/photographer-dashboard/photographer-dashboard';
 import { PhotographerPortfolio } from '../Page/photographer-portfolio/photographer-portfolio';
+import { PhotoByCat } from '../Page/photo-by-cat/photo-by-cat';
 
 export const routes: Routes = [
 
@@ -103,8 +102,7 @@ export const routes: Routes = [
       { path: 'all-packages', component: AllPackages },
       { path: 'about', component: About },
       { path: 'contact', component: Contact },
-      { path: 'wedding', component: Wedding },
-      { path: 'reception', component: Reception }
+      { path: 'photos-by-category', component: PhotoByCat }
     ]
   },
 
@@ -130,7 +128,7 @@ export const routes: Routes = [
     path: 'photographer-dashboard',
     component: PhotographerDashboard,
     children: [
-      { path: 'photographer-portfolio', component: PhotographerPortfolio }
+      { path: 'photographer-portfolio', component: PhotographerPortfolio },
     ]
   },
   
