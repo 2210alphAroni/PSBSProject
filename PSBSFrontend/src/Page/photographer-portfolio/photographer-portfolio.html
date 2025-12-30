@@ -1,1 +1,93 @@
-<p>photographer-portfolio works!</p>
+<div class="container py-5">
+
+  <h2 class="text-center fw-bold mb-4">Photographer Portfolio</h2>
+
+  <!-- Upload / Edit -->
+  <div class="card shadow mb-5">
+    <div class="card-body">
+
+      <h5 class="mb-3">
+        {{ portfolio.id === 0 ? 'Add Portfolio' : 'Edit Portfolio' }}
+      </h5>
+
+      <div class="row g-3">
+
+        <div class="col-md-6">
+          <input type="text"
+                 class="form-control"
+                 placeholder="Photo Title"
+                 [(ngModel)]="portfolio.title">
+        </div>
+
+        <div class="col-md-6">
+          <select class="form-select"
+                  [(ngModel)]="portfolio.category">
+            <option value="">Select Category</option>
+            <option *ngFor="let c of categories" [value]="c">
+              {{ c }}
+            </option>
+          </select>
+        </div>
+
+        <div class="col-md-12">
+          <textarea class="form-control"
+                    rows="3"
+                    placeholder="Description"
+                    [(ngModel)]="portfolio.description"></textarea>
+        </div>
+
+        <div class="col-md-6">
+          <input type="file"
+                 class="form-control"
+                 accept="image/*"
+                 (change)="onFileChange($event)">
+        </div>
+
+        <div class="col-md-6" *ngIf="previewImage">
+          <img [src]="previewImage"
+               class="img-fluid rounded shadow"
+               style="max-height: 120px;">
+        </div>
+
+        <div class="col-md-12 d-grid">
+          <button class="btn btn-primary"
+                  (click)="savePortfolio()">
+            {{ portfolio.id === 0 ? 'Upload Portfolio' : 'Update Portfolio' }}
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Portfolio List -->
+  <div class="row g-4">
+    <div class="col-md-4" *ngFor="let item of portfolios">
+      <div class="card shadow h-100">
+
+        <img [src]="item.imageUrl"
+             class="card-img-top"
+             style="height: 220px; object-fit: cover;">
+
+        <div class="card-body">
+          <h5 class="fw-bold">{{ item.title }}</h5>
+          <span class="badge bg-dark mb-2">{{ item.category }}</span>
+          <p class="small text-muted">{{ item.description }}</p>
+        </div>
+
+        <div class="card-footer d-flex justify-content-between">
+          <button class="btn btn-sm btn-warning"
+                  (click)="editPortfolio(item)">
+            Edit
+          </button>
+          <button class="btn btn-sm btn-danger"
+                  (click)="deletePortfolio(item.id)">
+            Delete
+          </button>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+</div>

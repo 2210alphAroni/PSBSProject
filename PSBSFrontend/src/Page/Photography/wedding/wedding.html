@@ -2,7 +2,7 @@
 <section class="py-5 bg-light">
   <div class="container py-5">
 
-    <!-- Section Header -->
+    <!-- Header -->
     <div class="text-center mb-5 py-5">
       <h2 class="fw-bold">Wedding Photography</h2>
       <p class="text-muted">
@@ -10,19 +10,26 @@
       </p>
     </div>
 
-    <!-- Gallery Grid -->
-    <div class="row g-4">
+    <!-- Empty State -->
+    <div *ngIf="weddingImages.length === 0"
+         class="text-center text-muted">
+      No wedding photos available.
+    </div>
 
-      <div
-        class="col-6 col-md-4 col-lg-3"
-        *ngFor="let img of weddingImages">
+    <!-- Gallery -->
+    <div class="row g-4" *ngIf="weddingImages.length > 0">
+      <div class="col-6 col-md-4 col-lg-3"
+           *ngFor="let item of weddingImages">
+
         <img
-          [src]="img"
+          [src]="item.imageUrl"
           class="img-fluid rounded shadow-sm"
-          alt="Wedding Photographys">
-      </div>
+          style="height:220px; object-fit:cover;"
+          alt="Wedding Photography">
 
+      </div>
     </div>
 
   </div>
 </section>
+<!-- ================= END WEDDING GALLERY SECTION ================= -->

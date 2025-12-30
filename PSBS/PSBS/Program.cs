@@ -1,28 +1,90 @@
-using PSBS.Context;
+﻿using PSBS.Context;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System.Text;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// =========================
+// ADD SERVICES
+// =========================
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+builder.Services.AddControllers()
+    .AddNewtonsoftJson();
+
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddSingleton<DapperContext>();
-builder.Services.AddScoped<EmailService>();
-builder.Services.AddCors(option =>
+
+// ✅ FIXED Swagger with JWT support
+builder.Services.AddSwaggerGen(c =>
 {
-    option.AddPolicy("SpecificOrigins", policy =>
+    c.SwaggerDoc("v1", new OpenApiInfo
     {
-        policy.WithOrigins("http://localhost:4200")
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        Title = "PSBS API",
+        Version = "v1"
+    });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = ParameterLocation.Header,
+        Description = "Enter: Bearer {your JWT token}"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            Array.Empty<string>()
+        }
     });
 });
+
+// =========================
+// DEPENDENCY INJECTION
+// =========================
+
+builder.Services.AddSingleton<DapperContext>();
+builder.Services.AddScoped<EmailService>();
+
+// =========================
+// CORS
+// =========================
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("SpecificOrigins", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
+// =========================
+// JWT CONFIG (NULL-SAFE)
+// =========================
+
+var jwtSection = builder.Configuration.GetSection("Jwt");
+
+var jwtKey = jwtSection["Key"]
+    ?? throw new Exception("JWT Key is missing in appsettings.json");
+
+var jwtIssuer = jwtSection["Issuer"]
+    ?? throw new Exception("JWT Issuer is missing in appsettings.json");
+
+var jwtAudience = jwtSection["Audience"]
+    ?? throw new Exception("JWT Audience is missing in appsettings.json");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 .AddJwtBearer(options =>
@@ -33,27 +95,40 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["Jwt:Issuer"],
-        ValidAudience = builder.Configuration["Jwt:Audience"],
+
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
         IssuerSigningKey = new SymmetricSecurityKey(
-            Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"])
+            Encoding.UTF8.GetBytes(jwtKey)
         )
     };
 });
 
-
+// =========================
+// BUILD APP
+// =========================
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// =========================
+// MIDDLEWARE PIPELINE
+// =========================
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "PSBS API v1");
+        c.RoutePrefix = "swagger";
+    });
 }
 
-app.UseCors("SpecificOrigins");
 app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+
+app.UseCors("SpecificOrigins");
 
 app.UseAuthentication();
 app.UseAuthorization();
