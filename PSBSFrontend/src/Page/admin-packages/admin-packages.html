@@ -29,10 +29,23 @@
 
         <div class="mb-2">
           <label class="form-label">Package Name *</label>
-          <input class="form-control"
+          <select
+            class="form-select"
             name="packageName"
             [(ngModel)]="formModel.packageName"
-            required />
+            required>
+
+            <option value="" disabled selected>-- Select Package --</option>
+            <option value="Wedding Photography">Wedding Photography</option>
+            <option value="Reception Photography">Reception Photography</option>
+            <option value="Birthday Event">Birthday Event</option>
+            <option value="Corporate Event">Corporate Event</option>
+            <option value="Pre-wedding Shoot">Pre-wedding Shoot</option>
+            <option value="Baby Shoot">Baby Shoot</option>
+            <option value="Product Photography">Product Photography</option>
+            <option value="Fashion Photography">Fashion Photography</option>
+
+          </select>
         </div>
 
         <div class="mb-2">
