@@ -49,7 +49,6 @@ namespace PSBS.Controllers
             SELECT 
                 Id,
                 FullName,
-                Specialty,
                 IsAvailable
             FROM UsersRegistration
             WHERE RegisterAS = 'Photographer'
