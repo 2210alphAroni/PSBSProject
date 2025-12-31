@@ -69,7 +69,6 @@ export class PhotographerPortfolio implements OnInit {
     formData.append('description', this.portfolio.description);
     var user=JSON.parse(localStorage.getItem('user')??"");
     formData.append('photographerId', user.userId);
-    debugger;
 
 
 
