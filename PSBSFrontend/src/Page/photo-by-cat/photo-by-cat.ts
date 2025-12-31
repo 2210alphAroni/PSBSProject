@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -17,7 +17,8 @@ export class PhotoByCat implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -35,6 +36,7 @@ export class PhotoByCat implements OnInit {
       next: res => {
         console.log('API Response:', res);
         this.weddingImages = res;
+        this.cdr.detectChanges();
       },
       error: err => {
         console.error('API Error:', err);
