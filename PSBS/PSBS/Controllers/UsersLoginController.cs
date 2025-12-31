@@ -44,7 +44,8 @@ namespace PSBS.Controllers
                     RegisterAS
                 FROM UsersRegistration
                 WHERE (Email = @Value OR UserName = @Value)
-                AND Password = @Password",
+                AND Password = @Password
+                ",
                 new
                 {
                     Value = request.EmailOrUserName,
@@ -54,22 +55,11 @@ namespace PSBS.Controllers
             if (user == null)
                 return Unauthorized(new { error = "Invalid email/username or password" });
 
-            // ⭐ PhotographerId বের করা
-            int? photographerId = null;
-            if (user.RegisterAS == "Photographer")
-            {
-                photographerId = await connection.ExecuteScalarAsync<int?>(
-                    "SELECT PhotographerId FROM Photographers WHERE UserId = @UserId",
-                    new { UserId = user.Id }
-                );
-            }
-
-            var token = GenerateJwtToken(user, photographerId);
+            var token = GenerateJwtToken(user);
 
             return Ok(new
             {
                 token,
-                photographerId,
                 user = new
                 {
                     UserId = user.Id,
@@ -95,7 +85,15 @@ namespace PSBS.Controllers
 
             try
             {
-                payload = await GoogleJsonWebSignature.ValidateAsync(dto.Token);
+                var settings = new GoogleJsonWebSignature.ValidationSettings
+                {
+                    Audience = new[]
+                    {
+                        "501889184170-hvi2lbi392aonfl8iqihudbr9hqc2ldg.apps.googleusercontent.com"
+                    }
+                };
+
+                payload = await GoogleJsonWebSignature.ValidateAsync(dto.Token, settings);
             }
             catch
             {
@@ -142,48 +140,37 @@ namespace PSBS.Controllers
                 };
             }
 
-            int? photographerId = null;
-            if (user.RegisterAS == "Photographer")
-            {
-                photographerId = await connection.ExecuteScalarAsync<int?>(
-                    "SELECT PhotographerId FROM Photographers WHERE UserId = @UserId",
-                    new { UserId = user.Id }
-                );
-            }
-
-            var token = GenerateJwtToken(user, photographerId);
+            var token = GenerateJwtToken(user);
 
             return Ok(new
             {
                 token,
-                photographerId,
                 user = new
                 {
                     UserId = user.Id,
                     FullName = user.FullName,
+                    UserName = user.UserName,
                     Email = user.Email,
+                    Phone = user.Phone,
+                    Gender = user.Gender,
+                    CreatedAt = user.CreatedAt,
                     RegisterAS = user.RegisterAS
                 }
             });
         }
 
         // ================= JWT TOKEN =================
-        private string GenerateJwtToken(dynamic user, int? photographerId)
+        private string GenerateJwtToken(dynamic user)
         {
             var claims = new List<Claim>
-            {
-                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                new Claim(ClaimTypes.Role, user.RegisterAS ?? "Client")
-            };
+    {
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Name, user.FullName ?? "User"),
+        new Claim(ClaimTypes.Role, user.RegisterAS ?? "Client")
+    };
 
             if (!string.IsNullOrEmpty((string?)user.Email))
                 claims.Add(new Claim(ClaimTypes.Email, user.Email));
-
-            // ⭐ Photographer হলে PhotographerId token এ যাবে
-            if (user.RegisterAS == "Photographer" && photographerId != null)
-            {
-                claims.Add(new Claim("PhotographerId", photographerId.ToString()));
-            }
 
             var key = new SymmetricSecurityKey(
                 Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
@@ -204,11 +191,15 @@ namespace PSBS.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
+
+
         [Authorize]
         [HttpDelete("delete-my-account")]
         public async Task<IActionResult> DeleteMyAccount()
         {
+            // 1️⃣ Get user id from JWT (CORRECT CLAIM)
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
             if (userIdClaim == null)
                 return Unauthorized("User ID not found in token");
 
@@ -216,6 +207,7 @@ namespace PSBS.Controllers
 
             using var connection = _context.CreateConnection();
 
+            // 2️⃣ DELETE FROM CORRECT TABLE
             var rows = await connection.ExecuteAsync(
                 "DELETE FROM UsersRegistration WHERE Id = @UserId",
                 new { UserId = userId }
@@ -226,7 +218,10 @@ namespace PSBS.Controllers
 
             return Ok("Account deleted successfully");
         }
+
     }
+
+
 
     // ================= DTOs =================
     public class LoginRequest

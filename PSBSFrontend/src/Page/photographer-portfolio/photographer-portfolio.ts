@@ -43,7 +43,9 @@ export class PhotographerPortfolio implements OnInit {
   }
 
   loadPortfolio() {
-    this.http.get<any[]>(this.apiUrl)
+    var user=JSON.parse(localStorage.getItem('user')??"");
+    var apiUrl=`https://localhost:7272/api/PhotographerPortfolio?photographerId=${user.userId}`;
+    this.http.get<any[]>(apiUrl)
       .subscribe(res => {
         console.log(res);
         this.portfolios = res;
@@ -65,6 +67,11 @@ export class PhotographerPortfolio implements OnInit {
     formData.append('title', this.portfolio.title);
     formData.append('category', this.portfolio.category);
     formData.append('description', this.portfolio.description);
+    var user=JSON.parse(localStorage.getItem('user')??"");
+    formData.append('photographerId', user.userId);
+    debugger;
+
+
 
     if (this.selectedFile)
       formData.append('image', this.selectedFile);

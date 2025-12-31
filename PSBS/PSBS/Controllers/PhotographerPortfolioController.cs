@@ -20,14 +20,15 @@ namespace PSBS.Controllers
 
         // ✅ GET ALL
         [HttpGet]
-        public async Task<IActionResult> GetAll()
+        public async Task<IActionResult> GetAll(int photographerId)
         {
             var sql = @"SELECT * FROM PhotographerPortfolio
                     WHERE IsActive = 1
+                    AND PhotographerId = @PhotographerId
                     ORDER BY CreatedAt DESC";
 
             using var con = _context.CreateConnection();
-            var data = await con.QueryAsync(sql);
+            var data = await con.QueryAsync(sql, new { PhotographerId = photographerId });
             return Ok(data);
         }
 
@@ -62,16 +63,18 @@ namespace PSBS.Controllers
 
             var sql = @"INSERT INTO PhotographerPortfolio
                     (PhotographerId, Title, Category, Description, ImageName, ImageUrl, IsActive)
-                    VALUES (1,@Title,@Category,@Description,@ImageName,@ImageUrl,1)";
+                    VALUES (@photographerId,@Title,@Category,@Description,@ImageName,@ImageUrl,1)";
 
             using var con = _context.CreateConnection();
             await con.ExecuteAsync(sql, new
             {
+                model.photographerId,
                 model.Title,
                 model.Category,
                 model.Description,
                 ImageName = fileName,
                 ImageUrl = imageUrl
+
             });
 
             return Ok();
@@ -120,6 +123,7 @@ namespace PSBS.Controllers
 
     public class PhotographerPortfolioCreateDto
     {
+        public int photographerId { get; set; }
         public string Title { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
