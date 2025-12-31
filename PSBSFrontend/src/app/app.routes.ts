@@ -73,6 +73,8 @@ import { BookingPackage } from '../Page/booking-package/booking-package';
 import { Profile } from '../Page/profile/profile';
 import { About } from '../Page/about/about';
 import { Contact } from '../Page/contact/contact';
+import { PrivacyPolicy } from '../Page/privacy-policy/privacy-policy';
+import { TermsUse } from '../Page/terms-use/terms-use';
 
 
 // AUTH PAGES
@@ -103,7 +105,9 @@ export const routes: Routes = [
       { path: 'all-packages', component: AllPackages },
       { path: 'about', component: About },
       { path: 'contact', component: Contact },
-      { path: 'photos-by-category', component: PhotoByCat }
+      { path: 'photos-by-category', component: PhotoByCat },
+      { path: 'privacy-policy', component: PrivacyPolicy },
+      { path: 'terms-use', component: TermsUse }
     ]
   },
 
