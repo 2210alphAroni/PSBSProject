@@ -361,99 +361,65 @@
 <!-- PHOTOGRAPHERS (Photographer panel preview) -->
 <section id="photographers" class="py-5">
   <div class="container">
+
     <div class="text-center mb-5">
       <h2 class="fw-bold">Our Photographers</h2>
-      <p class="text-muted">Portfolio, availability, and booking requests</p>
-
-      <button class="btn btn-outline-primary fw-semibold">View All Photographers</button>
+      <p class="text-muted">
+        Portfolio, availability, and booking requests
+      </p>
     </div>
 
+    <!-- 🔁 Dynamic Photographer Cards -->
     <div class="row g-4">
-      <div class="col-md-4">
+
+      <div
+        class="col-md-4"
+        *ngFor="let p of photographers">
+
         <div class="card border-0 shadow-sm rounded-4 h-100">
           <div class="card-body">
+
+            <!-- Header -->
             <div class="d-flex align-items-center gap-3 mb-3">
               <div
-                class="rounded-circle bg-primary-subtle text-primary d-flex align-items-center justify-content-center">
+                class="rounded-circle bg-primary-subtle text-primary
+                       d-flex align-items-center justify-content-center"
+                style="width:50px;height:50px;font-weight:600;">
+                {{ p.FullName?.charAt(0) }}
               </div>
+
               <div>
-                <div class="fw-bold">Rezwan Khan</div>
-                <div class="small text-muted">Wedding • Event</div>
+                <div class="fw-bold">{{ p.FullName }}</div>
+                <div class="small text-muted">
+                  {{ p.Specialty || 'Professional Photographer' }}
+                </div>
               </div>
             </div>
 
+            <!-- Badges -->
             <div class="d-flex flex-wrap gap-2 mb-3">
-              <span class="badge bg-success-subtle text-success">Available
-                Dates</span>
-              <span class="badge bg-info-subtle text-info">Portfolio</span>
-              <span class="badge bg-warning-subtle text-warning">Chat</span>
+              <span class="badge bg-success-subtle text-success">
+                Available
+              </span>
+              <span class="badge bg-info-subtle text-info">
+                Portfolio
+              </span>
+              <span class="badge bg-warning-subtle text-warning">
+                Chat
+              </span>
             </div>
 
-            <a routerLink="/booking"
-              class="btn btn-outline-primary w-100 fw-semibold">
+            <!-- Action -->
+            <button
+              class="btn btn-outline-primary w-100 fw-semibold"
+              (click)="book(p.Id)">
               Book This Photographer
-            </a>
+            </button>
+
           </div>
         </div>
       </div>
 
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-          <div class="card-body">
-            <div class="d-flex align-items-center gap-3 mb-3">
-              <div
-                class="rounded-circle bg-success-subtle text-success d-flex align-items-center justify-content-center">
-              </div>
-              <div>
-                <div class="fw-bold">Md. Nabinur Islam Roni</div>
-                <div class="small text-muted">Product • Fashion</div>
-              </div>
-            </div>
-
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              <span class="badge bg-success-subtle text-success">Available
-                Slots</span>
-              <span class="badge bg-info-subtle text-info">Reviews</span>
-              <span
-                class="badge bg-warning-subtle text-warning">Messaging</span>
-            </div>
-
-            <a routerLink="/booking"
-              class="btn btn-outline-primary w-100 fw-semibold">
-              Book This Photographer
-            </a>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-          <div class="card-body">
-            <div class="d-flex align-items-center gap-3 mb-3">
-              <div
-                class="rounded-circle bg-warning-subtle text-warning d-flex align-items-center justify-content-center">
-              </div>
-              <div>
-                <div class="fw-bold">Abdulla Al Sayem</div>
-                <div class="small text-muted">Corporate • Events</div>
-              </div>
-            </div>
-
-            <div class="d-flex flex-wrap gap-2 mb-3">
-              <span
-                class="badge bg-success-subtle text-success">Accept/Reject</span>
-              <span class="badge bg-info-subtle text-info">Assigned
-                Bookings</span>
-              <span class="badge bg-warning-subtle text-warning">Chat</span>
-            </div>
-
-            <a routerLink="/booking"
-              class="btn btn-outline-primary w-100 fw-semibold">
-              Book This Photographer
-            </a>
-          </div>
-        </div>
-      </div>
     </div>
 
   </div>

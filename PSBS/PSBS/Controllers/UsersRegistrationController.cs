@@ -37,6 +37,42 @@ namespace PSBS.Controllers
         }
 
 
+        // available-photographers
+        [HttpGet("available-photographers")]
+        public async Task<IActionResult> GetAvailablePhotographers()
+        {
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+
+                var sql = @"
+            SELECT 
+                Id,
+                FullName,
+                Specialty,
+                IsAvailable
+            FROM UsersRegistration
+            WHERE RegisterAS = 'Photographer'
+            AND IsAvailable = 1
+            ORDER BY CreatedAT DESC
+        ";
+
+                var photographers = await connection.QueryAsync(sql);
+
+                return Ok(photographers);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    Message = "Failed to load photographers",
+                    Error = ex.Message
+                });
+            }
+        }
+
+
+        // Registration to save data in db
         [HttpPost("post")]
         public async Task<IActionResult> CreateUser([FromBody] UsersRegistration Users)
         {
