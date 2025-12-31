@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { ActivatedRoute } from '@angular/router';
@@ -11,27 +11,35 @@ import { ActivatedRoute } from '@angular/router';
   styleUrl: './photo-by-cat.css',
 })
 export class PhotoByCat implements OnInit {
-  apiUrl: string = '';
 
   weddingImages: any[] = [];
+  category: string = 'Wedding';
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef,private route: ActivatedRoute) {}
+  constructor(
+    private http: HttpClient,
+    private route: ActivatedRoute
+  ) {}
 
-    ngOnInit(): void {
-      debugger;
-      this.route.queryParamMap.subscribe(params => {
-      const cat = params.get('cat') ?? 'Wedding';
-      this.loadImagesByCategory(cat);
-  });
-
+  ngOnInit(): void {
+    this.route.queryParamMap.subscribe(params => {
+      this.category = params.get('cat') ?? 'Wedding';
+      this.loadImagesByCategory(this.category);
+    });
   }
-  loadImagesByCategory(category: string) {
-    this.apiUrl = `https://localhost:7272/api/PhotographerPortfolio/by-category?category=${category}`;
-    this.http.get<any[]>(this.apiUrl)
-      .subscribe(res => {
-        console.log(res);
+
+  loadImagesByCategory(category: string): void {
+    const apiUrl =
+      `https://localhost:7272/api/PhotographerPortfolio/by-category?category=${encodeURIComponent(category)}`;
+
+    this.http.get<any[]>(apiUrl).subscribe({
+      next: res => {
+        console.log('API Response:', res);
         this.weddingImages = res;
-        this.cdr.detectChanges();
-      });
-    }
+      },
+      error: err => {
+        console.error('API Error:', err);
+        this.weddingImages = [];
+      }
+    });
+  }
 }
