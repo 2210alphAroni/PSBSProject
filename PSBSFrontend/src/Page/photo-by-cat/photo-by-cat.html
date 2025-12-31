@@ -12,14 +12,14 @@
 
     <!-- Empty State -->
     <div *ngIf="weddingImages.length === 0"
-         class="text-center text-muted">
+      class="text-center text-muted">
       No wedding photos available.
     </div>
 
     <!-- Gallery -->
     <div class="row g-4" *ngIf="weddingImages.length > 0">
       <div class="col-6 col-md-4 col-lg-3"
-           *ngFor="let item of weddingImages">
+        *ngFor="let item of weddingImages">
 
         <img
           [src]="item.ImageUrl"
@@ -27,7 +27,13 @@
           style="height:220px; object-fit:cover;"
           alt="{{category}} Photography">
 
+        <!-- for title and description -->
+        <div class="card-body text-center py-3">
+          <h6 class="mb-1">{{ item.Title }}</h6>
+          <small class="text-muted">{{ item.Description }}</small><br>
+        </div>
       </div>
+
     </div>
 
   </div>
