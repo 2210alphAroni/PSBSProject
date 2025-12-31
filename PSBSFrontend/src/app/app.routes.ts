@@ -87,6 +87,7 @@ import { AdminPackages } from '../Page/admin-packages/admin-packages';
 
 //Photographer Dashboard can be added similarly
 import { PhotographerDashboard } from '../Page/photographer-dashboard/photographer-dashboard';
+import { PhotographerProfile } from '../Page/photographer-profile/photographer-profile';
 import { PhotographerPortfolio } from '../Page/photographer-portfolio/photographer-portfolio';
 import { PhotoByCat } from '../Page/photo-by-cat/photo-by-cat';
 
@@ -128,6 +129,7 @@ export const routes: Routes = [
     path: 'photographer-dashboard',
     component: PhotographerDashboard,
     children: [
+      { path: 'photographer-profile', component: PhotographerProfile },
       { path: 'photographer-portfolio', component: PhotographerPortfolio },
     ]
   },

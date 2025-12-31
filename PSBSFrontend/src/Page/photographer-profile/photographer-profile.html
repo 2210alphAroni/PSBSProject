@@ -1,0 +1,64 @@
+<div class="container py-5 mt-5 bg-secondary bg-opacity-10 rounded-4">
+
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+
+      <!-- Profile Card -->
+      <div class="card shadow-lg border-0 rounded-4 overflow-hidden">
+
+        <!-- Header -->
+        <div class="card-header bg-dark text-white text-center py-4">
+          <h4 class="mb-1">My Profile</h4>
+          <small class="opacity-75">Account Information</small>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4">
+
+          <!-- Profile Summary -->
+          <div class="text-center mb-4">
+            <div class="mb-2">
+              <i class="bi bi-person-circle display-1 text-primary"></i>
+            </div>
+            <h5 class="fw-bold mb-0">{{ user?.fullName }}</h5>
+            <span class="badge bg-secondary mt-2 px-3 py-2">
+              {{ user?.registerAS }}
+            </span>
+          </div>
+
+          <!-- Info Table -->
+          <div class="table-responsive">
+            <table class="table table-bordered align-middle text-center mb-0">
+              <tbody>
+                <tr>
+                  <th class="bg-light">Username</th>
+                  <td>{{ user?.userName }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Email</th>
+                  <td>{{ user?.email }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Phone</th>
+                  <td>{{ user?.phone }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Gender</th>
+                  <td>{{ user?.gender }}</td>
+                </tr>
+                <tr>
+                  <th class="bg-light">Joined</th>
+                  <td>{{ user?.createdAt | date }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </div>
+
+</div>
