@@ -1,7 +1,6 @@
 ﻿using Dapper;
 using Microsoft.AspNetCore.Mvc;
 using PSBS.Context;
-using PSBS.Model;
 
 namespace PSBS.Controllers
 {
@@ -18,38 +17,66 @@ namespace PSBS.Controllers
             _env = env;
         }
 
-        // ✅ GET ALL
+        // ===============================
+        // GET ALL (Photographer Dashboard)
+        // ===============================
         [HttpGet]
         public async Task<IActionResult> GetAll(int photographerId)
         {
-            var sql = @"SELECT * FROM PhotographerPortfolio
-                    WHERE IsActive = 1
-                    AND PhotographerId = @PhotographerId
-                    ORDER BY CreatedAt DESC";
+            var sql = @"SELECT *
+                FROM PhotographerPortfolio
+                WHERE IsActive = 1
+                AND PhotographerId = @PhotographerId
+                ORDER BY CreatedAt DESC";
 
             using var con = _context.CreateConnection();
             var data = await con.QueryAsync(sql, new { PhotographerId = photographerId });
             return Ok(data);
         }
 
-        // ✅ GET BY CATEGORY
+        // ===============================
+        // GET BY CATEGORY (FRONTEND ONLY)
+        // ===============================
         [HttpGet("by-category")]
         public async Task<IActionResult> GetByCategory(string category)
         {
             var sql = @"SELECT * FROM PhotographerPortfolio
-                    WHERE IsActive = 1
-                    AND Category = @Category
-                    ORDER BY CreatedAt DESC";
+                        WHERE IsActive = 1
+                        AND IsApproved = 1
+                        AND Category = @Category
+                        ORDER BY CreatedAt DESC";
 
             using var con = _context.CreateConnection();
             var data = await con.QueryAsync(sql, new { Category = category });
             return Ok(data);
         }
 
-        // ✅ CREATE
+        // ===============================
+        // CREATE (UPLOAD → PENDING)
+        // ===============================
         [HttpPost]
         public async Task<IActionResult> Create([FromForm] PhotographerPortfolioCreateDto model)
         {
+            // ✅ CATEGORY VALIDATION (SECURITY)
+            string[] allowedCategories =
+            {
+                "Wedding",
+                "Reception",
+                "Birthday",
+                "Corporate",
+                "Pre-wedding",
+                "Baby",
+                "Product",
+                "Fashion"
+            };
+
+            if (!allowedCategories.Any(c =>
+                c.Equals(model.Category, StringComparison.OrdinalIgnoreCase)))
+            {
+                return BadRequest("Invalid category selected");
+            }
+
+            // ✅ IMAGE SAVE
             var folder = Path.Combine(_env.WebRootPath!, "uploads/portfolio");
             Directory.CreateDirectory(folder);
 
@@ -61,32 +88,56 @@ namespace PSBS.Controllers
 
             var imageUrl = $"{Request.Scheme}://{Request.Host}/uploads/portfolio/{fileName}";
 
+            // ✅ INSERT AS PENDING (IsApproved = 0)
             var sql = @"INSERT INTO PhotographerPortfolio
-                    (PhotographerId, Title, Category, Description, ImageName, ImageUrl, IsActive)
-                    VALUES (@photographerId,@Title,@Category,@Description,@ImageName,@ImageUrl,1)";
+                        (
+                            PhotographerId,
+                            Title,
+                            Category,
+                            Description,
+                            ImageName,
+                            ImageUrl,
+                            IsActive,
+                            IsApproved
+                        )
+                        VALUES
+                        (
+                            @PhotographerId,
+                            @Title,
+                            @Category,
+                            @Description,
+                            @ImageName,
+                            @ImageUrl,
+                            1,
+                            0
+                        )";
 
             using var con = _context.CreateConnection();
             await con.ExecuteAsync(sql, new
             {
-                model.photographerId,
+                PhotographerId = model.photographerId,
                 model.Title,
                 model.Category,
                 model.Description,
                 ImageName = fileName,
                 ImageUrl = imageUrl
-
             });
 
-            return Ok();
+            return Ok(new { message = "Uploaded successfully. Waiting for admin approval." });
         }
 
-        // ✅ UPDATE
+        // ===============================
+        // UPDATE (Photographer)
+        // ===============================
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromForm] PhotographerPortfolioUpdateDto model)
         {
             var sql = @"UPDATE PhotographerPortfolio
-                    SET Title=@Title, Category=@Category, Description=@Description
-                    WHERE Id=@Id";
+                        SET Title=@Title,
+                            Category=@Category,
+                            Description=@Description,
+                            IsApproved = 0
+                        WHERE Id=@Id";
 
             using var con = _context.CreateConnection();
             await con.ExecuteAsync(sql, new
@@ -97,28 +148,96 @@ namespace PSBS.Controllers
                 model.Description
             });
 
-            return Ok();
+            return Ok(new { message = "Updated. Needs re-approval." });
         }
 
-        // ✅ DELETE (SOFT)
+        // ===============================
+        // DELETE (SOFT)
+        // ===============================
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            var sql = @"UPDATE PhotographerPortfolio SET IsActive=0 WHERE Id=@Id";
+            var sql = @"UPDATE PhotographerPortfolio
+                        SET IsActive = 0
+                        WHERE Id = @Id";
 
             using var con = _context.CreateConnection();
             await con.ExecuteAsync(sql, new { Id = id });
 
             return Ok();
         }
+
+        // ===============================
+        // ADMIN: GET PENDING
+        // ===============================
+        [HttpGet("pending")]
+        public async Task<IActionResult> GetPending()
+        {
+            var sql = @"SELECT * FROM PhotographerPortfolio
+                        WHERE IsActive = 1
+                        AND IsApproved = 0
+                        ORDER BY CreatedAt DESC";
+
+            using var con = _context.CreateConnection();
+            var data = await con.QueryAsync(sql);
+            return Ok(data);
+        }
+
+        // ===============================
+        // ADMIN: APPROVE
+        // ===============================
+        [HttpPut("approve/{id}")]
+        public async Task<IActionResult> Approve(int id)
+        {
+            var sql = @"UPDATE PhotographerPortfolio
+                        SET IsApproved = 1
+                        WHERE Id = @Id";
+
+            using var con = _context.CreateConnection();
+            await con.ExecuteAsync(sql, new { Id = id });
+            return Ok();
+        }
+
+        // ===============================
+        // ADMIN: REJECT
+        // ===============================
+        [HttpPut("reject/{id}")]
+        public async Task<IActionResult> Reject(int id, [FromBody] RejectDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(dto.RejectReason))
+                return BadRequest("Reject reason required");
+
+            var sql = @"UPDATE PhotographerPortfolio
+                SET 
+                    IsApproved = -1,
+                    RejectReason = @RejectReason,
+                    UpdatedAt = GETDATE()
+                WHERE Id = @Id
+                AND IsActive = 1";
+
+            using var con = _context.CreateConnection();
+            var rows = await con.ExecuteAsync(sql, new
+            {
+                Id = id,
+                RejectReason = dto.RejectReason
+            });
+
+            if (rows == 0)
+                return NotFound("Portfolio not found");
+
+            return Ok(new { message = "Portfolio rejected" });
+        }
     }
 
+    // ===============================
+    // DTOs
+    // ===============================
     public class PhotographerPortfolioUpdateDto
     {
         public string Title { get; set; } = string.Empty;
         public string Category { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public IFormFile Image { get; set; } = null!;
+        public IFormFile? Image { get; set; }
     }
 
     public class PhotographerPortfolioCreateDto
@@ -129,4 +248,10 @@ namespace PSBS.Controllers
         public string Description { get; set; } = string.Empty;
         public IFormFile? Image { get; set; }
     }
+
+    public class RejectDto
+    {
+        public string? RejectReason { get; set; }
+    }
+
 }

@@ -14,15 +14,15 @@
 
         <div class="col-md-6">
           <input type="text"
-                 class="form-control"
-                 placeholder="Photo Title"
-                 [(ngModel)]="portfolio.title">
+            class="form-control"
+            placeholder="Photo Title"
+            [(ngModel)]="portfolio.title">
         </div>
 
         <div class="col-md-6">
           <select class="form-select"
-                  [(ngModel)]="portfolio.category">
-            <option value="">Select Category</option>
+            [(ngModel)]="portfolio.category">
+            <option value>Select Category</option>
             <option *ngFor="let c of categories" [value]="c">
               {{ c }}
             </option>
@@ -31,32 +31,33 @@
 
         <div class="col-md-12">
           <textarea class="form-control"
-                    rows="3"
-                    placeholder="Description"
-                    [(ngModel)]="portfolio.description"></textarea>
+            rows="3"
+            placeholder="Description"
+            [(ngModel)]="portfolio.description"></textarea>
         </div>
 
         <div class="col-md-6">
           <input type="file"
-                 class="form-control"
-                 accept="image/*"
-                 (change)="onFileChange($event)">
+            class="form-control"
+            accept="image/*"
+            (change)="onFileChange($event)">
         </div>
 
         <div class="col-md-6" *ngIf="previewImage">
           <img [src]="previewImage"
-               class="img-fluid rounded shadow"
-               style="max-height: 120px;">
+            class="img-fluid rounded shadow"
+            style="max-height: 120px;">
         </div>
 
         <div class="col-md-12 d-grid">
           <button class="btn btn-primary"
-                  (click)="savePortfolio()">
+            (click)="savePortfolio()">
             {{ portfolio.id === 0 ? 'Upload Portfolio' : 'Update Portfolio' }}
           </button>
         </div>
 
       </div>
+
     </div>
   </div>
 
@@ -65,8 +66,8 @@
     <div class="col-md-4" *ngFor="let item of portfolios">
       <div class="card shadow h-100">
         <img [src]="item.ImageUrl"
-             class="card-img-top"
-             style="height: 220px; object-fit: cover;">
+          class="card-img-top"
+          style="height: 220px; object-fit: cover;">
 
         <div class="card-body">
           <h5 class="fw-bold">{{ item.Title }}</h5>
@@ -74,13 +75,32 @@
           <p class="small text-muted">{{ item.Description }}</p>
         </div>
 
+        <!-- STATUS BADGE -->
+        <span
+          class="badge mb-2"
+          [ngClass]="{
+    'bg-warning': item.IsApproved === 0,
+    'bg-success': item.IsApproved === 1,
+    'bg-danger': item.IsApproved === -1
+  }">
+          {{
+          item.IsApproved === 0 ? 'Pending' :
+          item.IsApproved === 1 ? 'Approved' : 'Rejected'
+          }}
+        </span>
+
+        <!-- REJECT REASON -->
+        <p *ngIf="item.IsApproved === -1" class="text-danger small mt-1">
+          <strong>Reason:</strong> {{ item.RejectReason }}
+        </p>
+
         <div class="card-footer d-flex justify-content-between">
           <button class="btn btn-sm btn-warning"
-                  (click)="editPortfolio(item)">
+            (click)="editPortfolio(item)">
             Edit
           </button>
           <button class="btn btn-sm btn-danger"
-                  (click)="deletePortfolio(item.Id)">
+            (click)="deletePortfolio(item.Id)">
             Delete
           </button>
         </div>

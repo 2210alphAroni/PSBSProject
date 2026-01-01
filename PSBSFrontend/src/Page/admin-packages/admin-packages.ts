@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { RouterModule } from "@angular/router";
 
+/* ================= PACKAGES ================= */
 export interface Package {
   id: number;
   packageName: string;
@@ -14,6 +15,16 @@ export interface Package {
   basePrice: number;
 }
 
+/* ================= PORTFOLIO ================= */
+export interface Portfolio {
+  Id: number;
+  Title: string;
+  Category: string;
+  Description: string;
+  ImageUrl: string;
+  IsApproved: boolean;
+}
+
 @Component({
   selector: 'app-admin-packages',
   standalone: true,
@@ -22,73 +33,83 @@ export interface Package {
 })
 export class AdminPackages implements OnInit {
 
+  /* ================= PACKAGE LOGIC ================= */
   packages: Package[] = [];
+  rejectPortfolioId: number | null = null;
+  rejectReason: string = '';
 
   showForm = false;
   isEditMode = false;
   saving = false;
+  searchText = '';
 
   formModel: Package = this.emptyPackage();
-
   private apiUrl = 'https://localhost:7272/api/Packages';
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  /* ================= PORTFOLIO LOGIC ================= */
+  private portfolioApi =
+    'https://localhost:7272/api/PhotographerPortfolio/pending';
+
+
+  categories: string[] = [
+    'Wedding',
+    'Reception',
+    'Birthday',
+    'Corporate',
+    'Pre-wedding',
+    'Baby',
+    'Product',
+    'Fashion'
+  ];
+
+  activeCategory: string = 'Wedding';
+
+  portfolios: Portfolio[] = [];
+  filteredPortfolios: Portfolio[] = [];
+
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) { }
 
   ngOnInit(): void {
     this.loadPackages();
+    this.loadAllPortfolios();
   }
 
-  // ============ FILTERING ============
-  searchText: string = '';
-
-  // Filter packages based on search text
+  /* ================= PACKAGE FUNCTIONS ================= */
   filteredPackages(): Package[] {
-  if (!this.searchText) {
-    return this.packages;
+    if (!this.searchText) return this.packages;
+
+    const text = this.searchText.toLowerCase();
+    return this.packages.filter(pkg =>
+      pkg.packageName.toLowerCase().includes(text) ||
+      pkg.description.toLowerCase().includes(text)
+    );
   }
 
-  const text = this.searchText.toLowerCase();
-
-  return this.packages.filter(pkg =>
-    pkg.packageName.toLowerCase().includes(text) ||
-    pkg.description.toLowerCase().includes(text) ||
-    pkg.coverageDurationHours.toExponential().includes(text)
-  );
-}
-
-  // ============ LOAD ============
   loadPackages(): void {
     this.http.get<Package[]>(this.apiUrl).subscribe({
-      next: (res) => this.packages = res,
-      error: (err) => this.handleHttpError('Load failed', err),
+      next: res => this.packages = res,
+      error: err => this.handleHttpError('Package load failed', err),
       complete: () => this.cdr.detectChanges()
     });
   }
 
-  // ============ OPEN ADD ============
   addNew(): void {
     this.showForm = true;
     this.isEditMode = false;
     this.formModel = this.emptyPackage();
-    alert('Adding a new package. Fill in the form and click Save.');
   }
 
-  // ============ OPEN EDIT ============
   edit(pkg: Package): void {
     this.showForm = true;
     this.isEditMode = true;
     this.formModel = { ...pkg };
-    alert(`Editing package "${pkg.packageName}". Modify the form and click Save.`);
   }
 
-  // ============ SAVE (ADD/UPDATE) ============
   save(): void {
-    if (!this.formModel.packageName?.trim()) {
-      alert('Package name is required');
-      return;
-    }
-
-    this.saving = true;
+    if (!this.formModel.packageName?.trim()) return;
 
     const payload: Package = {
       ...this.formModel,
@@ -97,58 +118,24 @@ export class AdminPackages implements OnInit {
       maxEditedPhotos: Number(this.formModel.maxEditedPhotos),
     };
 
-    if (this.isEditMode) {
-      this.http.put(`${this.apiUrl}/${payload.id}`, payload).subscribe({
-        next: () => {
-          this.saving = false;
-          this.cancel();
-          this.loadPackages();
-          alert(`Package "${payload.packageName}" updated successfully.`);
-          window.location.reload();
-        },
-        error: (err) => {
-          this.saving = false;
-          this.handleHttpError('Update failed', err);
-        }
-      });
-    } else {
-      // IMPORTANT: backend should return the created Package object
-      this.http.post<Package>(this.apiUrl, payload).subscribe({
-        next: (created) => {
-          this.saving = false;
-          this.cancel();
+    const req = this.isEditMode
+      ? this.http.put(`${this.apiUrl}/${payload.id}`, payload)
+      : this.http.post(this.apiUrl, payload);
 
-          // Fast UI update (no need to wait)
-          if (created?.id) {
-            this.packages = [created, ...this.packages];
-            alert(`Package "${created.packageName}" added successfully.`);
-            window.location.reload();
-          } else {
-            this.loadPackages();          }
-        },
-        error: (err) => {
-          this.saving = false;
-          this.handleHttpError('Add failed', err);
-        }
-      });
-    }
-  }
-
-  // ============ DELETE ============
-  delete(pkg: Package): void {
-    if (!confirm(`Delete package "${pkg.packageName}"?`)) return;
-
-    this.http.delete(`${this.apiUrl}/${pkg.id}`).subscribe({
-      next: () => {
-        this.packages = this.packages.filter(p => p.id !== pkg.id);
-        alert(`Package "${pkg.packageName}" deleted successfully.`);
-        window.location.reload();
-      },
-      error: (err) => this.handleHttpError('Delete failed', err)
+    req.subscribe(() => {
+      this.cancel();
+      this.loadPackages();
     });
   }
 
-  // ============ CANCEL ============
+  delete(pkg: Package): void {
+    if (!confirm(`Delete "${pkg.packageName}"?`)) return;
+
+    this.http.delete(`${this.apiUrl}/${pkg.id}`).subscribe(() => {
+      this.packages = this.packages.filter(p => p.id !== pkg.id);
+    });
+  }
+
   cancel(): void {
     this.showForm = false;
     this.isEditMode = false;
@@ -168,10 +155,110 @@ export class AdminPackages implements OnInit {
   }
 
   private handleHttpError(title: string, err: unknown): void {
-    const e = err as HttpErrorResponse;
-    console.error(title, e);
+    console.error(title, err);
+  }
 
-    window.location.reload();
+  /* ================= PORTFOLIO FUNCTIONS ================= */
+
+  loadAllPortfolios(): void {
+    this.http.get<Portfolio[]>(this.portfolioApi).subscribe({
+      next: res => {
+        console.log('All Portfolios:', res); // for debugging
+        // this.portfolios = res.filter(p => p.IsApproved === true);
+        this.portfolios = res;
+        this.applyCategoryFilter();
+        this.cdr.detectChanges();
+      },
+      error: err =>
+        this.handleHttpError('Portfolio load failed', err)
+    });
+  }
+
+  changeCategory(category: string): void {
+    this.activeCategory = category;
+    this.applyCategoryFilter();
+    this.cdr.detectChanges();
+  }
+
+  applyCategoryFilter(): void {
+    this.filteredPortfolios = this.portfolios.filter(
+      p => p.Category === this.activeCategory
+    );
+  }
+
+  approvePortfolio(id: number): void {
+
+    if (!confirm('Approve this portfolio?')) return;
+
+    const approveUrl =
+      `https://localhost:7272/api/PhotographerPortfolio/approve/${id}`;
+
+    this.http.put(approveUrl, {}).subscribe({
+      next: () => {
+
+        // 🔥 UI থেকে remove
+        this.portfolios = this.portfolios.filter(p => p.Id !== id);
+        this.applyCategoryFilter();
+
+        alert('Portfolio approved successfully');
+
+        this.cdr.detectChanges();
+      },
+      error: err =>
+        this.handleHttpError('Approve failed', err)
+    });
 
   }
+
+  // open modal showing reason for rejection
+  openRejectModal(id: number): void {
+  this.rejectPortfolioId = id;
+  this.rejectReason = '';
+
+  const modal = new (window as any).bootstrap.Modal(
+    document.getElementById('rejectModal')
+  );
+  modal.show();
+}
+  
+// confirm rejection with reason
+confirmReject(): void {
+
+  if (!this.rejectReason.trim()) {
+    alert('Reject reason is required');
+    return;
+  }
+
+  const url =
+    `https://localhost:7272/api/PhotographerPortfolio/reject/${this.rejectPortfolioId}`;
+
+  this.http.put(url, {
+    rejectReason: this.rejectReason
+  }).subscribe(() => {
+
+    // remove from admin list
+    this.portfolios = this.portfolios.filter(
+      p => p.Id !== this.rejectPortfolioId
+    );
+    this.applyCategoryFilter();
+
+    // close modal
+    const modalEl = document.getElementById('rejectModal');
+    const modal = (window as any).bootstrap.Modal.getInstance(modalEl);
+    modal.hide();
+
+    alert('Portfolio rejected');
+    window.setTimeout(() => {
+      this.cdr.detectChanges();
+    }, 0);
+
+    // reset
+
+    this.rejectPortfolioId = null;
+    this.rejectReason = '';
+  });
+}
+
+
+
 }

@@ -35,7 +35,7 @@
             [(ngModel)]="formModel.packageName"
             required>
 
-            <option value="" disabled selected>-- Select Package --</option>
+            <option value disabled selected>-- Select Package --</option>
             <option value="Wedding Photography">Wedding Photography</option>
             <option value="Reception Photography">Reception Photography</option>
             <option value="Birthday Event">Birthday Event</option>
@@ -143,135 +143,116 @@
     </table>
   </div>
 
-  
-  <!-- new section -->
+  <!-- ================= PORTFOLIO CATEGORY SECTION ================= -->
   <section class="container py-5 mt-5">
 
-  <!-- Package Tabs -->
-  <ul class="nav nav-tabs justify-content-center border-0 mb-5">
+    <!-- CATEGORY TABS -->
+    <ul class="nav nav-pills justify-content-center mb-5">
+      <li class="nav-item" *ngFor="let c of categories">
+        <button
+          type="button"
+          class="nav-link"
+          [class.active]="activeCategory === c"
+          (click)="changeCategory(c)">
+          {{ c }}
+        </button>
+      </li>
+    </ul>
 
-    <li class="nav-item">
-      <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#wedding">
-        Wedding 
-      </button>
-    </li>
-
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#reception">
-        Reception 
-      </button>
-    </li>
-
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#birthday">
-        Birthday Event
-      </button>
-    </li>
-
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#corporate">
-        Corporate Event
-      </button>
-    </li>
-
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#prewedding">
-        Pre-wedding Shoot
-      </button>
-    </li>
-
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#baby">
-        Baby Shoot
-      </button>
-    </li>
-
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#product">
-        Product 
-      </button>
-    </li>
-
-    <li class="nav-item">
-      <button class="nav-link" data-bs-toggle="tab" data-bs-target="#fashion">
-        Fashion 
-      </button>
-    </li>
-
-  </ul>
-
-  <!-- Tab Content -->
-  <div class="tab-content text-center">
-
-    <div class="tab-pane fade show active" id="wedding">
-      <h2 class="fw-bold mb-3">Wedding Photography</h2>
-      <p class="text-muted mx-auto" style="max-width: 750px;">
-        Full wedding day coverage capturing rituals, emotions,
-        candid moments, and cinematic highlights.
+    <!-- CATEGORY TITLE -->
+    <div class="text-center mb-4">
+      <h2 class="fw-bold">{{ activeCategory }} Photography</h2>
+      <p class="text-muted">
+        Showing portfolio for {{ activeCategory }} category
       </p>
     </div>
 
-    <div class="tab-pane fade" id="reception">
-      <h2 class="fw-bold mb-3">Reception Photography</h2>
-      <p class="text-muted mx-auto" style="max-width: 750px;">
-        Elegant reception coverage including stage moments,
-        guest interactions, and celebration highlights.
-      </p>
+    <!-- PORTFOLIO GRID -->
+    <div class="row g-4">
+
+      <div
+        class="col-md-4"
+        *ngFor="let item of filteredPortfolios">
+
+        <div class="card shadow h-100">
+          <img
+            [src]="item.ImageUrl"
+            class="card-img-top"
+            alt="Portfolio Image"
+            style="height:220px; object-fit:cover;">
+
+          <div class="card-body">
+            <h5 class="fw-bold">{{ item.Title }}</h5>
+            <span class="badge bg-dark mb-2">
+              {{ item.Category }}
+            </span>
+            <p class="small text-muted">
+              {{ item.Description }}
+            </p>
+          </div>
+
+          <div class="card-footer text-center">
+
+            <button
+              class="btn btn-sm btn-success me-2"
+              (click)="approvePortfolio(item.Id)">
+              Approve
+            </button>
+
+            <button
+              class="btn btn-sm btn-danger"
+              (click)="openRejectModal(item.Id)">
+              Reject
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- EMPTY STATE -->
+      <div
+        *ngIf="filteredPortfolios.length === 0"
+        class="text-center text-muted py-5">
+        No portfolio found for {{ activeCategory }}
+      </div>
+
     </div>
 
-    <div class="tab-pane fade" id="birthday">
-      <h2 class="fw-bold mb-3">Birthday Event</h2>
-      <p class="text-muted mx-auto" style="max-width: 750px;">
-        Colorful and joyful photography capturing decorations,
-        cake cutting, and family celebrations.
-      </p>
-    </div>
-
-    <div class="tab-pane fade" id="corporate">
-      <h2 class="fw-bold mb-3">Corporate Event</h2>
-      <p class="text-muted mx-auto" style="max-width: 750px;">
-        Professional photography for meetings, conferences,
-        seminars, and corporate branding.
-      </p>
-    </div>
-
-    <div class="tab-pane fade" id="prewedding">
-      <h2 class="fw-bold mb-3">Pre-wedding Shoot</h2>
-      <p class="text-muted mx-auto" style="max-width: 750px;">
-        Creative couple photography sessions before the wedding
-        with cinematic storytelling and styling.
-      </p>
-    </div>
-
-    <div class="tab-pane fade" id="baby">
-      <h2 class="fw-bold mb-3">Baby Shoot</h2>
-      <p class="text-muted mx-auto" style="max-width: 750px;">
-        Soft, safe, and adorable photography capturing precious
-        moments of newborns and infants.
-      </p>
-    </div>
-
-    <div class="tab-pane fade" id="product">
-      <h2 class="fw-bold mb-3">Product Photography</h2>
-      <p class="text-muted mx-auto" style="max-width: 750px;">
-        High-quality product images perfect for e-commerce,
-        catalogs, and digital marketing.
-      </p>
-    </div>
-
-    <div class="tab-pane fade" id="fashion">
-      <h2 class="fw-bold mb-3">Fashion Photography</h2>
-      <p class="text-muted mx-auto" style="max-width: 750px;">
-        Editorial and portfolio fashion shoots for models,
-        designers, and clothing brands.
-      </p>
-    </div>
-
-  </div>
-
-</section>
-
-
+  </section>
+  <!-- ================= END PORTFOLIO CATEGORY SECTION ================= -->
 
   <router-outlet></router-outlet>
+</div>
+
+<!-- Reject Modal -->
+<div class="modal fade" id="rejectModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Reject Portfolio</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <div class="modal-body">
+        <textarea
+          class="form-control"
+          rows="4"
+          placeholder="Enter rejection reason..."
+          [(ngModel)]="rejectReason">
+        </textarea>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <button class="btn btn-danger" (click)="confirmReject()">
+          Reject
+        </button>
+      </div>
+
+    </div>
+  </div>
 </div>
