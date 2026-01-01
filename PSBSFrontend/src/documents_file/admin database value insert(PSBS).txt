@@ -17,3 +17,48 @@ ADD ResetToken NVARCHAR(200),
 Google → User approves → Google returns token → 
 Angular sends token → Backend verifies → 
 Your app creates/logs in user
+
+
+// for packages booking in PSBS 
+
+CREATE TABLE Bookings (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+
+    -- Relations
+    UserId INT NOT NULL,
+    PhotographerId INT NOT NULL,
+    PackageId INT NOT NULL,
+
+    -- Booking Details
+    EventCategory NVARCHAR(100) NOT NULL,
+    EventDate DATE NOT NULL,
+    EventLocation NVARCHAR(255) NOT NULL,
+    Notes NVARCHAR(MAX) NULL,
+
+    -- Package Snapshot (for history safety)
+    PackageName NVARCHAR(150) NOT NULL,
+    CoverageDurationHours INT NOT NULL,
+    EditedPhotos INT NOT NULL,
+    RawFilesAvailable BIT NOT NULL,
+    Price DECIMAL(10,2) NOT NULL,
+
+    -- Status
+    BookingStatus NVARCHAR(50) NOT NULL DEFAULT 'Pending',
+    PaymentStatus NVARCHAR(50) NOT NULL DEFAULT 'Unpaid',
+
+    -- Audit
+    CreatedAt DATETIME NOT NULL DEFAULT GETDATE(),
+
+    -- Foreign Keys
+    CONSTRAINT FK_Bookings_User
+        FOREIGN KEY (UserId)
+        REFERENCES UsersRegistration(Id),
+
+    CONSTRAINT FK_Bookings_Photographer
+        FOREIGN KEY (PhotographerId)
+        REFERENCES UsersRegistration(Id),
+
+    CONSTRAINT FK_Bookings_Package
+        FOREIGN KEY (PackageId)
+        REFERENCES Packages(id)
+);

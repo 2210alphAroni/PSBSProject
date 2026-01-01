@@ -107,7 +107,9 @@ export const routes: Routes = [
       { path: 'contact', component: Contact },
       { path: 'photos-by-category', component: PhotoByCat },
       { path: 'privacy-policy', component: PrivacyPolicy },
-      { path: 'terms-use', component: TermsUse }
+      { path: 'terms-use', component: TermsUse },
+      { path: 'booking-package', component: BookingPackage },
+
     ]
   },
 
@@ -115,7 +117,6 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'registration', component: Registration },
   { path: 'forgot-password', component: ForgotPassword },
-  { path: 'booking-package', component: BookingPackage },
   { path: 'profile', component: Profile },
 
   // 🛠 ADMIN PAGES → NO HEADER / FOOTER
