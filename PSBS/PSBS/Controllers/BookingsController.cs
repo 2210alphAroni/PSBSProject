@@ -18,34 +18,84 @@ namespace PSBS.Controllers
 
         /* ================= CREATE BOOKING ================= */
         [HttpPost]
-        public async Task<IActionResult> CreateBooking(Booking booking)
+        public async Task<IActionResult> CreateBooking([FromBody] Booking booking)
         {
-            var sql = @"
-                INSERT INTO Bookings
-                (PackageId, Category, Description, Duration, EditedPhotos, RawFiles,
-                 EventDate, Location, Notes, Price)
-                VALUES
-                (@PackageId, @Category, @Description, @Duration, @EditedPhotos, @RawFiles,
-                 @EventDate, @Location, @Notes, @Price)";
+            using var con = _context.CreateConnection();
 
-            await _context.CreateConnection().ExecuteAsync(sql, booking);
+            // ✅ USER EXISTS CHECK
+            var userExists = await con.ExecuteScalarAsync<int>(
+                "SELECT COUNT(1) FROM UsersRegistration WHERE Id = @Id",
+                new { Id = booking.UserId });
+
+            if (userExists == 0)
+                return BadRequest("Invalid UserId. User does not exist.");
+
+            // ✅ PHOTOGRAPHER EXISTS CHECK
+            var photographerExists = await con.ExecuteScalarAsync<int>(
+                "SELECT COUNT(1) FROM UsersRegistration WHERE Id = @Id",
+                new { Id = booking.PhotographerId });
+
+            if (photographerExists == 0)
+                return BadRequest("Invalid PhotographerId. Photographer does not exist.");
+
+            var sql = @"
+            INSERT INTO Bookings
+            (
+                UserId,
+                PhotographerId,
+                PackageId,
+                EventCategory,
+                EventDate,
+                EventLocation,
+                Notes,
+                PackageName,
+                CoverageDurationHours,
+                EditedPhotos,
+                RawFilesAvailable,
+                Price,
+                BookingStatus,
+                PaymentStatus,
+                CreatedAt
+            )
+            VALUES
+            (
+                @UserId,
+                @PhotographerId,
+                @PackageId,
+                @EventCategory,
+                @EventDate,
+                @EventLocation,
+                @Notes,
+                @PackageName,
+                @CoverageDurationHours,
+                @EditedPhotos,
+                @RawFilesAvailable,
+                @Price,
+                'Pending',
+                'Unpaid',
+                GETDATE()
+            );
+        ";
+
+            await con.ExecuteAsync(sql, booking);
 
             return Ok(new { message = "Booking created successfully" });
         }
+
 
         /* ================= USER BOOKINGS ================= */
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUserBookings(int userId)
         {
             var sql = @"
-                SELECT b.*, p.Name AS PackageName
-                FROM Bookings b
-                JOIN Packages p ON b.PackageId = p.Id
-                WHERE b.UserId = @userId
-                ORDER BY b.CreatedAt DESC";
+                SELECT *
+                FROM Bookings
+                WHERE UserId = @UserId
+                ORDER BY CreatedAt DESC
+            ";
 
-            var bookings = await _context.CreateConnection()
-                .QueryAsync(sql, new { userId });
+            using var con = _context.CreateConnection();
+            var bookings = await con.QueryAsync<Booking>(sql, new { UserId = userId });
 
             return Ok(bookings);
         }
@@ -55,12 +105,14 @@ namespace PSBS.Controllers
         public async Task<IActionResult> GetAllBookings()
         {
             var sql = @"
-                SELECT b.*, p.Name AS PackageName
-                FROM Bookings b
-                JOIN Packages p ON b.PackageId = p.Id
-                ORDER BY b.CreatedAt DESC";
+                SELECT *
+                FROM Bookings
+                ORDER BY CreatedAt DESC
+            ";
 
-            var bookings = await _context.CreateConnection().QueryAsync(sql);
+            using var con = _context.CreateConnection();
+            var bookings = await con.QueryAsync<Booking>(sql);
+
             return Ok(bookings);
         }
     }

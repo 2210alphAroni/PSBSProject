@@ -13,11 +13,12 @@ import { FormsModule } from '@angular/forms';
 })
 export class BookingPackage implements OnInit {
 
-  userId = 1;           // login system থেকে আসবে
+  userId = 0;           // login system থেকে আসবে
   photographerId = 0;   // portfolio থেকে আসবে
   packageId!: number;
 
   booking = {
+    EventCategory: '',
     EventDate: '',
     EventLocation: '',
     Notes: '',
@@ -54,23 +55,36 @@ export class BookingPackage implements OnInit {
         this.booking.EditedPhotos = res.maxEditedPhotos;
         this.booking.RawFilesAvailable = res.rawFilesAvailable;
         this.booking.Price = res.basePrice;
+
+        this.photographerId = res.photographerId;
         this.cdr.detectChanges();
       });
   }
 
   submitBooking() {
-    const payload = {
-      UserId: this.userId,
-      PhotographerId: this.photographerId,
-      PackageId: this.packageId,
-      ...this.booking
-    };
+  const payload = {
+    UserId: this.userId,
+    PhotographerId: this.photographerId,
+    PackageId: this.packageId,
 
-    this.http
-      .post('https://localhost:7272/api/bookings', payload)
-      .subscribe(() => {
-        alert('Booking Confirmed Successfully');
-        this.cdr.detectChanges();
-      });
-  }
+    EventCategory: this.booking.EventCategory,
+    EventDate: new Date(this.booking.EventDate),
+    EventLocation: this.booking.EventLocation,
+    Notes: this.booking.Notes,
+
+    PackageName: this.booking.PackageName,
+    CoverageDurationHours: this.booking.CoverageDurationHours,
+    EditedPhotos: this.booking.EditedPhotos,
+    RawFilesAvailable: this.booking.RawFilesAvailable,
+    Price: this.booking.Price
+  };
+
+  this.http
+    .post('https://localhost:7272/api/Bookings', payload)
+    .subscribe(() => {
+      alert('Booking Confirmed Successfully');
+      this.cdr.detectChanges();
+    });
+}
+
 }
