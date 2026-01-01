@@ -67,7 +67,33 @@ namespace PSBS.Controllers
             return Ok(packageDict.Values);
         }
 
-        // ================= ADD PACKAGE =================
+        // new get method using id 
+        // ================= GET PACKAGE BY ID =================
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetPackageById(int id)
+        {
+            var sql = @"
+        SELECT
+            id,
+            package_name AS PackageName,
+            description,
+            coverage_duration_hours AS CoverageDurationHours,
+            max_edited_photos AS MaxEditedPhotos,
+            raw_files_available AS RawFilesAvailable,
+            base_price AS BasePrice
+        FROM Packages
+        WHERE id = @Id;
+    ";
+
+            using var connection = _context.CreateConnection();
+            var package = await connection.QueryFirstOrDefaultAsync<Package>(sql, new { Id = id });
+
+            if (package == null)
+                return NotFound("Package not found");
+
+            return Ok(package);
+        }
+
         // ================= ADD PACKAGE =================
         [HttpPost]
         public async Task<IActionResult> AddPackage([FromBody] Package package)
