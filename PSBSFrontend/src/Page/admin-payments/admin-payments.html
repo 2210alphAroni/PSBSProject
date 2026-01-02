@@ -1,1 +1,67 @@
-<p>admin-payments works!</p>
+<section class="py-5 bg-light">
+  <div class="container">
+
+    <h2 class="fw-bold mb-4">All Payments</h2>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center text-muted">
+      Loading payments...
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="alert alert-danger text-center">
+      {{ error }}
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive" *ngIf="!loading && payments.length">
+      <table class="table table-bordered table-hover align-middle">
+
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>User ID</th>
+            <th>Photographer ID</th>
+            <th>Amount</th>
+            <th>Payment Status</th>
+            <th>Paid At</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let p of payments; let i = index">
+            <td>{{ i + 1 }}</td>
+
+            <td>{{ p.userId }}</td>
+            <td>{{ p.photographerId }}</td>
+            <td>৳ {{ p.price }}</td>
+
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': p.paymentStatus === 'Paid',
+                  'bg-danger': p.paymentStatus !== 'Paid'
+                }">
+                {{ p.paymentStatus || 'Unpaid' }}
+              </span>
+            </td>
+
+            <td>
+              {{ p.paymentStatus === 'Paid'
+                  ? (p.createdAt | date:'short')
+                  : '-' }}
+            </td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!loading && !payments.length" class="text-center text-muted">
+      No payments found
+    </div>
+
+  </div>
+</section>
