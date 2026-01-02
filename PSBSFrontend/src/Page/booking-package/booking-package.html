@@ -12,7 +12,7 @@
       (ngSubmit)="submitBooking()">
 
       <!-- Event Date -->
-      <div class="col-md-12">
+      <div class="col-md-6">
         <label class="form-label fw-semibold">Event Date</label>
         <input
           type="date"
@@ -20,11 +20,30 @@
           [(ngModel)]="booking.EventDate"
           name="EventDate"
           required
+          (change)="checkAvailability()"
           #eventDate="ngModel">
 
         <small class="text-danger"
           *ngIf="eventDate.invalid && bookingForm.submitted">
           Event date is required
+        </small>
+      </div>
+
+      <!-- Event Start Time -->
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Event Start Time</label>
+        <input
+          type="time"
+          class="form-control"
+          [(ngModel)]="booking.EventStartTime"
+          name="EventStartTime"
+          required
+          (change)="checkAvailability()"
+          #startTime="ngModel">
+
+        <small class="text-danger"
+          *ngIf="startTime.invalid && bookingForm.submitted">
+          Event start time is required
         </small>
       </div>
 
@@ -53,7 +72,8 @@
           class="form-select"
           [(ngModel)]="photographerId"
           name="PhotographerId"
-          required>
+          required
+          (change)="checkAvailability()">
 
           <option [ngValue]="0">-- Select Photographer --</option>
           <option *ngFor="let p of photographers" [ngValue]="p.Id">
@@ -65,6 +85,10 @@
           *ngIf="photographerId === 0 && bookingForm.submitted">
           Please select a photographer
         </small>
+
+        <div *ngIf="!isPhotographerAvailable" class="alert alert-danger mt-2">
+          {{ availabilityMessage }}
+        </div>
       </div>
 
       <!-- Notes -->
@@ -135,11 +159,11 @@
       <div class="col-12 text-center">
         <button
           class="btn btn-dark btn-lg px-5 rounded-pill"
-          type="submit">
+          type="submit"
+          [disabled]="!isPhotographerAvailable || checkingAvailability">
           Confirm Booking
         </button>
 
-        <!-- Success Message -->
         <div *ngIf="bookingSuccess" class="mt-3">
           <span class="text-success fw-semibold">
             ✔ Booking Successful

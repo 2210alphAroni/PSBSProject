@@ -1,11 +1,9 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsersRegistrationService } from '../../app/Services/users-registration.service';
-import { Router } from '@angular/router';
-
 
 @Component({
   selector: 'app-booking-package',
@@ -16,16 +14,20 @@ import { Router } from '@angular/router';
 })
 export class BookingPackage implements OnInit {
 
-  userId = 0;           // login system থেকে আসবে
-  photographerId = 0;   // package অথবা dropdown থেকে আসবে
+  userId = 0;
+  photographerId = 0;
   packageId!: number;
 
-  // ✅ photographers list for dropdown
   photographers: any[] = [];
-  bookingSuccess: boolean = false;
+  bookingSuccess = false;
+
+  isPhotographerAvailable = true;
+  availabilityMessage = '';
+  checkingAvailability = false;
 
   booking = {
     EventDate: '',
+    EventStartTime: '',
     EventLocation: '',
     Notes: '',
     PackageName: '',
@@ -41,74 +43,98 @@ export class BookingPackage implements OnInit {
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
     private userService: UsersRegistrationService
-  ) { }
+  ) {}
 
   ngOnInit(): void {
-
-    // ✅ Load photographers for dropdown
     this.loadPhotographers();
 
     this.route.queryParams.subscribe(params => {
       this.packageId = Number(params['packageId']);
-
       if (this.packageId && !isNaN(this.packageId)) {
         this.loadPackage(this.packageId);
       }
     });
   }
 
-  // ✅ Photographer dropdown data
   loadPhotographers(): void {
     this.userService.getAvailablePhotographers().subscribe({
-      next: (res) => {
+      next: res => {
         this.photographers = res;
-
-        // ✅ AUTO select first photographer if not set
-        if (!this.photographerId && this.photographers.length > 0) {
-          this.photographerId = this.photographers[0].id;
-        }
-
         this.cdr.detectChanges();
-      },
-      error: (err) => {
-        console.error('Failed to load photographers', err);
       }
     });
   }
-  // ✅ Load package details
 
   loadPackage(id: number) {
-    this.http
-      .get<any>(`https://localhost:7272/api/Packages/${id}`)
+    this.http.get<any>(`https://localhost:7272/api/Packages/${id}`)
       .subscribe(res => {
-        console.log('Package Data:', res);
-
         this.booking.PackageName = res.packageName;
         this.booking.CoverageDurationHours = res.coverageDurationHours;
         this.booking.EditedPhotos = res.maxEditedPhotos;
         this.booking.RawFilesAvailable = res.rawFilesAvailable;
         this.booking.Price = res.basePrice;
-
-        // ✅ default photographer from package
         this.photographerId = res.photographerId;
-
         this.cdr.detectChanges();
       });
   }
 
-  submitBooking() {
+  // 🔥 TIME-BASED AVAILABILITY CHECK
+  checkAvailability() {
 
-    // Photographer validation
-  if (this.photographerId === 0) {
-    alert('Please select a photographer');
-    return;
+    if (
+      !this.photographerId ||
+      !this.booking.EventDate ||
+      !this.booking.EventStartTime
+    ) {
+      this.isPhotographerAvailable = true;
+      this.availabilityMessage = '';
+      return;
+    }
+
+    this.checkingAvailability = true;
+
+    this.http.get<any>(
+      'https://localhost:7272/api/Bookings/check-availability',
+      {
+        params: {
+          photographerId: this.photographerId,
+          eventDate: this.booking.EventDate,
+          startTime: this.booking.EventStartTime,
+          durationHours: this.booking.CoverageDurationHours
+        }
+      }
+    ).subscribe({
+      next: res => {
+        this.isPhotographerAvailable = res.isAvailable;
+        this.availabilityMessage = res.isAvailable
+          ? ''
+          : 'Photographer is already booked for this time slot';
+        this.checkingAvailability = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.isPhotographerAvailable = false;
+        this.availabilityMessage = 'Unable to check availability';
+        this.checkingAvailability = false;
+      }
+    });
   }
 
-    // ✅ get logged in user
+  submitBooking() {
+
+    if (!this.isPhotographerAvailable) {
+      alert('Photographer is already booked for this time slot');
+      return;
+    }
+
+    if (this.photographerId === 0) {
+      alert('Please select a photographer');
+      return;
+    }
+
     const user = localStorage.getItem('user');
     if (user) {
-      const userData = JSON.parse(user);
-      this.userId = userData.userId;
+      this.userId = JSON.parse(user).userId;
     }
 
     const payload = {
@@ -117,6 +143,8 @@ export class BookingPackage implements OnInit {
       PackageId: this.packageId,
 
       EventDate: new Date(this.booking.EventDate),
+      EventStartTime: this.booking.EventStartTime,
+
       EventLocation: this.booking.EventLocation,
       Notes: this.booking.Notes,
 
@@ -127,20 +155,21 @@ export class BookingPackage implements OnInit {
       Price: this.booking.Price
     };
 
-
-    console.log('Booking Payload:', payload);
-
-    this.http
-      .post('https://localhost:7272/api/Bookings', payload)
-      .subscribe(() => {
-        this.bookingSuccess = true;
-        alert('Booking Confirmed Successfully');
-        this.cdr.detectChanges();
-        // this.router.navigate(['/home']);
+    this.http.post('https://localhost:7272/api/Bookings', payload)
+      .subscribe({
+        next: () => {
+          this.bookingSuccess = true;
+          alert('Booking Confirmed Successfully');
+          this.cdr.detectChanges();
+          window.location.reload();
+        },
+        error: (err: HttpErrorResponse) => {
+          if (err.status === 409) {
+            alert('Photographer is already booked for this time slot');
+          } else {
+            alert('Booking Failed. Please try again.');
+          }
+        }
       });
-      error: (err: HttpErrorResponse) => {
-        console.error('Booking failed', err);
-        alert('Booking Failed. Please try again.');
-      }
   }
 }

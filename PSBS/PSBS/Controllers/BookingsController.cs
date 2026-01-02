@@ -38,42 +38,84 @@ namespace PSBS.Controllers
             if (photographerExists == 0)
                 return BadRequest("Invalid PhotographerId. Photographer does not exist.");
 
+            // ❗ REQUIRED TIME VALIDATION
+            if (booking.EventStartTime == null)
+                return BadRequest("Event start time is required.");
+
+            if (booking.CoverageDurationHours <= 0)
+                return BadRequest("Invalid package duration.");
+
+            // 🧠 CALCULATE START & END DATETIME
+            var startDateTime = booking.EventDate.Date
+                                .Add(booking.EventStartTime.Value.TimeOfDay);
+
+            var endDateTime = startDateTime
+                                .AddHours(booking.CoverageDurationHours);
+
+            // 🚫 TIME OVERLAP CHECK (CORE LOGIC)
+            var conflictSql = @"
+        SELECT COUNT(1)
+        FROM Bookings
+        WHERE PhotographerId = @PhotographerId
+        AND BookingStatus != 'Rejected'
+        AND EventStartTime < @NewEnd
+        AND EventEndTime > @NewStart
+    ";
+
+            var conflict = await con.ExecuteScalarAsync<int>(conflictSql, new
+            {
+                booking.PhotographerId,
+                NewStart = startDateTime,
+                NewEnd = endDateTime
+            });
+
+            if (conflict > 0)
+                return Conflict("Photographer is already booked in this time slot.");
+
+            // ✅ INSERT BOOKING
             var sql = @"
-            INSERT INTO Bookings
-            (
-                UserId,
-                PhotographerId,
-                PackageId,
-                EventDate,
-                EventLocation,
-                Notes,
-                PackageName,
-                CoverageDurationHours,
-                EditedPhotos,
-                RawFilesAvailable,
-                Price,
-                BookingStatus,
-                PaymentStatus,
-                CreatedAt
-            )
-            VALUES
-            (
-                @UserId,
-                @PhotographerId,
-                @PackageId,
-                @EventDate,
-                @EventLocation,
-                @Notes,
-                @PackageName,
-                @CoverageDurationHours,
-                @EditedPhotos,
-                @RawFilesAvailable,
-                @Price,
-                'Pending',
-                'Unpaid',
-                GETDATE()
-            );
-        ";
+        INSERT INTO Bookings
+        (
+            UserId,
+            PhotographerId,
+            PackageId,
+            EventDate,
+            EventStartTime,
+            EventEndTime,
+            EventLocation,
+            Notes,
+            PackageName,
+            CoverageDurationHours,
+            EditedPhotos,
+            RawFilesAvailable,
+            Price,
+            BookingStatus,
+            PaymentStatus,
+            CreatedAt
+        )
+        VALUES
+        (
+            @UserId,
+            @PhotographerId,
+            @PackageId,
+            @EventDate,
+            @EventStartTime,
+            @EventEndTime,
+            @EventLocation,
+            @Notes,
+            @PackageName,
+            @CoverageDurationHours,
+            @EditedPhotos,
+            @RawFilesAvailable,
+            @Price,
+            'Pending',
+            'Unpaid',
+            GETDATE()
+        );
+    ";
+
+            booking.EventStartTime = startDateTime;
+            booking.EventEndTime = endDateTime;
 
             await con.ExecuteAsync(sql, booking);
 
@@ -113,5 +155,42 @@ namespace PSBS.Controllers
 
             return Ok(bookings);
         }
+
+
+        /* ================= CHECK PHOTOGRAPHER AVAILABILITY ================= */
+        [HttpGet("check-availability")]
+        public async Task<IActionResult> CheckAvailability(
+    int photographerId,
+    DateTime eventDate,
+    TimeSpan startTime,
+    int durationHours)
+        {
+            using var con = _context.CreateConnection();
+
+            var newStart = eventDate.Date.Add(startTime);
+            var newEnd = newStart.AddHours(durationHours);
+
+            var sql = @"
+        SELECT COUNT(1)
+        FROM Bookings
+        WHERE PhotographerId = @PhotographerId
+        AND BookingStatus != 'Rejected'
+        AND EventStartTime < @NewEnd
+        AND EventEndTime > @NewStart
+    ";
+
+            var conflict = await con.ExecuteScalarAsync<int>(sql, new
+            {
+                PhotographerId = photographerId,
+                NewStart = newStart,
+                NewEnd = newEnd
+            });
+
+            return Ok(new
+            {
+                isAvailable = conflict == 0
+            });
+        }
+
     }
 }

@@ -10,8 +10,10 @@
         public int PackageId { get; set; }
 
         // Event Details
-        public string EventCategory { get; set; } = string.Empty;
         public DateTime EventDate { get; set; }
+
+        public DateTime? EventStartTime { get; set; }
+        public DateTime? EventEndTime { get; set; }
         public string EventLocation { get; set; } = string.Empty;
         public string? Notes { get; set; }
 
