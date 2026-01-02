@@ -72,15 +72,56 @@ public class UsersPasswordController : ControllerBase
 
         return Ok(new { message = "Password reset successful" });
     }
+
+    // 3️⃣ CHANGE PASSWORD (LOGGED-IN USER)
+    [HttpPost("change")]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequest request)
+    {
+        using var connection = _context.CreateConnection();
+
+        var user = await connection.QueryFirstOrDefaultAsync<dynamic>(
+            @"SELECT * FROM UsersRegistration 
+          WHERE Id = @UserId AND Password = @CurrentPassword",
+            new
+            {
+                request.UserId,
+                request.CurrentPassword
+            });
+
+        if (user == null)
+            return BadRequest(new { error = "Current password is incorrect" });
+
+        await connection.ExecuteAsync(
+            @"UPDATE UsersRegistration
+          SET Password = @NewPassword,
+              ConfirmPassword = @NewPassword
+          WHERE Id = @UserId",
+            new
+            {
+                request.NewPassword,
+                request.UserId
+            });
+
+        return Ok(new { message = "Password changed successfully" });
+    }
+
 }
 
 public class ForgotPasswordRequest
 {
-    public string Email { get; set; }
+    public string? Email { get; set; }
 }
 
 public class ResetPasswordRequest
 {
-    public string Token { get; set; }
-    public string NewPassword { get; set; }
+    public string? Token { get; set; }
+    public string? NewPassword { get; set; }
 }
+
+public class ChangePasswordRequest
+{
+    public int UserId { get; set; }
+    public string? CurrentPassword { get; set; }
+    public string? NewPassword { get; set; }
+}
+
