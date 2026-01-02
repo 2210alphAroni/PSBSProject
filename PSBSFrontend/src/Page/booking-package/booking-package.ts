@@ -25,6 +25,13 @@ export class BookingPackage implements OnInit {
   availabilityMessage = '';
   checkingAvailability = false;
 
+  // 🔥 PAYMENT STATE (ADDED)
+  showPayment = false;
+  paymentMethod = '';
+  processingPayment = false;
+  paymentSuccess = false;
+  createdBookingId = 0;
+
   booking = {
     EventDate: '',
     EventStartTime: '',
@@ -78,14 +85,9 @@ export class BookingPackage implements OnInit {
       });
   }
 
-  // 🔥 TIME-BASED AVAILABILITY CHECK
   checkAvailability() {
 
-    if (
-      !this.photographerId ||
-      !this.booking.EventDate ||
-      !this.booking.EventStartTime
-    ) {
+    if (!this.photographerId || !this.booking.EventDate || !this.booking.EventStartTime) {
       this.isPhotographerAvailable = true;
       this.availabilityMessage = '';
       return;
@@ -106,9 +108,7 @@ export class BookingPackage implements OnInit {
     ).subscribe({
       next: res => {
         this.isPhotographerAvailable = res.isAvailable;
-        this.availabilityMessage = res.isAvailable
-          ? ''
-          : 'Photographer is already booked for this time slot';
+        this.availabilityMessage = res.isAvailable ? '' : 'Photographer is already booked';
         this.checkingAvailability = false;
         this.cdr.detectChanges();
       },
@@ -123,7 +123,7 @@ export class BookingPackage implements OnInit {
   submitBooking() {
 
     if (!this.isPhotographerAvailable) {
-      alert('Photographer is already booked for this time slot');
+      alert('Photographer is already booked with this schedule.');
       return;
     }
 
@@ -141,13 +141,10 @@ export class BookingPackage implements OnInit {
       UserId: this.userId,
       PhotographerId: this.photographerId,
       PackageId: this.packageId,
-
       EventDate: new Date(this.booking.EventDate),
       EventStartTime: this.booking.EventStartTime,
-
       EventLocation: this.booking.EventLocation,
       Notes: this.booking.Notes,
-
       PackageName: this.booking.PackageName,
       CoverageDurationHours: this.booking.CoverageDurationHours,
       EditedPhotos: this.booking.EditedPhotos,
@@ -155,21 +152,58 @@ export class BookingPackage implements OnInit {
       Price: this.booking.Price
     };
 
-    this.http.post('https://localhost:7272/api/Bookings', payload)
+    this.http.post<any>('https://localhost:7272/api/Bookings', payload)
       .subscribe({
-        next: () => {
+        next: res => {
           this.bookingSuccess = true;
+          this.createdBookingId = res?.id || 0;
+          this.showPayment = true;
           alert('Booking Confirmed Successfully');
           this.cdr.detectChanges();
-          window.location.reload();
         },
         error: (err: HttpErrorResponse) => {
           if (err.status === 409) {
-            alert('Photographer is already booked for this time slot');
+            alert('Photographer already booked');
           } else {
-            alert('Booking Failed. Please try again.');
+            alert('Booking Failed');
           }
         }
       });
+  }
+
+  // 🔥 PAYMENT FUNCTION
+  makePayment() {
+
+    if (!this.createdBookingId) {
+      alert('Booking ID missing');
+      return;
+    }
+
+    this.processingPayment = true;
+
+    setTimeout(() => {
+
+      this.http.put(
+        `https://localhost:7272/api/Bookings/payment/${this.createdBookingId}`,
+        {
+          paymentStatus: 'Paid',
+          paymentMethod: this.paymentMethod
+        }
+      ).subscribe({
+        next: () => {
+          this.processingPayment = false;
+          this.paymentSuccess = true;
+          alert('Payment Successful');
+          setTimeout(() => {
+            this.router.navigate(['/home']);
+          }, 1500);
+        },
+        error: () => {
+          this.processingPayment = false;
+          alert('Payment Failed');
+        }
+      });
+
+    }, 2000);
   }
 }

@@ -173,5 +173,47 @@
 
     </form>
 
+    <!-- ================= PAYMENT SECTION (ADDED) ================= -->
+    <div class="row justify-content-center mt-5" *ngIf="showPayment">
+      <div class="col-md-6">
+
+        <div class="card shadow border-0 rounded-4">
+          <div class="card-body text-center">
+
+            <h4 class="fw-bold mb-3">Complete Payment</h4>
+            <p class="text-muted">
+              Pay <strong>৳ {{ booking.Price }}</strong> to confirm booking
+            </p>
+
+            <select class="form-select mb-3"
+              [(ngModel)]="paymentMethod">
+              <option value="">-- Select Payment Method --</option>
+              <option value="Bkash">bKash</option>
+              <option value="Nagad">Nagad</option>
+              <option value="Card">Debit / Credit Card</option>
+            </select>
+
+            <button
+              class="btn btn-success btn-lg px-5 rounded-pill"
+              (click)="makePayment()"
+              [disabled]="!paymentMethod || processingPayment">
+              Pay Now
+            </button>
+
+            <div *ngIf="processingPayment" class="mt-3 text-muted">
+              Processing payment...
+            </div>
+
+            <div *ngIf="paymentSuccess" class="mt-3 text-success fw-semibold">
+              ✔ Payment Successful
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- ================= PAYMENT SECTION end ================= -->
+
   </div>
 </section>

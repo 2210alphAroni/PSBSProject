@@ -52,15 +52,15 @@ namespace PSBS.Controllers
             var endDateTime = startDateTime
                                 .AddHours(booking.CoverageDurationHours);
 
-            // 🚫 TIME OVERLAP CHECK (CORE LOGIC)
+            // 🚫 TIME OVERLAP CHECK
             var conflictSql = @"
-        SELECT COUNT(1)
-        FROM Bookings
-        WHERE PhotographerId = @PhotographerId
-        AND BookingStatus != 'Rejected'
-        AND EventStartTime < @NewEnd
-        AND EventEndTime > @NewStart
-    ";
+                SELECT COUNT(1)
+                FROM Bookings
+                WHERE PhotographerId = @PhotographerId
+                AND BookingStatus != 'Rejected'
+                AND EventStartTime < @NewEnd
+                AND EventEndTime > @NewStart
+            ";
 
             var conflict = await con.ExecuteScalarAsync<int>(conflictSql, new
             {
@@ -72,56 +72,88 @@ namespace PSBS.Controllers
             if (conflict > 0)
                 return Conflict("Photographer is already booked in this time slot.");
 
-            // ✅ INSERT BOOKING
-            var sql = @"
-        INSERT INTO Bookings
-        (
-            UserId,
-            PhotographerId,
-            PackageId,
-            EventDate,
-            EventStartTime,
-            EventEndTime,
-            EventLocation,
-            Notes,
-            PackageName,
-            CoverageDurationHours,
-            EditedPhotos,
-            RawFilesAvailable,
-            Price,
-            BookingStatus,
-            PaymentStatus,
-            CreatedAt
-        )
-        VALUES
-        (
-            @UserId,
-            @PhotographerId,
-            @PackageId,
-            @EventDate,
-            @EventStartTime,
-            @EventEndTime,
-            @EventLocation,
-            @Notes,
-            @PackageName,
-            @CoverageDurationHours,
-            @EditedPhotos,
-            @RawFilesAvailable,
-            @Price,
-            'Pending',
-            'Unpaid',
-            GETDATE()
-        );
-    ";
-
+            // ✅ SET FINAL DATETIME
             booking.EventStartTime = startDateTime;
             booking.EventEndTime = endDateTime;
 
-            await con.ExecuteAsync(sql, booking);
+            // ✅ INSERT + RETURN ID (FIXED PART)
+            var sql = @"
+                INSERT INTO Bookings
+                (
+                    UserId,
+                    PhotographerId,
+                    PackageId,
+                    EventDate,
+                    EventStartTime,
+                    EventEndTime,
+                    EventLocation,
+                    Notes,
+                    PackageName,
+                    CoverageDurationHours,
+                    EditedPhotos,
+                    RawFilesAvailable,
+                    Price,
+                    BookingStatus,
+                    PaymentStatus,
+                    CreatedAt
+                )
+                VALUES
+                (
+                    @UserId,
+                    @PhotographerId,
+                    @PackageId,
+                    @EventDate,
+                    @EventStartTime,
+                    @EventEndTime,
+                    @EventLocation,
+                    @Notes,
+                    @PackageName,
+                    @CoverageDurationHours,
+                    @EditedPhotos,
+                    @RawFilesAvailable,
+                    @Price,
+                    'Pending',
+                    'Unpaid',
+                    GETDATE()
+                );
 
-            return Ok(new { message = "Booking created successfully" });
+                SELECT CAST(SCOPE_IDENTITY() as int);
+            ";
+
+            var bookingId = await con.ExecuteScalarAsync<int>(sql, booking);
+
+            return Ok(new
+            {
+                id = bookingId,
+                message = "Booking created successfully"
+            });
         }
 
+        /* ================= UPDATE PAYMENT ================= */
+        [HttpPut("payment/{id}")]
+        public async Task<IActionResult> UpdatePayment(int id, [FromBody] PaymentDto dto)
+        {
+            using var con = _context.CreateConnection();
+
+            var sql = @"
+                UPDATE Bookings
+                SET PaymentStatus = @PaymentStatus,
+                    PaymentMethod = @PaymentMethod
+                WHERE Id = @Id
+            ";
+
+            var rows = await con.ExecuteAsync(sql, new
+            {
+                Id = id,
+                PaymentStatus = dto.PaymentStatus,
+                PaymentMethod = dto.PaymentMethod
+            });
+
+            if (rows == 0)
+                return NotFound("Booking not found.");
+
+            return Ok(new { message = "Payment updated successfully" });
+        }
 
         /* ================= USER BOOKINGS ================= */
         [HttpGet("user/{userId}")]
@@ -156,14 +188,13 @@ namespace PSBS.Controllers
             return Ok(bookings);
         }
 
-
         /* ================= CHECK PHOTOGRAPHER AVAILABILITY ================= */
         [HttpGet("check-availability")]
         public async Task<IActionResult> CheckAvailability(
-    int photographerId,
-    DateTime eventDate,
-    TimeSpan startTime,
-    int durationHours)
+            int photographerId,
+            DateTime eventDate,
+            TimeSpan startTime,
+            int durationHours)
         {
             using var con = _context.CreateConnection();
 
@@ -171,13 +202,13 @@ namespace PSBS.Controllers
             var newEnd = newStart.AddHours(durationHours);
 
             var sql = @"
-        SELECT COUNT(1)
-        FROM Bookings
-        WHERE PhotographerId = @PhotographerId
-        AND BookingStatus != 'Rejected'
-        AND EventStartTime < @NewEnd
-        AND EventEndTime > @NewStart
-    ";
+                SELECT COUNT(1)
+                FROM Bookings
+                WHERE PhotographerId = @PhotographerId
+                AND BookingStatus != 'Rejected'
+                AND EventStartTime < @NewEnd
+                AND EventEndTime > @NewStart
+            ";
 
             var conflict = await con.ExecuteScalarAsync<int>(sql, new
             {
@@ -191,6 +222,12 @@ namespace PSBS.Controllers
                 isAvailable = conflict == 0
             });
         }
+    }
 
+    /* ================= PAYMENT DTO ================= */
+    public class PaymentDto
+    {
+        public string? PaymentStatus { get; set; }
+        public string? PaymentMethod { get; set; }
     }
 }
