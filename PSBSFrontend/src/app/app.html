@@ -1,5 +1,12 @@
 <app-header></app-header>
 
+<button
+  class="scroll-top-btn"
+  *ngIf="showScrollTop"
+  (click)="scrollToTop()">
+  ↑
+</button>
+
 <router-outlet></router-outlet>
 
 <app-footer></app-footer>
