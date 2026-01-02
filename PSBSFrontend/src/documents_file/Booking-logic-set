@@ -1,0 +1,180 @@
+🔥 1. Date & Time Conflict Logic (সবচেয়ে important)
+📌 Photographer Availability Conflict
+
+একই photographer যদি:
+
+একই date-এ
+
+already booked থাকে
+➡️ Booking block হবে
+
+Possible Logic:
+
+Backend check:
+
+EventDate + PhotographerId
+
+Frontend:
+
+Warning দেখাবে
+👉 “Photographer is already booked on this date”
+
+📌 Package Coverage Time Conflict
+
+Package duration (e.g. 6 hours)
+
+আগের booking যদি overlap করে
+➡️ conflict
+
+Example:
+
+Booking A: 10am–4pm
+
+Booking B: 2pm–8pm ❌
+
+⚠️ 2. Photographer–Package Compatibility Logic
+📌 Photographer supports this package?
+
+সব photographer সব package support নাও করতে পারে
+
+Example:
+
+Wedding package ❌ Portrait photographer
+
+Logic:
+
+Package ↔ Photographer mapping
+
+Dropdown only shows compatible photographers
+
+👤 3. User-Based Conflict Logic
+📌 Same user multiple bookings
+
+Same user:
+
+Same date
+
+Same location
+➡️ accidental duplicate booking
+
+Logic:
+
+Backend duplicate check
+
+Frontend warning
+
+📌 User booking limit
+
+Free user: max 1 booking
+
+Premium user: unlimited
+
+💰 4. Pricing & Payment Conflict Logic
+📌 Price mismatch protection
+
+Frontend price ≠ backend price ❌
+
+Backend recalculates price
+
+📌 Discount / Coupon Conflict
+
+Coupon expired
+
+Coupon already used
+
+Coupon not applicable to this package
+
+📍 5. Location-Based Conflict Logic
+📌 Distance feasibility
+
+Event location too far
+
+Photographer location ≠ event city
+
+Logic:
+
+Show travel fee
+
+Or block booking
+
+📆 6. Date Validation Logic
+📌 Past date booking ❌
+
+Today < EventDate only allowed
+
+📌 Holiday / blackout dates
+
+Photographer unavailable dates
+
+Public holidays
+
+🧾 7. Data Integrity Logic
+📌 Missing required data
+
+EventLocation empty ❌
+
+EventDate empty ❌
+
+📌 Invalid Notes
+
+Max length limit
+
+Disallow HTML / script
+
+🔐 8. Security & Authorization Logic
+📌 Logged-in user only
+
+If user not logged in:
+➡️ redirect to login
+
+📌 Role check
+
+Only clients can book
+
+Photographer / Admin ❌
+
+🔁 9. Booking Status Lifecycle Logic
+
+Each booking can have status:
+
+Status	Meaning
+Pending	Awaiting confirmation
+Accepted	Photographer accepted
+Rejected	Photographer declined
+Cancelled	User cancelled
+Completed	Event done
+
+Logic:
+
+Cancel allowed before X hours
+
+Reschedule allowed once
+
+🛎️ 10. Notification Logic
+📌 On booking:
+
+Email to user
+
+SMS to photographer
+
+📌 On conflict:
+
+Notify user instantly
+
+📊 11. Analytics / System Logic
+
+Most booked photographer
+
+Peak booking dates
+
+Revenue per package
+
+🚨 12. Extreme Edge Case Logic
+
+Same booking double click
+
+Network timeout
+
+Partial payment success
+
+Browser refresh during submit
