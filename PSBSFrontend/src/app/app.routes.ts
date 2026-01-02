@@ -87,6 +87,7 @@ import { AdminDashboard } from '../Page/admin-dashboard/admin-dashboard';
 import { AdminUsers } from '../Page/admin-users/admin-users';
 import { AdminPackages } from '../Page/admin-packages/admin-packages';
 import { AdminBookings } from '../Page/admin-bookings/admin-bookings';
+import { AdminPayments } from '../Page/admin-payments/admin-payments';
 
 //Photographer Dashboard can be added similarly
 import { PhotographerDashboard } from '../Page/photographer-dashboard/photographer-dashboard';
@@ -127,7 +128,8 @@ export const routes: Routes = [
     children: [
       { path: 'users', component: AdminUsers },
       { path: 'admin-packages', component: AdminPackages },
-      { path: 'admin-bookings', component: AdminBookings }
+      { path: 'admin-bookings', component: AdminBookings },
+      { path: 'admin-payments', component: AdminPayments },
     ]
   },
 
