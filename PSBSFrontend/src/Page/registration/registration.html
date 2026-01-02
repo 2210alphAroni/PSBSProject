@@ -17,11 +17,17 @@
             class="reg-input"
             name="registerAs"
             [(ngModel)]="user.registerAs"
-            required>
+            required
+            #registerAs="ngModel">
             <option value disabled>Select role</option>
             <option value="Photographer">Photographer</option>
             <option value="Client">Client</option>
           </select>
+
+          <div class="text-danger small"
+               *ngIf="registerAs.invalid && (registerAs.touched || regForm.submitted)">
+            Please select a role
+          </div>
         </div>
 
         <!-- Full Name -->
@@ -33,7 +39,13 @@
             name="fullName"
             [(ngModel)]="user.fullName"
             placeholder="Enter your name"
-            required>
+            required
+            #fullName="ngModel">
+
+          <div class="text-danger small"
+               *ngIf="fullName.invalid && (fullName.touched || regForm.submitted)">
+            Full name is required
+          </div>
         </div>
 
         <!-- Email -->
@@ -45,7 +57,13 @@
             name="email"
             [(ngModel)]="user.email"
             placeholder="Enter your email"
-            required>
+            required
+            #email="ngModel">
+
+          <div class="text-danger small"
+               *ngIf="email.invalid && (email.touched || regForm.submitted)">
+            Enter a valid email address
+          </div>
         </div>
 
         <!-- Phone with Country Code -->
@@ -58,7 +76,8 @@
               class="form-select"
               name="countryCode"
               [(ngModel)]="user.countryCode"
-              required>
+              required
+              #countryCode="ngModel">
               <option value>Select Country Code</option>
               <option *ngFor="let c of countries" [value]="c.dialCode">
                 {{ c.flag }} {{ c.name }} ({{ c.dialCode }})
@@ -73,7 +92,18 @@
               [(ngModel)]="user.phone"
               placeholder="Phone number"
               pattern="[0-9]{6,15}"
-              required>
+              required
+              #phone="ngModel">
+          </div>
+
+          <div class="text-danger small"
+               *ngIf="countryCode.invalid && (countryCode.touched || regForm.submitted)">
+            Country code is required
+          </div>
+
+          <div class="text-danger small"
+               *ngIf="phone.invalid && (phone.touched || regForm.submitted)">
+            Enter a valid phone number (6–15 digits)
           </div>
         </div>
 
@@ -86,7 +116,13 @@
             name="userName"
             [(ngModel)]="user.userName"
             placeholder="Choose a username"
-            required>
+            required
+            #userName="ngModel">
+
+          <div class="text-danger small"
+               *ngIf="userName.invalid && (userName.touched || regForm.submitted)">
+            Username is required
+          </div>
         </div>
 
         <!-- Password -->
@@ -99,20 +135,27 @@
             name="password"
             [(ngModel)]="user.password"
             placeholder="Enter password"
-            required />
+            minlength="6"
+            required
+            #password="ngModel" />
 
           <i
             class="fa-solid"
             [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"
             (click)="togglePassword()"
             style="
-            position: absolute;
-            right: 12px;
-            top: 45px;
-            cursor: pointer;
-            color: #666;
-          ">
+              position: absolute;
+              right: 12px;
+              top: 45px;
+              cursor: pointer;
+              color: #666;
+            ">
           </i>
+
+          <div class="text-danger small"
+               *ngIf="password.invalid && (password.touched || regForm.submitted)">
+            Password must be at least 6 characters
+          </div>
         </div>
 
         <!-- Confirm Password -->
@@ -124,7 +167,13 @@
             name="confirmPassword"
             [(ngModel)]="user.confirmPassword"
             placeholder="Re-enter password"
-            required>
+            required
+            #confirmPassword="ngModel">
+
+          <div class="text-danger small"
+               *ngIf="confirmPassword.touched && user.password !== user.confirmPassword">
+            Passwords do not match
+          </div>
         </div>
 
         <!-- Gender -->
@@ -134,12 +183,18 @@
             class="reg-input"
             name="gender"
             [(ngModel)]="user.gender"
-            required>
+            required
+            #gender="ngModel">
             <option value disabled>Select gender</option>
             <option>Male</option>
             <option>Female</option>
             <option>Other</option>
           </select>
+
+          <div class="text-danger small"
+               *ngIf="gender.invalid && (gender.touched || regForm.submitted)">
+            Please select gender
+          </div>
         </div>
 
         <!-- Submit -->

@@ -126,7 +126,6 @@ export class Registration implements OnInit {
     // ---------- REQUIRED FIELD CHECK ----------
     if (form.invalid) {
       alert('Please fill in all required fields correctly.');
-      window.location.reload();
       return;
     }
 
