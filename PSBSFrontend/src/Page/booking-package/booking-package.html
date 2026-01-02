@@ -6,9 +6,73 @@
       <p class="text-muted">Fill in the details to confirm your booking</p>
     </div>
 
+    <section class="mb-5">
+      <h3>Follow the Steps for booking...</h3>
+      <div class="row g-4">
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 rounded-4">
+          <div class="card-body">
+            <div
+              class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
+
+              <!-- Font Awesome Icon -->
+              <i class="fa-solid fa-user fs-4"></i>
+
+            </div>
+            <h6 class="fw-bold">Create Account</h6>
+            <p class="text-muted small mb-0">Registration & login.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 rounded-4">
+          <div class="card-body">
+            <div
+              class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
+               <!-- Font Awesome Icon -->
+              <i class="fa-solid fa-box fs-4"></i>
+            </div>
+            <h6 class="fw-bold">Select Package</h6>
+            <p class="text-muted small mb-0">Duration, photos, add-ons & more.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 rounded-4">
+          <div class="card-body">
+            <div
+              class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
+
+               <!-- Font Awesome Icon -->
+              <i class="fa-solid fa-alarm-clock fs-4"></i>
+            </div>
+            <h6 class="fw-bold">Choose Date</h6>
+            <p class="text-muted small mb-0">Check availability & slots.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-3">
+        <div class="card border-0 shadow-sm h-100 rounded-4">
+          <div class="card-body">
+            <div
+              class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
+               <!-- Font Awesome Icon -->
+              <i class="fa-solid fa-money-bill fs-4"></i>
+            </div>
+            <h6 class="fw-bold">Pay & Confirm</h6>
+            <p class="text-muted small mb-0">Invoice + status tracking.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    </section>
+
     <form
       #bookingForm="ngForm"
-      class="row g-4"
+      class="row g-4 py-5"
       (ngSubmit)="submitBooking()">
 
       <!-- Event Date -->
