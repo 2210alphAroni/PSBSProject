@@ -15,7 +15,6 @@ export class UsersRegistrationService {
   getAvailablePhotographers(): Observable<any[]> {
     return this.http.get<any[]>(
       `${this.apiUrl}/available-photographers`
-      
     );
   }
 }

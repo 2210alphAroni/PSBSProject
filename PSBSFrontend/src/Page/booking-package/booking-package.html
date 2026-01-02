@@ -6,8 +6,10 @@
       <p class="text-muted">Fill in the details to confirm your booking</p>
     </div>
 
-    <form class="row g-4" (ngSubmit)="submitBooking()">
-
+    <form
+      #bookingForm="ngForm"
+      class="row g-4"
+      (ngSubmit)="submitBooking()">
 
       <!-- Event Date -->
       <div class="col-md-12">
@@ -17,7 +19,13 @@
           class="form-control"
           [(ngModel)]="booking.EventDate"
           name="EventDate"
-          required>
+          required
+          #eventDate="ngModel">
+
+        <small class="text-danger"
+          *ngIf="eventDate.invalid && bookingForm.submitted">
+          Event date is required
+        </small>
       </div>
 
       <!-- Location -->
@@ -28,7 +36,35 @@
           class="form-control"
           [(ngModel)]="booking.EventLocation"
           name="EventLocation"
+          required
+          #location="ngModel">
+
+        <small class="text-danger"
+          *ngIf="location.invalid && bookingForm.submitted">
+          Event location is required
+        </small>
+      </div>
+
+      <!-- Photographer Selection -->
+      <div class="col-12">
+        <label class="form-label fw-semibold">Select Photographer</label>
+
+        <select
+          class="form-select"
+          [(ngModel)]="photographerId"
+          name="PhotographerId"
           required>
+
+          <option [ngValue]="0">-- Select Photographer --</option>
+          <option *ngFor="let p of photographers" [ngValue]="p.Id">
+            {{ p.FullName }}
+          </option>
+        </select>
+
+        <small class="text-danger"
+          *ngIf="photographerId === 0 && bookingForm.submitted">
+          Please select a photographer
+        </small>
       </div>
 
       <!-- Notes -->
@@ -52,8 +88,7 @@
 
               <div class="col-md-6">
                 <label class="form-label">Package Name</label>
-                <input
-                  class="form-control"
+                <input class="form-control"
                   [(ngModel)]="booking.PackageName"
                   name="PackageName"
                   readonly>
@@ -61,8 +96,7 @@
 
               <div class="col-md-3">
                 <label class="form-label">Duration (Hours)</label>
-                <input
-                  class="form-control"
+                <input class="form-control"
                   [(ngModel)]="booking.CoverageDurationHours"
                   name="CoverageDurationHours"
                   readonly>
@@ -70,8 +104,7 @@
 
               <div class="col-md-3">
                 <label class="form-label">Edited Photos</label>
-                <input
-                  class="form-control"
+                <input class="form-control"
                   [(ngModel)]="booking.EditedPhotos"
                   name="EditedPhotos"
                   readonly>
@@ -79,16 +112,14 @@
 
               <div class="col-md-6">
                 <label class="form-label">Raw Files</label>
-                <input
-                  class="form-control"
+                <input class="form-control"
                   [value]="booking.RawFilesAvailable ? 'Yes' : 'No'"
                   readonly>
               </div>
 
               <div class="col-md-6">
                 <label class="form-label">Price (৳)</label>
-                <input
-                  class="form-control"
+                <input class="form-control"
                   [(ngModel)]="booking.Price"
                   name="Price"
                   readonly>
@@ -107,6 +138,13 @@
           type="submit">
           Confirm Booking
         </button>
+
+        <!-- Success Message -->
+        <div *ngIf="bookingSuccess" class="mt-3">
+          <span class="text-success fw-semibold">
+            ✔ Booking Successful
+          </span>
+        </div>
       </div>
 
     </form>
