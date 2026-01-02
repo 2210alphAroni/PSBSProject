@@ -130,17 +130,22 @@ namespace PSBS.Controllers
         }
 
         /* ================= UPDATE PAYMENT ================= */
+        /* ================= UPDATE PAYMENT ================= */
         [HttpPut("payment/{id}")]
         public async Task<IActionResult> UpdatePayment(int id, [FromBody] PaymentDto dto)
         {
             using var con = _context.CreateConnection();
 
             var sql = @"
-                UPDATE Bookings
-                SET PaymentStatus = @PaymentStatus,
-                    PaymentMethod = @PaymentMethod
-                WHERE Id = @Id
-            ";
+        UPDATE Bookings
+        SET PaymentStatus = @PaymentStatus,
+            PaymentMethod = @PaymentMethod,
+            BookingStatus = CASE
+                WHEN @PaymentStatus = 'Paid' THEN 'Confirmed'
+                ELSE BookingStatus
+            END
+        WHERE Id = @Id
+    ";
 
             var rows = await con.ExecuteAsync(sql, new
             {
@@ -152,7 +157,10 @@ namespace PSBS.Controllers
             if (rows == 0)
                 return NotFound("Booking not found.");
 
-            return Ok(new { message = "Payment updated successfully" });
+            return Ok(new
+            {
+                message = "Payment & booking status updated successfully"
+            });
         }
 
         /* ================= USER BOOKINGS ================= */
