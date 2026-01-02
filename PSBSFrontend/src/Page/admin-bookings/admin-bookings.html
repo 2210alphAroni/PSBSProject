@@ -1,1 +1,97 @@
-<p>admin-bookings works!</p>
+<section class="py-5 bg-light">
+  <div class="container">
+
+    <h2 class="fw-bold mb-4">All Bookings</h2>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="text-center text-muted">
+      Loading bookings...
+    </div>
+
+    <!-- Error -->
+    <div *ngIf="error" class="alert alert-danger text-center">
+      {{ error }}
+    </div>
+
+    <!-- Table -->
+    <div class="table-responsive" *ngIf="!loading && bookings.length">
+      <table class="table table-bordered table-hover align-middle">
+
+        <thead class="table-dark">
+          <tr>
+            <th>#</th>
+            <th>User ID</th>
+            <th>Photographer ID</th>
+            <th>Package</th>
+            <th>Event Date</th>
+            <th>Start Time</th>
+            <th>Location</th>
+            <th>Price</th>
+            <th>Booking Status</th>
+            <th>Payment Status</th>
+            <th>Created At</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let b of bookings; let i = index">
+            <td>{{ i + 1 }}</td>
+
+            <td>{{ b.userId }}</td>
+            <td>{{ b.photographerId }}</td>
+
+            <td>
+              <strong>{{ b.packageName }}</strong><br>
+              <small class="text-muted">ID: {{ b.packageId }}</small>
+            </td>
+
+            <td>{{ b.eventDate | date:'mediumDate' }}</td>
+
+            <td>
+              {{ b.eventStartTime | date:'shortTime' }}
+              -
+              {{ b.eventEndTime | date:'shortTime' }}
+            </td>
+
+            <td>{{ b.eventLocation }}</td>
+
+            <td>৳ {{ b.price }}</td>
+
+            <!-- Booking Status -->
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': b.bookingStatus === 'Confirmed',
+                  'bg-warning text-dark': b.bookingStatus !== 'Confirmed'
+                }">
+                {{ b.bookingStatus }}
+              </span>
+            </td>
+
+            <!-- Payment Status -->
+            <td>
+              <span
+                class="badge"
+                [ngClass]="{
+                  'bg-success': b.paymentStatus === 'Paid',
+                  'bg-danger': b.paymentStatus !== 'Paid'
+                }">
+                {{ b.paymentStatus }}
+              </span>
+            </td>
+
+            <td>{{ b.createdAt | date:'short' }}</td>
+          </tr>
+        </tbody>
+
+      </table>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="!loading && !bookings.length" class="text-center text-muted">
+      No bookings found
+    </div>
+
+  </div>
+</section>
