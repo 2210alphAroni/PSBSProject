@@ -24,6 +24,7 @@ export class AdminDashboard {
   userCount: any[] = [];
   recentActivities: any[] = [];
   packageCount: number = 0;
+  bookingCount: number = 0;
 
   constructor(private httpRequest: HttpClient, public router: Router, private cdr: ChangeDetectorRef) {
     this.loadDashboard();
@@ -54,12 +55,21 @@ export class AdminDashboard {
 
   ngOnInit() {
     this.loadPackageCount();
+    this.loadBookingCount();
   }
 
   loadPackageCount() {
     this.httpRequest.get<any[]>('https://localhost:7272/api/Packages')
       .subscribe(res => {
         this.packageCount = res.length;
+        this.cdr.detectChanges();
+      });
+  }
+
+  loadBookingCount() {
+    this.httpRequest.get<any[]>('https://localhost:7272/api/Bookings')
+      .subscribe(res => {
+        this.bookingCount = res.length;
         this.cdr.detectChanges();
       });
   }
