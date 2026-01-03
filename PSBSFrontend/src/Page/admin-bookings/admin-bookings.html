@@ -30,13 +30,13 @@
             <th>Booking Status</th>
             <th>Payment Status</th>
             <th>Created At</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
 
         <tbody>
           <tr *ngFor="let b of bookings; let i = index">
             <td>{{ i + 1 }}</td>
-
             <td>{{ b.userId }}</td>
             <td>{{ b.photographerId }}</td>
 
@@ -54,13 +54,10 @@
             </td>
 
             <td>{{ b.eventLocation }}</td>
-
             <td>৳ {{ b.price }}</td>
 
-            <!-- Booking Status -->
             <td>
-              <span
-                class="badge"
+              <span class="badge"
                 [ngClass]="{
                   'bg-success': b.bookingStatus === 'Confirmed',
                   'bg-warning text-dark': b.bookingStatus !== 'Confirmed'
@@ -69,10 +66,8 @@
               </span>
             </td>
 
-            <!-- Payment Status -->
             <td>
-              <span
-                class="badge"
+              <span class="badge"
                 [ngClass]="{
                   'bg-success': b.paymentStatus === 'Paid',
                   'bg-danger': b.paymentStatus !== 'Paid'
@@ -82,16 +77,61 @@
             </td>
 
             <td>{{ b.createdAt | date:'short' }}</td>
+
+            <!-- Actions -->
+            <td class="text-center">
+              <button
+                class="btn btn-sm btn-primary me-1"
+                (click)="openEditModal(b)">
+                Edit
+              </button>
+
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="deleteBooking(b.id ?? b.bookingId)">
+                Delete
+              </button>
+            </td>
           </tr>
         </tbody>
 
       </table>
     </div>
 
-    <!-- Empty -->
     <div *ngIf="!loading && !bookings.length" class="text-center text-muted">
       No bookings found
     </div>
-
   </div>
 </section>
+
+<!-- ================= EDIT MODAL ================= -->
+<div class="modal-backdrop fade show" *ngIf="showEditModal"></div>
+
+<div class="modal fade show d-block" *ngIf="showEditModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Booking</h5>
+        <button class="btn-close" (click)="closeEditModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <p><strong>Booking ID:</strong> {{ selectedBooking?.id ?? selectedBooking?.bookingId }}</p>
+
+        <label class="form-label">Booking Status</label>
+        <select class="form-select" [(ngModel)]="selectedBooking.bookingStatus">
+          <option value="Pending">Pending</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Cancelled">Cancelled</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+        <button class="btn btn-success" (click)="updateBooking()">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>

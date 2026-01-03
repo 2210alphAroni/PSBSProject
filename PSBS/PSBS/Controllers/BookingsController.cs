@@ -254,6 +254,55 @@ namespace PSBS.Controllers
                 isAvailable = conflict == 0
             });
         }
+
+
+        /* ================= PUT : UPDATE BOOKING ================= */
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateBooking(int id, [FromBody] Booking booking)
+        {
+            if (id <= 0)
+                return BadRequest("Invalid booking id");
+
+            var sql = @"
+                UPDATE Bookings SET
+                    BookingStatus = @BookingStatus,
+                    PaymentStatus = @PaymentStatus
+                WHERE Id = @Id
+            ";
+
+            using var connection = _context.CreateConnection();
+
+            var affectedRows = await connection.ExecuteAsync(sql, new
+            {
+                Id = id,
+                booking.BookingStatus,
+                booking.PaymentStatus
+            });
+
+            if (affectedRows == 0)
+                return NotFound("Booking not found");
+
+            return Ok(new { message = "Booking updated successfully" });
+        }
+
+        /* ================= DELETE : DELETE BOOKING ================= */
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteBooking(int id)
+        {
+            if (id <= 0)
+                return BadRequest("Invalid booking id");
+
+            var sql = "DELETE FROM Bookings WHERE Id = @Id";
+
+            using var connection = _context.CreateConnection();
+
+            var affectedRows = await connection.ExecuteAsync(sql, new { Id = id });
+
+            if (affectedRows == 0)
+                return NotFound("Booking not found");
+
+            return Ok(new { message = "Booking deleted successfully" });
+        }
     }
 
     /* ================= PAYMENT DTO ================= */
