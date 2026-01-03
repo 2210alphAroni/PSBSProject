@@ -53,6 +53,42 @@
 
     <h3 class="fw-bold mb-4">Dashboard Overview</h3>
 
+
+    <!-- CHARTS SECTION -->
+    <div class="row mt-5">
+
+      <!-- BAR CHART -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3">User Distribution</h5>
+            <canvas id="userBarChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- LINE CHART -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3">Bookings Trend</h5>
+            <canvas id="bookingLineChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIE CHART -->
+      <div class="col-lg-6 mb-4">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <h5 class="fw-bold mb-3">Overview</h5>
+            <canvas id="overviewPieChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- DASHBOARD STATS -->
     <h3 *ngFor="let data of userCount">
       {{ data.RegisterAS }} : {{ data.personCount }}
@@ -80,10 +116,10 @@
       </li>
     </ul>
 
+
   </ng-container>
 
   <!-- CHILD ROUTES (users, photographers, etc.) -->
   <router-outlet></router-outlet>
 
 </main>
-
