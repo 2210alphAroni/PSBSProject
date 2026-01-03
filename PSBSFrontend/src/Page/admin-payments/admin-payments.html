@@ -25,6 +25,7 @@
             <th>Amount</th>
             <th>Payment Status</th>
             <th>Paid At</th>
+            <th class="text-center">Actions</th>
           </tr>
         </thead>
 
@@ -47,11 +48,23 @@
               </span>
             </td>
 
-            <td>
-              {{ p.paymentStatus === 'Paid'
-                  ? (p.createdAt | date:'short')
-                  : '-' }}
+            <td>{{ p.createdAt | date:'short' }}</td>
+
+            <!-- Actions -->
+            <td class="text-center">
+              <button
+                class="btn btn-sm btn-primary me-1"
+                (click)="openEditModal(p)">
+                Edit
+              </button>
+
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="deletePayment(p.id ?? p.bookingId)">
+                Delete
+              </button>
             </td>
+
           </tr>
         </tbody>
 
@@ -65,3 +78,34 @@
 
   </div>
 </section>
+
+<!-- ================= EDIT MODAL ================= -->
+<div class="modal-backdrop fade show" *ngIf="showEditModal"></div>
+
+<div class="modal fade show d-block" *ngIf="showEditModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
+
+      <div class="modal-header">
+        <h5 class="modal-title">Edit Payment</h5>
+        <button class="btn-close" (click)="closeEditModal()"></button>
+      </div>
+
+      <div class="modal-body">
+        <p><strong>Booking ID:</strong> {{ selectedPayment?.id ?? selectedPayment?.bookingId }}</p>
+
+        <label class="form-label">Payment Status</label>
+        <select class="form-select" [(ngModel)]="selectedPayment.paymentStatus">
+          <option value="Unpaid">Unpaid</option>
+          <option value="Paid">Paid</option>
+        </select>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+        <button class="btn btn-success" (click)="updatePayment()">Save</button>
+      </div>
+
+    </div>
+  </div>
+</div>
