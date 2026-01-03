@@ -76,7 +76,7 @@ namespace PSBS.Controllers
             booking.EventStartTime = startDateTime;
             booking.EventEndTime = endDateTime;
 
-            // ✅ INSERT + RETURN ID (FIXED PART)
+            // ✅ INSERT BOOKING + RETURN ID
             var sql = @"
                 INSERT INTO Bookings
                 (
@@ -122,6 +122,31 @@ namespace PSBS.Controllers
 
             var bookingId = await con.ExecuteScalarAsync<int>(sql, booking);
 
+            /* ================= NEW PART (SAFE ADDITION) ================= */
+
+            // 🔹 GET USER FULL NAME
+            var fullName = await con.ExecuteScalarAsync<string>(
+                "SELECT FullName FROM UsersRegistration WHERE Id = @Id",
+                new { Id = booking.UserId }
+            );
+
+            // 🔹 INSERT RECENT BOOKING ACTIVITY
+            var activitySql = @"
+                INSERT INTO RecentActivities
+                (Message, ActivityType, CreatedAt, FullName)
+                VALUES
+                (@Message, @ActivityType, GETDATE(), @FullName)
+            ";
+
+            await con.ExecuteAsync(activitySql, new
+            {
+                Message = $"New booking created for {booking.PackageName}",
+                ActivityType = "Booking",
+                FullName = fullName
+            });
+
+            /* ================= END NEW PART ================= */
+
             return Ok(new
             {
                 id = bookingId,
@@ -130,22 +155,21 @@ namespace PSBS.Controllers
         }
 
         /* ================= UPDATE PAYMENT ================= */
-        /* ================= UPDATE PAYMENT ================= */
         [HttpPut("payment/{id}")]
         public async Task<IActionResult> UpdatePayment(int id, [FromBody] PaymentDto dto)
         {
             using var con = _context.CreateConnection();
 
             var sql = @"
-        UPDATE Bookings
-        SET PaymentStatus = @PaymentStatus,
-            PaymentMethod = @PaymentMethod,
-            BookingStatus = CASE
-                WHEN @PaymentStatus = 'Paid' THEN 'Confirmed'
-                ELSE BookingStatus
-            END
-        WHERE Id = @Id
-    ";
+                UPDATE Bookings
+                SET PaymentStatus = @PaymentStatus,
+                    PaymentMethod = @PaymentMethod,
+                    BookingStatus = CASE
+                        WHEN @PaymentStatus = 'Paid' THEN 'Confirmed'
+                        ELSE BookingStatus
+                    END
+                WHERE Id = @Id
+            ";
 
             var rows = await con.ExecuteAsync(sql, new
             {
