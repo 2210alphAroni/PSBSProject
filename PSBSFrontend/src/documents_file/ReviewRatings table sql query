@@ -1,0 +1,37 @@
+CREATE TABLE ReviewRatings (
+    Id INT IDENTITY(1,1) PRIMARY KEY,
+
+    -- Who gave the review (Client)
+    UserId INT NOT NULL,
+
+    -- Who received the review
+    PhotographerId INT NOT NULL,
+
+    -- Booking reference (to ensure valid & one-time review)
+    BookingId INT NOT NULL UNIQUE,
+
+    -- Rating & Review
+    Rating INT NOT NULL CHECK (Rating BETWEEN 1 AND 5),
+    ReviewComment NVARCHAR(500) NULL,
+
+    -- Status & moderation
+    IsApproved BIT DEFAULT 1,
+    IsDeleted BIT DEFAULT 0,
+
+    -- Timestamps
+    CreatedAt DATETIME DEFAULT GETDATE(),
+    UpdatedAt DATETIME NULL,
+
+    -- ================== FOREIGN KEYS ==================
+    CONSTRAINT FK_Review_User
+        FOREIGN KEY (UserId)
+        REFERENCES UsersRegistration(Id),
+
+    CONSTRAINT FK_Review_Photographer
+        FOREIGN KEY (PhotographerId)
+        REFERENCES UsersRegistration(Id),
+
+    CONSTRAINT FK_Review_Booking
+        FOREIGN KEY (BookingId)
+        REFERENCES Bookings(Id)
+);
