@@ -105,6 +105,7 @@ export class AdminDashboard{
       .subscribe(res => {
         this.recentActivities = res;
         console.log('Recent Activities:', res);  // Debugging line
+        this.cdr.detectChanges();
       });
   }
 
@@ -115,6 +116,7 @@ export class AdminDashboard{
 
   if (this.userBarChart) {
     this.userBarChart.destroy();
+    this.cdr.detectChanges();
   }
 
   const labels = this.userCount.map(u => u.RegisterAS);
@@ -143,6 +145,7 @@ createBookingLineChart(bookings: any[]) {
 
   if (this.bookingLineChart) {
     this.bookingLineChart.destroy();
+    this.cdr.detectChanges();
   }
 
   const grouped: any = {};
@@ -190,6 +193,7 @@ createOverviewPieChart() {
 
   if (this.overviewPieChart) {
     this.overviewPieChart.destroy();
+    this.cdr.detectChanges();
   }
 
   let admin = 0;
@@ -239,7 +243,6 @@ createOverviewPieChart() {
     }
   });
 }
-
 
 
 }
