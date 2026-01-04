@@ -1,1 +1,80 @@
-<p>review-rating works!</p>
+<section class="py-5 bg-light">
+    <div class="container py-5 mt-5">
+
+        <!-- ======= HEADER ======= -->
+        <h2 class="fw-bold">Photographer Reviews</h2>
+        <p class="text-muted">
+            Average Rating:
+            <span class="fw-bold text-warning">
+                {{ averageRating | number:'1.1-1' }}
+            </span>
+            ⭐ ({{ totalReviews }} reviews)
+        </p>
+
+        <!-- ======= ADD REVIEW ======= -->
+        <div class="card shadow-sm mb-5" *ngIf="!alreadyReviewed">
+            <div class="card-body">
+                <h5 class="fw-bold mb-3">Leave a Review</h5>
+
+                <!-- STAR RATING -->
+                <div class="mb-3">
+                    <span
+                        *ngFor="let s of [1,2,3,4,5]"
+                        (click)="setRating(s)"
+                        style="cursor:pointer;font-size:24px;"
+                        [class.text-warning]="s <= rating"
+                        [class.text-muted]="s > rating">
+                        ★
+                    </span>
+                </div>
+
+                <!-- COMMENT -->
+                <textarea
+                    class="form-control mb-3"
+                    rows="3"
+                    placeholder="Write your review..."
+                    [(ngModel)]="reviewComment">
+        </textarea>
+
+                <button class="btn btn-primary" (click)="submitReview()">
+                    Submit Review
+                </button>
+            </div>
+        </div>
+
+        <!-- ======= ALREADY REVIEWED ======= -->
+        <div class="alert alert-info text-center" *ngIf="alreadyReviewed">
+            You have already submitted a review for this booking.
+        </div>
+
+        <!-- ======= REVIEWS LIST ======= -->
+        <div class="row g-4">
+            <div class="col-md-6" *ngFor="let r of reviews">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body">
+
+                        <div class="d-flex justify-content-between mb-2">
+                            <strong>{{ r.FullName }}</strong>
+                            <small class="text-muted">
+                                {{ r.CreatedAt | date:'mediumDate' }}
+                            </small>
+                        </div>
+
+                        <!-- STARS -->
+                        <div class="mb-2 text-warning">
+                            <span *ngFor="let s of [1,2,3,4,5]">
+                                {{ s <= r.Rating ? '★' : '☆' }}
+                            </span>
+                        </div>
+
+                        <p class="mb-0 text-muted">
+                            {{ r.ReviewComment }}
+                        </p>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</section>

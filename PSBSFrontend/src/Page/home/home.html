@@ -356,8 +356,8 @@
 </section>
 
 <!-- PHOTOGRAPHERS (Photographer panel preview) -->
-<section id="photographers" class="py-5">
-  <div class="container" routerLink="/review-rating">
+<section id="photographers" class="py-5" routerLink="/review-rating">
+  <div class="container">
 
     <div class="text-center mb-5">
       <h2 class="fw-bold">Our Photographers</h2>
@@ -366,17 +366,17 @@
       </p>
     </div>
 
-    <!-- 🔁 Dynamic Photographer Cards -->
     <div class="row g-4">
-
       <div
         class="col-md-4"
         *ngFor="let p of photographers">
 
-        <div class="card border-0 shadow-sm rounded-4 h-100">
+        <!-- 🔥 CLICK HERE -->
+        <div
+          class="card border-0 shadow-sm rounded-4 h-100 cursor-pointer">
+
           <div class="card-body">
 
-            <!-- Header -->
             <div class="d-flex align-items-center gap-3 mb-3">
               <div
                 class="rounded-circle bg-primary-subtle text-primary
@@ -393,7 +393,6 @@
               </div>
             </div>
 
-            <!-- Badges -->
             <div class="d-flex flex-wrap gap-2 mb-3">
               <span class="badge bg-success-subtle text-success">
                 Available
@@ -406,11 +405,11 @@
           </div>
         </div>
       </div>
-
     </div>
 
   </div>
 </section>
+
 
 <!-- REVIEWS -->
 <section id="reviews" class="py-5"

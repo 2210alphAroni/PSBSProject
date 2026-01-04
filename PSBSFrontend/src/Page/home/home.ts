@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Router, RouterModule } from '@angular/router';
+import { Router, RouterLink, RouterModule } from '@angular/router';
 import { UsersRegistrationService } from '../../app/Services/users-registration.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, RouterLink],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
@@ -23,6 +23,7 @@ export class Home implements OnInit {
   ngOnInit(): void {
     this.loadPhotographers();
   }
+
 
   // ✅ Call service → API → DB
   loadPhotographers(): void {
