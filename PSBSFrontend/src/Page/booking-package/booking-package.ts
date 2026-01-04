@@ -31,6 +31,9 @@ export class BookingPackage implements OnInit {
   processingPayment = false;
   paymentSuccess = false;
   createdBookingId = 0;
+  mobileNumber: string = '';
+  paymentCode: string = '';
+  askForCode = false;
 
   booking = {
     EventDate: '',
@@ -50,7 +53,7 @@ export class BookingPackage implements OnInit {
     private http: HttpClient,
     private cdr: ChangeDetectorRef,
     private userService: UsersRegistrationService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadPhotographers();
@@ -206,4 +209,21 @@ export class BookingPackage implements OnInit {
 
     }, 2000);
   }
+
+  //  PAYMENT METHOD SELECTION for phone and get code
+  resetPaymentStep() {
+  this.askForCode = false;
+  this.paymentCode = '';
+}
+
+onSendPayment() {
+  if (!this.askForCode) {
+    // first click → show code input
+    this.askForCode = true;
+    return;
+  }
+
+  // second click → actual payment
+  this.makePayment();
+}
 }
