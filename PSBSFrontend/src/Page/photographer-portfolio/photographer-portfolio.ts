@@ -35,7 +35,6 @@ export class PhotographerPortfolio implements OnInit {
     'Product',
     'Fashion'
   ];
-  // item: any;
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) { }
 
