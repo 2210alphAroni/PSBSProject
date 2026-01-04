@@ -140,6 +140,20 @@ export class BookingPackage implements OnInit {
       this.userId = JSON.parse(user).userId;
     }
 
+    // validation for required fields
+    if (
+      !this.userId ||
+      !this.photographerId ||
+      !this.packageId ||
+      !this.booking.EventDate ||
+      !this.booking.EventStartTime ||
+      !this.booking.EventLocation ||
+      !this.booking.Price
+    ) {
+      alert('Please fill all required booking details.');
+      return;
+    }
+
     const payload = {
       UserId: this.userId,
       PhotographerId: this.photographerId,
@@ -212,18 +226,18 @@ export class BookingPackage implements OnInit {
 
   //  PAYMENT METHOD SELECTION for phone and get code
   resetPaymentStep() {
-  this.askForCode = false;
-  this.paymentCode = '';
-}
-
-onSendPayment() {
-  if (!this.askForCode) {
-    // first click → show code input
-    this.askForCode = true;
-    return;
+    this.askForCode = false;
+    this.paymentCode = '';
   }
 
-  // second click → actual payment
-  this.makePayment();
-}
+  onSendPayment() {
+    if (!this.askForCode) {
+      // first click → show code input
+      this.askForCode = true;
+      return;
+    }
+
+    // second click → actual payment
+    this.makePayment();
+  }
 }
