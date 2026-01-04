@@ -5,6 +5,9 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsersRegistrationService } from '../../app/Services/users-registration.service';
 
+// for pdf genarate
+import jsPDF from 'jspdf';
+
 @Component({
   selector: 'app-booking-package',
   standalone: true,
@@ -237,7 +240,34 @@ export class BookingPackage implements OnInit {
       return;
     }
 
+    // Generate invoice PDF
+    this.generateInvoicePdf();
+
     // second click → actual payment
     this.makePayment();
   }
+
+
+  // generate PDF invoice
+  generateInvoicePdf() {
+    const doc = new jsPDF();
+
+    doc.setFontSize(18);
+    doc.text('INVOICE', 105, 20, { align: 'center' });
+
+    doc.setFontSize(12);
+    doc.text(`Booking ID: ${this.createdBookingId}`, 20, 40);
+    doc.text(`Payment Method: ${this.paymentMethod}`, 20, 50);
+    doc.text(`Mobile Number: ${this.mobileNumber}`, 20, 60);
+    doc.text(`Amount Paid: ৳ ${this.booking.Price}`, 20, 70);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 80);
+
+    doc.line(20, 90, 190, 90);
+
+    doc.text('Thank you for your payment!', 20, 110);
+    doc.text('Photography Service Booking System', 20, 120);
+
+    doc.save(`Invoice_${this.createdBookingId}.pdf`);
+  }
+
 }
