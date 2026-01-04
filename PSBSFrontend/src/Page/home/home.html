@@ -357,7 +357,7 @@
 
 <!-- PHOTOGRAPHERS (Photographer panel preview) -->
 <section id="photographers" class="py-5">
-  <div class="container">
+  <div class="container" routerLink="/review-rating">
 
     <div class="text-center mb-5">
       <h2 class="fw-bold">Our Photographers</h2>
@@ -388,7 +388,7 @@
               <div>
                 <div class="fw-bold">{{ p.FullName }}</div>
                 <div class="small text-muted">
-                  {{ p.Specialty || 'Professional Photographer' }}
+                  {{ p.Specialty || 'Photographer' }}
                 </div>
               </div>
             </div>

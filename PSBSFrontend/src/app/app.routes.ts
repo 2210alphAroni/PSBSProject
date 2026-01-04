@@ -75,6 +75,7 @@ import { About } from '../Page/about/about';
 import { Contact } from '../Page/contact/contact';
 import { PrivacyPolicy } from '../Page/privacy-policy/privacy-policy';
 import { TermsUse } from '../Page/terms-use/terms-use';
+import { ReviewRating } from '../Page/review-rating/review-rating';
 
 
 // AUTH PAGES
@@ -112,6 +113,7 @@ export const routes: Routes = [
       { path: 'privacy-policy', component: PrivacyPolicy },
       { path: 'terms-use', component: TermsUse },
       { path: 'booking-package', component: BookingPackage },
+      { path: 'review-rating', component: ReviewRating },
 
     ]
   },
