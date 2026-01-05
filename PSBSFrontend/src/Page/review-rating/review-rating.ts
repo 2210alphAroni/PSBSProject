@@ -59,7 +59,8 @@ export class ReviewRating implements OnInit {
       .get<any>(`https://localhost:7272/api/UsersRegistration/${this.photographerId}`)
       .subscribe({
         next: res => this.photographer = res,
-        error: err => console.error(err)
+        error: err => console.error(err),
+        complete: () => this.cdr.detectChanges()
       });
   }
 
@@ -79,6 +80,7 @@ export class ReviewRating implements OnInit {
         this.alreadyReviewed = true;
         this.loadReviews();
         this.loadAverageRating();
+        this.cdr.detectChanges();
       },
       error: err => alert(err.error)
     });
@@ -92,6 +94,7 @@ export class ReviewRating implements OnInit {
       .subscribe(res => {
         this.reviews = res;
         this.isLoadingReviews = false;
+        this.cdr.detectChanges();
       });
   }
 
