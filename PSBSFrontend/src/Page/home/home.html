@@ -356,7 +356,7 @@
 </section>
 
 <!-- PHOTOGRAPHERS (Photographer panel preview) -->
-<section id="photographers" class="py-5" routerLink="/review-rating">
+<section id="photographers" class="py-5">
   <div class="container">
 
     <div class="text-center mb-5">
@@ -367,13 +367,13 @@
     </div>
 
     <div class="row g-4">
-      <div
-        class="col-md-4"
-        *ngFor="let p of photographers">
+      <div class="col-md-4" *ngFor="let p of photographers">
 
-        <!-- 🔥 CLICK HERE -->
+        <!-- CLICKABLE CARD -->
         <div
-          class="card border-0 shadow-sm rounded-4 h-100 cursor-pointer">
+          class="card border-0 shadow-sm rounded-4 h-100 cursor-pointer"
+          [routerLink]="['/review-rating']"
+          [queryParams]="{ photographerId: p.Id }">
 
           <div class="card-body">
 
@@ -404,6 +404,7 @@
 
           </div>
         </div>
+
       </div>
     </div>
 

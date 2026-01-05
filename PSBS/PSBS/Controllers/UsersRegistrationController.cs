@@ -71,6 +71,46 @@ namespace PSBS.Controllers
         }
 
 
+        // ================= GET USER BY ID =================
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetUserById(int id)
+        {
+            try
+            {
+                using var connection = _dapperContext.CreateConnection();
+
+                var sql = @"
+            SELECT 
+                Id,
+                RegisterAS,
+                FullName,
+                Email,
+                Phone,
+                Gender,
+                IsAvailable,
+                CreatedAT
+            FROM UsersRegistration
+            WHERE Id = @Id
+        ";
+
+                var user = await connection.QueryFirstOrDefaultAsync(sql, new { Id = id });
+
+                if (user == null)
+                    return NotFound(new { message = "User not found" });
+
+                return Ok(user);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    Message = "Failed to load user",
+                    Error = ex.Message
+                });
+            }
+        }
+
+
         // Registration to save data in db
         [HttpPost("post")]
         public async Task<IActionResult> CreateUser([FromBody] UsersRegistration Users)

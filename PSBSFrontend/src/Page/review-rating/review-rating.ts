@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -16,6 +16,8 @@ export class ReviewRating implements OnInit {
   photographerId!: number;
   userId!: number;
 
+  photographer: any = null;   // 🔥 photographer full info
+
   rating: number = 5;
   reviewComment: string = '';
 
@@ -25,24 +27,43 @@ export class ReviewRating implements OnInit {
   reviews: any[] = [];
   alreadyReviewed = false;
 
-  private api = 'https://localhost:5001/api/ReviewRating';
+  private api = 'https://localhost:7272/api/ReviewRating';
 
   constructor(
     private http: HttpClient,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
 
-    // 🔥 AUTO photographer from card click
-    this.photographerId = Number(
-      this.route.snapshot.paramMap.get('photographerId')
-    );
+    // ✅ photographerId from query params
+    this.route.queryParams.subscribe(params => {
+      this.photographerId = Number(params['photographerId']);
 
+      if (!this.photographerId) {
+        console.error('Photographer ID missing');
+        return;
+      }
+
+      this.loadPhotographer();     // 🔥 NEW
+      this.loadReviews();
+      this.loadAverageRating();
+    });
+
+    // 🔐 user id (unchanged)
     this.userId = Number(localStorage.getItem('userId'));
+  }
 
-    this.loadReviews();
-    this.loadAverageRating();
+  // ================= PHOTOGRAPHER INFO =================
+  loadPhotographer() {
+    this.http
+      .get<any>(`https://localhost:7272/api/UsersRegistration/${this.photographerId}`)
+      .subscribe({
+        next: res => this.photographer = res,
+        error: err => console.error('Failed to load photographer info', err),
+        complete: () => this.cdr.detectChanges()
+      });
   }
 
   // ================= ADD REVIEW =================
@@ -50,7 +71,7 @@ export class ReviewRating implements OnInit {
     const data = {
       userId: this.userId,
       photographerId: this.photographerId,
-      bookingId: 0, // later booking flow এ connect করবে
+      bookingId: 0, // later booking flow
       rating: this.rating,
       reviewComment: this.reviewComment
     };
