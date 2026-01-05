@@ -3,7 +3,6 @@
 
     <h2 class="fw-bold mb-4">All Bookings</h2>
 
-
     <!-- ================= SEARCH / FILTER ================= -->
     <div class="card mb-4 shadow-sm">
       <div class="card-body">
@@ -41,7 +40,7 @@
               class="form-select"
               [(ngModel)]="filters.bookingStatus"
               (change)="applyFilters()">
-              <option value="">Booking Status</option>
+              <option value>Booking Status</option>
               <option value="Pending">Pending</option>
               <option value="Confirmed">Confirmed</option>
               <option value="Cancelled">Cancelled</option>
@@ -53,7 +52,7 @@
               class="form-select"
               [(ngModel)]="filters.paymentStatus"
               (change)="applyFilters()">
-              <option value="">Payment Status</option>
+              <option value>Payment Status</option>
               <option value="Paid">Paid</option>
               <option value="Unpaid">Unpaid</option>
             </select>
@@ -168,7 +167,7 @@
       </table>
     </div>
 
-    <div *ngIf="!loading && !bookings.length" class="text-center text-muted">
+    <div *ngIf="!loading && !filteredBookings.length" class="text-center text-muted">
       No bookings found
     </div>
   </div>
@@ -187,7 +186,8 @@
       </div>
 
       <div class="modal-body">
-        <p><strong>Booking ID:</strong> {{ selectedBooking?.id ?? selectedBooking?.bookingId }}</p>
+        <p><strong>Booking ID:</strong> {{ selectedBooking?.id ??
+          selectedBooking?.bookingId }}</p>
 
         <label class="form-label">Booking Status</label>
         <select class="form-select" [(ngModel)]="selectedBooking.bookingStatus">
@@ -198,7 +198,8 @@
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
+        <button class="btn btn-secondary"
+          (click)="closeEditModal()">Cancel</button>
         <button class="btn btn-success" (click)="updateBooking()">Save</button>
       </div>
 
