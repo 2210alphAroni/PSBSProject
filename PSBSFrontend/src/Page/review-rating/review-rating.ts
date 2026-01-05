@@ -16,7 +16,7 @@ export class ReviewRating implements OnInit {
   photographerId!: number;
   userId!: number;
 
-  photographer: any = null;   // photographer full info
+  photographer: any = null;
 
   rating: number = 5;
   reviewComment: string = '';
@@ -26,6 +26,9 @@ export class ReviewRating implements OnInit {
 
   reviews: any[] = [];
   alreadyReviewed = false;
+
+  isLoadingAvg = true;   // 🔥 added for UX
+  isLoadingReviews = true;
 
   private api = 'https://localhost:7272/api/ReviewRating';
 
@@ -37,21 +40,16 @@ export class ReviewRating implements OnInit {
 
   ngOnInit(): void {
 
-    // photographerId from query params
     this.route.queryParams.subscribe(params => {
       this.photographerId = Number(params['photographerId']);
 
-      if (!this.photographerId) {
-        console.error('Photographer ID missing');
-        return;
-      }
+      if (!this.photographerId) return;
 
-      this.loadPhotographer();     // 🔥 NEW
+      this.loadPhotographer();
       this.loadReviews();
       this.loadAverageRating();
     });
 
-    //  user id (unchanged)
     this.userId = Number(localStorage.getItem('userId'));
   }
 
@@ -61,8 +59,7 @@ export class ReviewRating implements OnInit {
       .get<any>(`https://localhost:7272/api/UsersRegistration/${this.photographerId}`)
       .subscribe({
         next: res => this.photographer = res,
-        error: err => console.error('Failed to load photographer info', err),
-        complete: () => this.cdr.detectChanges()
+        error: err => console.error(err)
       });
   }
 
@@ -71,19 +68,17 @@ export class ReviewRating implements OnInit {
     const data = {
       userId: this.userId,
       photographerId: this.photographerId,
-      bookingId: 0, // later booking flow
+      bookingId: 0,
       rating: this.rating,
       reviewComment: this.reviewComment
     };
 
     this.http.post(this.api, data).subscribe({
       next: () => {
-        alert('Review submitted successfully');
         this.reviewComment = '';
+        this.alreadyReviewed = true;
         this.loadReviews();
         this.loadAverageRating();
-        this.alreadyReviewed = true;
-        this.cdr.detectChanges();
       },
       error: err => alert(err.error)
     });
@@ -91,20 +86,31 @@ export class ReviewRating implements OnInit {
 
   // ================= LOAD REVIEWS =================
   loadReviews() {
+    this.isLoadingReviews = true;
     this.http
       .get<any[]>(`${this.api}/photographer/${this.photographerId}`)
-      .subscribe(res => this.reviews = res);
-      this.cdr.detectChanges();
+      .subscribe(res => {
+        this.reviews = res;
+        this.isLoadingReviews = false;
+      });
   }
 
   // ================= AVERAGE RATING =================
   loadAverageRating() {
+    this.isLoadingAvg = true;
     this.http
       .get<any>(`${this.api}/average/${this.photographerId}`)
-      .subscribe(res => {
-        this.averageRating = res.averageRating;
-        this.totalReviews = res.totalReviews;
-        this.cdr.detectChanges();
+      .subscribe({
+        next: res => {
+          this.averageRating = Number(res?.averageRating) || 0;
+          this.totalReviews = Number(res?.totalReviews) || 0;
+          this.isLoadingAvg = false;
+        },
+        error: () => {
+          this.averageRating = 0;
+          this.totalReviews = 0;
+          this.isLoadingAvg = false;
+        }
       });
   }
 
@@ -112,4 +118,15 @@ export class ReviewRating implements OnInit {
   setRating(value: number) {
     this.rating = value;
   }
+
+  // ⭐ helper for average stars
+  getStarArray() {
+    return [1,2,3,4,5];
+  }
+
+  // ⭐ helper method
+getRoundedRating(): number {
+  return Math.round(this.averageRating || 0);
+}
+
 }
