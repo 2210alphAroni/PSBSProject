@@ -13,11 +13,22 @@ import { FormsModule } from '@angular/forms';
 export class AdminBookings implements OnInit {
 
   bookings: any[] = [];
+  filteredBookings: any[] = [];
+
   loading = true;
   error = '';
 
   showEditModal = false;
   selectedBooking: any = null;
+
+    filters = {
+    userId: '',
+    photographerId: '',
+    location: '',
+    bookingStatus: '',
+    paymentStatus: '',
+    packageName: '',
+  };
 
   private apiUrl = 'https://localhost:7272/api/Bookings';
 
@@ -31,6 +42,7 @@ export class AdminBookings implements OnInit {
     this.http.get<any[]>(this.apiUrl).subscribe({
       next: res => {
         this.bookings = res;
+        this.filteredBookings = res; 
         this.loading = false;
       },
       error: () => {
@@ -39,6 +51,22 @@ export class AdminBookings implements OnInit {
       }
     });
   }
+
+  /* ================= SEARCH LOGIC ================= */
+  applyFilters(): void {
+    this.filteredBookings = this.bookings.filter(b => {
+
+      return (
+        (!this.filters.userId || b.userId?.toString().includes(this.filters.userId)) &&
+        (!this.filters.photographerId || b.photographerId?.toString().includes(this.filters.photographerId)) &&
+        (!this.filters.location || b.eventLocation?.toLowerCase().includes(this.filters.location.toLowerCase())) &&
+        (!this.filters.bookingStatus || b.bookingStatus === this.filters.bookingStatus) &&
+        (!this.filters.paymentStatus || b.paymentStatus === this.filters.paymentStatus) &&
+        (!this.filters.packageName || b.packageName?.toLowerCase().includes(this.filters.packageName.toLowerCase()))
+      );
+    });
+  }
+
 
   /* ================= EDIT ================= */
   openEditModal(booking: any): void {

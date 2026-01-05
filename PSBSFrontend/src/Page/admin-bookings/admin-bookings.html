@@ -3,6 +3,76 @@
 
     <h2 class="fw-bold mb-4">All Bookings</h2>
 
+
+    <!-- ================= SEARCH / FILTER ================= -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-md-2">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="User ID"
+              [(ngModel)]="filters.userId"
+              (input)="applyFilters()">
+          </div>
+
+          <div class="col-md-2">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Photographer ID"
+              [(ngModel)]="filters.photographerId"
+              (input)="applyFilters()">
+          </div>
+
+          <div class="col-md-2">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Location"
+              [(ngModel)]="filters.location"
+              (input)="applyFilters()">
+          </div>
+
+          <div class="col-md-2">
+            <select
+              class="form-select"
+              [(ngModel)]="filters.bookingStatus"
+              (change)="applyFilters()">
+              <option value="">Booking Status</option>
+              <option value="Pending">Pending</option>
+              <option value="Confirmed">Confirmed</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <select
+              class="form-select"
+              [(ngModel)]="filters.paymentStatus"
+              (change)="applyFilters()">
+              <option value="">Payment Status</option>
+              <option value="Paid">Paid</option>
+              <option value="Unpaid">Unpaid</option>
+            </select>
+          </div>
+
+          <div class="col-md-2">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Package"
+              [(ngModel)]="filters.packageName"
+              (input)="applyFilters()">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- ================= END SEARCH ================= -->
+
     <!-- Loading -->
     <div *ngIf="loading" class="text-center text-muted">
       Loading bookings...
@@ -35,7 +105,7 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let b of bookings; let i = index">
+          <tr *ngFor="let b of filteredBookings; let i = index">
             <td>{{ i + 1 }}</td>
             <td>{{ b.userId }}</td>
             <td>{{ b.photographerId }}</td>
