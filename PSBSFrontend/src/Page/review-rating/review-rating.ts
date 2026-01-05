@@ -16,7 +16,7 @@ export class ReviewRating implements OnInit {
   photographerId!: number;
   userId!: number;
 
-  photographer: any = null;   // 🔥 photographer full info
+  photographer: any = null;   // photographer full info
 
   rating: number = 5;
   reviewComment: string = '';
@@ -37,7 +37,7 @@ export class ReviewRating implements OnInit {
 
   ngOnInit(): void {
 
-    // ✅ photographerId from query params
+    // photographerId from query params
     this.route.queryParams.subscribe(params => {
       this.photographerId = Number(params['photographerId']);
 
@@ -51,7 +51,7 @@ export class ReviewRating implements OnInit {
       this.loadAverageRating();
     });
 
-    // 🔐 user id (unchanged)
+    //  user id (unchanged)
     this.userId = Number(localStorage.getItem('userId'));
   }
 
@@ -82,6 +82,8 @@ export class ReviewRating implements OnInit {
         this.reviewComment = '';
         this.loadReviews();
         this.loadAverageRating();
+        this.alreadyReviewed = true;
+        this.cdr.detectChanges();
       },
       error: err => alert(err.error)
     });
@@ -92,6 +94,7 @@ export class ReviewRating implements OnInit {
     this.http
       .get<any[]>(`${this.api}/photographer/${this.photographerId}`)
       .subscribe(res => this.reviews = res);
+      this.cdr.detectChanges();
   }
 
   // ================= AVERAGE RATING =================
@@ -101,6 +104,7 @@ export class ReviewRating implements OnInit {
       .subscribe(res => {
         this.averageRating = res.averageRating;
         this.totalReviews = res.totalReviews;
+        this.cdr.detectChanges();
       });
   }
 
