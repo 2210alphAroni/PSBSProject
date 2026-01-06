@@ -5,7 +5,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { UsersRegistrationService } from '../../app/Services/users-registration.service';
 
-// for pdf genarate
+// for pdf generate
 import jsPDF from 'jspdf';
 
 @Component({
@@ -28,12 +28,13 @@ export class BookingPackage implements OnInit {
   availabilityMessage = '';
   checkingAvailability = false;
 
-  // 🔥 PAYMENT STATE (ADDED)
+  // 🔥 PAYMENT STATE
   showPayment = false;
   paymentMethod = '';
   processingPayment = false;
   paymentSuccess = false;
   createdBookingId = 0;
+
   mobileNumber: string = '';
   paymentCode: string = '';
   askForCode = false;
@@ -143,7 +144,6 @@ export class BookingPackage implements OnInit {
       this.userId = JSON.parse(user).userId;
     }
 
-    // validation for required fields
     if (
       !this.userId ||
       !this.photographerId ||
@@ -191,7 +191,47 @@ export class BookingPackage implements OnInit {
       });
   }
 
-  // 🔥 PAYMENT FUNCTION
+  // ================= PAYMENT HELPERS =================
+
+  isValidMobile(): boolean {
+    return /^\d{11}$/.test(this.mobileNumber);
+  }
+
+  isValidCode(): boolean {
+    if (this.paymentMethod === 'Bkash') return /^\d{5}$/.test(this.paymentCode);
+    if (this.paymentMethod === 'Nagad') return /^\d{4}$/.test(this.paymentCode);
+    if (this.paymentMethod === 'Card') return /^\d{16}$/.test(this.paymentCode);
+    return false;
+  }
+
+  resetPaymentStep() {
+    this.askForCode = false;
+    this.paymentCode = '';
+    this.mobileNumber = '';
+    this.paymentSuccess = false;
+  }
+
+  onSendPayment() {
+
+    if (!this.mobileNumber || !this.isValidMobile()) {
+      alert('Please enter a valid 11-digit mobile number');
+      return;
+    }
+
+    if (!this.askForCode) {
+      this.askForCode = true;
+      return;
+    }
+
+    if (!this.paymentCode || !this.isValidCode()) {
+      alert('Please enter a valid payment code');
+      return;
+    }
+
+    this.generateInvoicePdf();
+    this.makePayment();
+  }
+
   makePayment() {
 
     if (!this.createdBookingId) {
@@ -202,7 +242,6 @@ export class BookingPackage implements OnInit {
     this.processingPayment = true;
 
     setTimeout(() => {
-
       this.http.put(
         `https://localhost:7272/api/Bookings/payment/${this.createdBookingId}`,
         {
@@ -223,32 +262,9 @@ export class BookingPackage implements OnInit {
           alert('Payment Failed');
         }
       });
-
     }, 2000);
   }
 
-  //  PAYMENT METHOD SELECTION for phone and get code
-  resetPaymentStep() {
-    this.askForCode = false;
-    this.paymentCode = '';
-  }
-
-  onSendPayment() {
-    if (!this.askForCode) {
-      // first click → show code input
-      this.askForCode = true;
-      return;
-    }
-
-    // Generate invoice PDF
-    this.generateInvoicePdf();
-
-    // second click → actual payment
-    this.makePayment();
-  }
-
-
-  // generate PDF invoice
   generateInvoicePdf() {
     const doc = new jsPDF();
 
