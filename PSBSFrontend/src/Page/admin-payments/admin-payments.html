@@ -3,6 +3,54 @@
 
     <h2 class="fw-bold mb-4">All Payments</h2>
 
+    <!-- ================= SEARCH / FILTER ================= -->
+    <div class="card mb-4 shadow-sm">
+      <div class="card-body">
+        <div class="row g-3">
+
+          <div class="col-md-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="User ID"
+              [(ngModel)]="filters.userId"
+              (input)="applyFilters()">
+          </div>
+
+          <div class="col-md-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Photographer ID"
+              [(ngModel)]="filters.photographerId"
+              (input)="applyFilters()">
+          </div>
+
+          <div class="col-md-3">
+            <select
+              class="form-select"
+              [(ngModel)]="filters.paymentStatus"
+              (change)="applyFilters()">
+              <option value>Payment Status</option>
+              <option value="Paid">Paid</option>
+              <option value="Unpaid">Unpaid</option>
+            </select>
+          </div>
+
+          <div class="col-md-3">
+            <input
+              type="text"
+              class="form-control"
+              placeholder="Amount"
+              [(ngModel)]="filters.amount"
+              (input)="applyFilters()">
+          </div>
+
+        </div>
+      </div>
+    </div>
+    <!-- ================= END SEARCH ================= -->
+
     <!-- Loading -->
     <div *ngIf="loading" class="text-center text-muted">
       Loading payments...
@@ -14,7 +62,7 @@
     </div>
 
     <!-- Table -->
-    <div class="table-responsive" *ngIf="!loading && payments.length">
+    <div class="table-responsive" *ngIf="!loading && filteredPayments.length">
       <table class="table table-bordered table-hover align-middle">
 
         <thead class="table-dark">
@@ -30,7 +78,7 @@
         </thead>
 
         <tbody>
-          <tr *ngFor="let p of payments; let i = index">
+          <tr *ngFor="let p of filteredPayments; let i = index">
             <td>{{ i + 1 }}</td>
 
             <td>{{ p.userId }}</td>
@@ -72,7 +120,7 @@
     </div>
 
     <!-- Empty -->
-    <div *ngIf="!loading && !payments.length" class="text-center text-muted">
+    <div *ngIf="!loading && !filteredPayments.length" class="text-center text-muted">
       No payments found
     </div>
 
@@ -92,18 +140,31 @@
       </div>
 
       <div class="modal-body">
-        <p><strong>Booking ID:</strong> {{ selectedPayment?.id ?? selectedPayment?.bookingId }}</p>
+        <p>
+          <strong>Booking ID:</strong>
+          {{ selectedPayment?.id ?? selectedPayment?.bookingId }}
+        </p>
 
         <label class="form-label">Payment Status</label>
-        <select class="form-select" [(ngModel)]="selectedPayment.paymentStatus">
+        <select
+          class="form-select"
+          [(ngModel)]="selectedPayment.paymentStatus">
           <option value="Unpaid">Unpaid</option>
           <option value="Paid">Paid</option>
         </select>
       </div>
 
       <div class="modal-footer">
-        <button class="btn btn-secondary" (click)="closeEditModal()">Cancel</button>
-        <button class="btn btn-success" (click)="updatePayment()">Save</button>
+        <button
+          class="btn btn-secondary"
+          (click)="closeEditModal()">
+          Cancel
+        </button>
+        <button
+          class="btn btn-success"
+          (click)="updatePayment()">
+          Save
+        </button>
       </div>
 
     </div>

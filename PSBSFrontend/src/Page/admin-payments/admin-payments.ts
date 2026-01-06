@@ -13,11 +13,21 @@ import { FormsModule } from '@angular/forms';
 export class AdminPayments implements OnInit {
 
   payments: any[] = [];
+  filteredPayments: any[] = [];
+
   loading = true;
   error = '';
 
   showEditModal = false;
   selectedPayment: any = null;
+
+  /* ================= FILTERS ================= */
+  filters = {
+    userId: '',
+    photographerId: '',
+    paymentStatus: '',
+    amount: ''
+  };
 
   private apiUrl = 'https://localhost:7272/api/Bookings';
 
@@ -37,6 +47,7 @@ export class AdminPayments implements OnInit {
     this.http.get<any[]>(this.apiUrl).subscribe({
       next: res => {
         this.payments = res;
+        this.filteredPayments = res; // 🔑 important
         this.loading = false;
         this.cdr.detectChanges();
       },
@@ -44,6 +55,30 @@ export class AdminPayments implements OnInit {
         this.error = 'Failed to load payments';
         this.loading = false;
       }
+    });
+  }
+
+  /* ================= APPLY FILTERS ================= */
+  applyFilters(): void {
+    this.filteredPayments = this.payments.filter(p => {
+
+      const userMatch =
+        !this.filters.userId ||
+        p.userId?.toString().includes(this.filters.userId);
+
+      const photographerMatch =
+        !this.filters.photographerId ||
+        p.photographerId?.toString().includes(this.filters.photographerId);
+
+      const statusMatch =
+        !this.filters.paymentStatus ||
+        (p.paymentStatus || 'Unpaid') === this.filters.paymentStatus;
+
+      const amountMatch =
+        !this.filters.amount ||
+        p.price?.toString().includes(this.filters.amount);
+
+      return userMatch && photographerMatch && statusMatch && amountMatch;
     });
   }
 
