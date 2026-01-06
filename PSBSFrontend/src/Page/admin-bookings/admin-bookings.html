@@ -73,9 +73,9 @@
     <!-- ================= END SEARCH ================= -->
 
     <!-- Loading -->
-    <div *ngIf="loading" class="text-center text-muted">
+    <!-- <div *ngIf="loading" class="text-center text-muted">
       Loading bookings...
-    </div>
+    </div> -->
 
     <!-- Error -->
     <div *ngIf="error" class="alert alert-danger text-center">
@@ -83,7 +83,7 @@
     </div>
 
     <!-- Table -->
-    <div class="table-responsive" *ngIf="!loading && bookings.length">
+    <div class="table-responsive" *ngIf="bookings.length">
       <table class="table table-bordered table-hover align-middle">
 
         <thead class="table-dark">

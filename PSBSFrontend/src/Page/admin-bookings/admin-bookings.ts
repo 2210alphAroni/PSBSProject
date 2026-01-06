@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -32,7 +32,7 @@ export class AdminBookings implements OnInit {
 
   private apiUrl = 'https://localhost:7272/api/Bookings';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit(): void {
     this.loadBookings();
@@ -44,6 +44,7 @@ export class AdminBookings implements OnInit {
         this.bookings = res;
         this.filteredBookings = res; 
         this.loading = false;
+        this.cdr.detectChanges();
       },
       error: () => {
         this.error = 'Failed to load bookings';
@@ -72,6 +73,7 @@ export class AdminBookings implements OnInit {
   openEditModal(booking: any): void {
     this.selectedBooking = { ...booking };
     this.showEditModal = true;
+    this.cdr.detectChanges();
   }
 
   closeEditModal(): void {
@@ -86,6 +88,7 @@ export class AdminBookings implements OnInit {
       next: () => {
         this.loadBookings();
         this.closeEditModal();
+        this.cdr.detectChanges();
         alert('Booking updated successfully');
         window.location.reload();
       },
@@ -108,6 +111,7 @@ export class AdminBookings implements OnInit {
       next: () => {
         this.bookings = this.bookings.filter(b => (b.id ?? b.bookingId) !== id);
         this.loadBookings();
+        this.cdr.detectChanges();
         alert('Booking deleted successfully');
 
       },
