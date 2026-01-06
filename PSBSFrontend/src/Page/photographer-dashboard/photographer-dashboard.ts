@@ -24,8 +24,9 @@ export class PhotographerDashboard {
   averageRating: number = 0;
 
   // Lists
-  recentBookings: any[] = [];
+  TotalBookings: any[] = [];
   recentActivities: any[] = [];
+  photographerId!: number;
 
   constructor(
     private http: HttpClient,
@@ -51,44 +52,97 @@ export class PhotographerDashboard {
 
   loadDashboard() {
     this.loadStats();
-    this.loadRecentBookings();
+    this.loadTotalBookings();
     this.loadRecentActivity();
   }
 
   loadPhotographerInfo() {
     const user = JSON.parse(localStorage.getItem('user') || '{}');
+
     this.photographerName = user?.fullName || 'Photographer';
+    this.photographerId = user?.userId;
+
+    console.log('Photographer ID:', this.photographerId);  // for debugging
   }
+
 
   loadStats() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const photographerId = user?.userId;
+
+    if (!photographerId) {
+      console.error('Photographer ID missing');
+      return;
+    }
+
     this.http
-      .get<any>('https://localhost:7272/api/Photographer/dashboard-stats')
-      .subscribe(res => {
-        this.totalBookings = res.totalBookings;
-        this.pendingBookings = res.pendingBookings;
-        this.totalEarnings = res.totalEarnings;
-        this.averageRating = res.averageRating;
-        this.cdr.detectChanges();
+      .get<any>(`https://localhost:7272/api/PhotographerDashboard/dashboard-stats/${photographerId}`)
+      .subscribe({
+        next: res => {
+          console.log('Dashboard response:', res); // Debug log
+
+          this.totalBookings = res.TotalBookings;
+          this.pendingBookings = res.PendingBookings;
+          this.totalEarnings = res.TotalEarnings;
+
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error('API error:', err);
+        }
       });
   }
 
-  loadRecentBookings() {
+
+
+  loadTotalBookings() {
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const photographerId = user?.userId;
+
+    if (!photographerId) {
+      console.error('Photographer ID missing');
+      return;
+    }
+
     this.http
-      .get<any[]>('https://localhost:7272/api/Photographer/recent-bookings')
-      .subscribe(res => {
-        this.recentBookings = res;
-        this.cdr.detectChanges();
+      .get<any[]>(
+        `https://localhost:7272/api/PhotographerDashboard/recent-bookings/${photographerId}`
+      )
+      .subscribe({
+        next: res => {
+          console.log('Recent Bookings:', res);
+          this.TotalBookings = res;
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error('Failed to load recent bookings', err);
+        }
       });
   }
+
 
   loadRecentActivity() {
+    if (!this.photographerId) {
+      console.error('Photographer ID missing for activity');
+      return;
+    }
+
     this.http
-      .get<any[]>('https://localhost:7272/api/Photographer/recent-activity')
-      .subscribe(res => {
-        this.recentActivities = res;
-        console.log('Photographer Activities:', res);
-        this.cdr.detectChanges();
+      .get<any[]>(
+        `https://localhost:7272/api/PhotographerDashboard/recent-activity/${this.photographerId}`
+      )
+      .subscribe({
+        next: res => {
+          console.log('Photographer Activities:', res);
+          this.recentActivities = res;
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error('Failed to load activities', err);
+        }
       });
   }
+
+
 
 }

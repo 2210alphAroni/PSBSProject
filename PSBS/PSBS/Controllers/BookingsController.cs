@@ -142,16 +142,17 @@ namespace PSBS.Controllers
             // 🔹 INSERT RECENT BOOKING ACTIVITY
             var activitySql = @"
                 INSERT INTO RecentActivities
-                (Message, ActivityType, CreatedAt, FullName)
+                (Message, ActivityType, CreatedAt, FullName, PhotographerId)
                 VALUES
-                (@Message, @ActivityType, GETDATE(), @FullName)
+                (@Message, @ActivityType, GETDATE(), @FullName, @PhotographerId)
             ";
 
             await con.ExecuteAsync(activitySql, new
             {
                 Message = $"New booking created for {booking.PackageName}",
                 ActivityType = "Booking",
-                FullName = fullName
+                FullName = fullName,
+                PhotographerId = booking.PhotographerId
             });
 
             /* ================= END NEW PART ================= */

@@ -89,33 +89,33 @@
     <!-- ================= RECENT BOOKINGS ================= -->
     <div class="card shadow-sm mb-4">
       <div class="card-body">
-        <h5 class="card-title mb-3">Recent Bookings</h5>
+        <h5 class="card-title mb-3">Total  RecentBookings</h5>
 
         <table class="table table-hover">
           <thead>
             <tr>
-              <th>Client</th>
-              <th>Date</th>
-              <th>Package</th>
+              <th>ClientName</th>
+              <th>EventDate</th>
+              <th>PackageName</th>
               <th>Status</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let booking of recentBookings">
-              <td>{{ booking.clientName }}</td>
-              <td>{{ booking.eventDate | date:'mediumDate' }}</td>
-              <td>{{ booking.packageName }}</td>
+            <tr *ngFor="let booking of TotalBookings">
+              <td>{{ booking.ClientName }}</td>
+              <td>{{ booking.EventDate | date:'mediumDate' }}</td>
+              <td>{{ booking.PackageName }}</td>
               <td>
-                <span class="badge bg-success" *ngIf="booking.status === 'Confirmed'">
+                <span class="badge bg-success" *ngIf="booking.Status === 'Confirmed'">
                   Confirmed
                 </span>
-                <span class="badge bg-warning text-dark" *ngIf="booking.status === 'Pending'">
+                <span class="badge bg-warning text-dark" *ngIf="booking.Status === 'Pending'">
                   Pending
                 </span>
               </td>
             </tr>
 
-            <tr *ngIf="recentBookings.length === 0">
+            <tr *ngIf="TotalBookings.length === 0">
               <td colspan="4" class="text-muted text-center">
                 No bookings found.
               </td>
@@ -133,8 +133,9 @@
         <ul class="activity-list">
           <li *ngFor="let activity of recentActivities">
             <span class="dot info"></span>
-            <strong>{{ activity.message }}</strong>
-            <small>{{ activity.createdAt | date:'short' }}</small>
+            <strong>{{ activity.ActivityType }} :</strong>
+            <strong>{{ activity.Message }}</strong>
+            <small>{{ activity.CreatedAt | date:'short' }}</small>
           </li>
 
           <li *ngIf="recentActivities.length === 0" class="text-muted">
