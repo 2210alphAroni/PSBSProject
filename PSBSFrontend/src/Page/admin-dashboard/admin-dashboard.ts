@@ -222,7 +222,8 @@ createOverviewPieChart() {
           client,
           photographer,
           this.packageCount,
-          this.bookingCount
+          this.bookingCount,
+          this.cdr.detectChanges()
         ],
         backgroundColor: [
           '#0d6efd',
