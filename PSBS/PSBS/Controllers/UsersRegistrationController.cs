@@ -36,7 +36,6 @@ namespace PSBS.Controllers
             }
         }
 
-
         // available-photographers
         [HttpGet("available-photographers")]
         public async Task<IActionResult> GetAvailablePhotographers()
@@ -81,14 +80,7 @@ namespace PSBS.Controllers
 
                 var sql = @"
             SELECT 
-                Id,
-                RegisterAS,
-                FullName,
-                Email,
-                Phone,
-                Gender,
-                IsAvailable,
-                CreatedAT
+                *
             FROM UsersRegistration
             WHERE Id = @Id
         ";

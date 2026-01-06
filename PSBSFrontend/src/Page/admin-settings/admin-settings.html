@@ -1,126 +1,117 @@
 <div class="container mt-4">
-    <div class="card shadow-sm p-4">
+  <div class="card shadow-sm p-4">
 
-        <!-- TOP BAR -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h4 class="mb-0">Admin Settings</h4>
+    <!-- TOP BAR -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="mb-0">Admin Settings</h4>
 
-            <button class="btn btn-danger btn-sm" (click)="logout()">
-                Logout
-            </button>
-        </div>
-
-        <!-- LOADING -->
-        <div *ngIf="loading" class="text-center py-4">
-            <div class="spinner-border"></div>
-        </div>
-
-        <!-- ADMIN INFO -->
-        <div *ngIf="!loading && admin" class="row">
-
-            <div class="col-md-6">
-                <h5 class="mb-3">Admin Information</h5>
-                <div class="py-4">
-                    <img width="40%" src="/assets/img/Admin.jpg" class="img-fluid rounded-circle" alt="Admin">
-                </div>
-
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <strong>Full Name:</strong> {{ admin.FullName }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Email:</strong> {{ admin.Email }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Phone:</strong> {{ admin.Phone }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Username:</strong> {{ admin.UserName }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Password:</strong> {{ admin.Password }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Gender:</strong> {{ admin.Gender }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Registered As:</strong> {{ admin.RegisterAS }}
-                    </li>
-                    <li class="list-group-item">
-                        <strong>Created At:</strong>
-                        {{ admin.CreatedAT | date:'medium' }}
-                    </li>
-                </ul>
-            </div>
-
-        </div>
-
-        <!-- CHANGE PASSWORD -->
-        <div *ngIf="!loading && admin" class="row mt-4">
-            <div class="col-md-6">
-
-                <h5 class="mb-3">🔐 Change Password</h5>
-
-                <!-- ALERT MESSAGE -->
-                <div *ngIf="alertMessage"
-                    class="alert"
-                    [ngClass]="{
-           'alert-success': alertType === 'success',
-           'alert-danger': alertType === 'error'
-         }">
-                    {{ alertMessage }}
-                </div>
-
-                <form #changePasswordForm="ngForm"
-                    (ngSubmit)="updatePassword()">
-
-                    <div class="mb-3">
-                        <label class="form-label">Current Password</label>
-                        <input
-                            type="password"
-                            class="form-control"
-                            name="currentPassword"
-                            [(ngModel)]="currentPassword"
-                            required>
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">New Password</label>
-                        <input
-                            type="password"
-                            class="form-control"
-                            name="newPassword"
-                            [(ngModel)]="newPassword"
-                            required
-                            minlength="6">
-                    </div>
-
-                    <div class="mb-3">
-                        <label class="form-label">Confirm New Password</label>
-                        <input
-                            type="password"
-                            class="form-control"
-                            name="confirmPassword"
-                            [(ngModel)]="confirmPassword"
-                            required>
-                    </div>
-
-                    <button
-                        type="submit"
-                        class="btn btn-dark"
-                        [disabled]="changePasswordForm.invalid || passwordLoading">
-                        {{ passwordLoading ? 'Updating...' : 'Update Password'
-                        }}
-                    </button>
-
-                </form>
-            </div>
-        </div>
-
-        <!-- NO ADMIN FOUND -->
-        <div *ngIf="!loading && !admin" class="alert alert-warning mt-3">
-            Admin information not found.
-        </div>
-
+      <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
     </div>
+
+    <!-- ADMIN INFO -->
+    <div *ngIf=" admin" class="row">
+
+      <div class="col-md-6">
+
+        <h5 class="mb-3">Admin Information</h5>
+
+        <!-- PROFILE IMAGE -->
+        <div class="text-center py-4">
+          <img
+            [src]="admin.ProfileImage ? admin.ProfileImage : ''"
+            class="rounded-circle mb-3"
+            style="width:150px;height:150px;object-fit:cover"
+            alt="Admin">
+
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              #fileInput
+              (change)="onImageSelected($event)">
+
+            <button
+              class="btn btn-outline-dark btn-sm"
+              (click)="fileInput.click()"
+              [disabled]="imageUploading">
+              {{ imageUploading ? 'Uploading...' : 'Change Photo' }}
+            </button>
+          </div>
+        </div>
+
+        <ul class="list-group">
+          <li class="list-group-item"><strong>Full Name:</strong> {{ admin.FullName }}</li>
+          <li class="list-group-item"><strong>Email:</strong> {{ admin.Email }}</li>
+          <li class="list-group-item"><strong>Phone:</strong> {{ admin.Phone }}</li>
+          <li class="list-group-item"><strong>Username:</strong> {{ admin.UserName }}</li>
+          <li class="list-group-item"><strong>Password:</strong> {{ admin.Password }}</li>
+          <li class="list-group-item"><strong>Gender:</strong> {{ admin.Gender }}</li>
+          <li class="list-group-item"><strong>Registered As:</strong> {{ admin.RegisterAS }}</li>
+          <li class="list-group-item">
+            <strong>Created At:</strong> {{ admin.CreatedAT | date:'medium' }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- CHANGE PASSWORD -->
+    <div *ngIf="!loading && admin" class="row mt-4">
+      <div class="col-md-6">
+
+        <h5 class="mb-3">🔐 Change Password</h5>
+
+        <div *ngIf="alertMessage"
+             class="alert"
+             [ngClass]="{
+               'alert-success': alertType === 'success',
+               'alert-danger': alertType === 'error'
+             }">
+          {{ alertMessage }}
+        </div>
+
+        <form #changePasswordForm="ngForm" (ngSubmit)="updatePassword()">
+
+          <div class="mb-3">
+            <label class="form-label">Current Password</label>
+            <input
+              type="password"
+              class="form-control"
+              name="currentPassword"
+              [(ngModel)]="currentPassword"
+              required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              name="newPassword"
+              [(ngModel)]="newPassword"
+              required minlength="6">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Confirm New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              required>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-dark"
+            [disabled]="changePasswordForm.invalid || passwordLoading">
+            {{ passwordLoading ? 'Updating...' : 'Update Password' }}
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
 </div>

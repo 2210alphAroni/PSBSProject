@@ -3,36 +3,39 @@ import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { AuthService } from '../../app/Services/auth.service';
 
 @Component({
   selector: 'app-admin-settings',
   standalone: true,
   imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './admin-settings.html',
-  styleUrls: ['./admin-settings.css'],
+  styleUrls: ['./admin-settings.css']
 })
 export class AdminSettings implements OnInit {
 
-  // ===== ADMIN INFO =====
   admin: any = null;
   loading = true;
 
-  private userApiUrl = 'https://localhost:7272/api/UsersRegistration/get';
-  private changePasswordApi = 'https://localhost:7272/api/UsersPassword/change';
-
-  // ===== CHANGE PASSWORD FIELDS =====
   currentPassword = '';
   newPassword = '';
   confirmPassword = '';
 
-  // ===== ALERT STATE =====
-  alertMessage: string = '';
+  alertMessage = '';
   alertType: 'success' | 'error' | '' = '';
   passwordLoading = false;
+
+  selectedImage!: File;
+  imageUploading = false;
+
+  private userApiUrl = 'https://localhost:7272/api/UsersRegistration/';
+  private changePasswordApi = 'https://localhost:7272/api/UsersPassword/change';
+  private uploadImageApi = 'https://localhost:7272/api/UsersProfile/upload-image';
 
   constructor(
     private http: HttpClient,
     private router: Router,
+    private authService: AuthService,
     private cdr: ChangeDetectorRef
   ) {}
 
@@ -41,26 +44,49 @@ export class AdminSettings implements OnInit {
   }
 
   loadAdminInfo() {
-    this.http.get<any[]>(this.userApiUrl).subscribe({
-      next: (res) => {
-        this.admin = res.find(u => u.RegisterAS === 'Admin');
+    const user = this.authService.getUser();
+    this.http.get<any>(this.userApiUrl + user.userId).subscribe({
+      next: res => {
+        this.admin = res;
         this.loading = false;
         this.cdr.detectChanges();
       },
+      error: () => this.loading = false
+    });
+  }
+
+  onImageSelected(event: any) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    this.selectedImage = file;
+    this.uploadProfileImage();
+  }
+
+  uploadProfileImage() {
+    const formData = new FormData();
+    formData.append('userId', this.admin.Id);
+    formData.append('image', this.selectedImage);
+
+    this.imageUploading = true;
+
+    this.http.post<any>(this.uploadImageApi, formData).subscribe({
+      next: res => {
+        this.admin.ProfileImage = res.imageUrl;
+        this.showAlert('Profile image updated successfully', 'success');
+        this.imageUploading = false;
+      },
       error: () => {
-        this.loading = false;
+        this.showAlert('Image upload failed', 'error');
+        this.imageUploading = false;
       }
     });
   }
 
-  // ===== CHANGE PASSWORD =====
+  // ✅ ONLY FIXED PART
   updatePassword() {
-
-    this.alertMessage = '';
-    this.alertType = '';
-
     if (this.newPassword !== this.confirmPassword) {
-      this.showAlert('New password and confirm password do not match', 'error');
+      this.showAlert('Passwords do not match', 'error');
       return;
     }
 
@@ -74,36 +100,46 @@ export class AdminSettings implements OnInit {
 
     this.http.post<any>(this.changePasswordApi, payload).subscribe({
       next: (res) => {
-        this.showAlert(res.message || 'Password changed successfully', 'success');
+
+        // ✅ GUARANTEED SUCCESS MESSAGE
+        const successMsg =
+          res?.message ||
+          res?.Message ||
+          'Password changed successfully';
+
+        this.showAlert(successMsg, 'success');
 
         this.currentPassword = '';
         this.newPassword = '';
         this.confirmPassword = '';
         this.passwordLoading = false;
+
+        this.cdr.detectChanges();
       },
-      error: (err) => {
-        const msg = err?.error?.error || 'Failed to change password';
-        this.showAlert(msg, 'error');
+      error: err => {
+        const errorMsg =
+          err?.error?.message ||
+          err?.error?.error ||
+          'Failed to change password';
+
+        this.showAlert(errorMsg, 'error');
         this.passwordLoading = false;
       }
     });
   }
 
-  showAlert(message: string, type: 'success' | 'error') {
-    this.alertMessage = message;
+  showAlert(msg: string, type: 'success' | 'error') {
+    this.alertMessage = msg;
     this.alertType = type;
 
-    // Auto hide after 4 seconds
     setTimeout(() => {
       this.alertMessage = '';
       this.alertType = '';
     }, 3000);
   }
 
-  // ===== LOGOUT =====
   logout() {
     localStorage.clear();
-    sessionStorage.clear();
     this.router.navigate(['/login']);
   }
 }
