@@ -36,7 +36,7 @@ public class UsersProfileController : ControllerBase
 
             using var con = _context.CreateConnection();
             await con.ExecuteAsync(
-                "UPDATE Users SET ProfileImage=@img WHERE Id=@id",
+                "UPDATE UsersRegistration SET ProfileImage=@img WHERE Id=@id",
                 new { img = imageUrl, id = data.userId }
             );
 

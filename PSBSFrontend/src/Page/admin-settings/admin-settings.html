@@ -17,12 +17,8 @@
 
         <!-- PROFILE IMAGE -->
         <div class="text-center py-4">
-          <img
-            [src]="admin.ProfileImage ? admin.ProfileImage : ''"
-            class="rounded-circle mb-3"
-            style="width:150px;height:150px;object-fit:cover"
-            alt="Admin">
-
+          <img width="20%"
+            [src]="'https://localhost:7272' + admin.ProfileImage">
           <div>
             <input
               type="file"
@@ -32,7 +28,7 @@
               (change)="onImageSelected($event)">
 
             <button
-              class="btn btn-outline-dark btn-sm"
+              class="btn btn-outline-dark btn-sm mt-3"
               (click)="fileInput.click()"
               [disabled]="imageUploading">
               {{ imageUploading ? 'Uploading...' : 'Change Photo' }}
