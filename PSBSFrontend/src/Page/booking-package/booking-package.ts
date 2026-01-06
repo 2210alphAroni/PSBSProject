@@ -160,6 +160,7 @@ export class BookingPackage implements OnInit {
     const payload = {
       UserId: this.userId,
       PhotographerId: this.photographerId,
+      PhotographerName: this.photographers.find(p => p.id === this.photographerId)?.name || '',
       PackageId: this.packageId,
       EventDate: new Date(this.booking.EventDate),
       EventStartTime: this.booking.EventStartTime,

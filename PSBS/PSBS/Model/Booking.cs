@@ -7,6 +7,8 @@
         // Foreign Keys
         public int UserId { get; set; }
         public int PhotographerId { get; set; }
+
+        public string? PhotographerName { get; set; }
         public int PackageId { get; set; }
 
         // Event Details

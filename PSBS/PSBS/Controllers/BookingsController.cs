@@ -76,12 +76,20 @@ namespace PSBS.Controllers
             booking.EventStartTime = startDateTime;
             booking.EventEndTime = endDateTime;
 
+            var photographerName = await con.ExecuteScalarAsync<string>(
+            "SELECT FullName FROM UsersRegistration WHERE Id = @Id",
+            new { Id = booking.PhotographerId }
+        );
+
+            booking.PhotographerName = photographerName;
+
             // ✅ INSERT BOOKING + RETURN ID
             var sql = @"
                 INSERT INTO Bookings
                 (
                     UserId,
                     PhotographerId,
+                    PhotographerName,
                     PackageId,
                     EventDate,
                     EventStartTime,
@@ -101,6 +109,7 @@ namespace PSBS.Controllers
                 (
                     @UserId,
                     @PhotographerId,
+                    @PhotographerName,
                     @PackageId,
                     @EventDate,
                     @EventStartTime,
