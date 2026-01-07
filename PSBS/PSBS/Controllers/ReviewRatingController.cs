@@ -20,25 +20,37 @@ namespace PSBS.Controllers
         [HttpPost]
         public async Task<IActionResult> AddReview([FromBody] ReviewRating review)
         {
-            using var connection = _context.CreateConnection();
+            try
+            {
+                if (review == null)
+                    return BadRequest(new { message = "Review data is null" });
 
-            // Prevent duplicate review per booking
-            var existsSql = "SELECT COUNT(1) FROM ReviewRatings WHERE BookingId = @BookingId";
-            var exists = await connection.ExecuteScalarAsync<int>(existsSql, new { review.BookingId });
+                if (review.UserId <= 0)
+                    return BadRequest(new { message = "Invalid UserId" });
 
-            if (exists > 0)
-                return BadRequest("Review already submitted for this booking");
+                if (review.PhotographerId <= 0)
+                    return BadRequest(new { message = "Invalid PhotographerId" });
 
-            var sql = @"
-                INSERT INTO ReviewRatings
-                (UserId, PhotographerId, BookingId, Rating, ReviewComment)
-                VALUES
-                (@UserId, @PhotographerId, @BookingId, @Rating, @ReviewComment)
-            ";
+                if (review.Rating < 1 || review.Rating > 5)
+                    return BadRequest(new { message = "Rating must be between 1 and 5" });
 
-            await connection.ExecuteAsync(sql, review);
+                var sql = @"
+            INSERT INTO ReviewRatings
+            (UserId, PhotographerId, Rating, ReviewComment, IsApproved, IsDeleted, CreatedAt)
+            VALUES
+            (@UserId, @PhotographerId, @Rating, @ReviewComment, 1, 0, GETDATE())
+        ";
 
-            return Ok(new { message = "Review submitted successfully" });
+                using var connection = _context.CreateConnection();
+                await connection.ExecuteAsync(sql, review);
+
+                return Ok(new { message = "Review submitted successfully" });
+            }
+            catch (Exception ex)
+            {
+                // 🔥 THIS WILL SHOW REAL ERROR
+                return StatusCode(500, new { message = ex.Message });
+            }
         }
 
         // ================= GET REVIEWS BY PHOTOGRAPHER =================
@@ -46,7 +58,7 @@ namespace PSBS.Controllers
         public async Task<IActionResult> GetReviewsByPhotographer(int photographerId)
         {
             var sql = @"
-                SELECT r.*, u.FullName
+                SELECT r.Id, r.Rating, r.ReviewComment, r.CreatedAt, u.FullName
                 FROM ReviewRatings r
                 JOIN UsersRegistration u ON r.UserId = u.Id
                 WHERE r.PhotographerId = @PhotographerId
@@ -67,7 +79,7 @@ namespace PSBS.Controllers
         {
             var sql = @"
                 SELECT 
-                    ISNULL(AVG(CAST(Rating AS FLOAT)),0) AS AverageRating,
+                    ISNULL(AVG(CAST(Rating AS FLOAT)), 0) AS AverageRating,
                     COUNT(*) AS TotalReviews
                 FROM ReviewRatings
                 WHERE PhotographerId = @PhotographerId
@@ -81,26 +93,13 @@ namespace PSBS.Controllers
             return Ok(data);
         }
 
-        // ================= CHECK ALREADY REVIEWED =================
-        [HttpGet("exists/{bookingId}")]
-        public async Task<IActionResult> ReviewExists(int bookingId)
-        {
-            var sql = "SELECT COUNT(1) FROM ReviewRatings WHERE BookingId = @BookingId";
-
-            using var connection = _context.CreateConnection();
-            var exists = await connection.ExecuteScalarAsync<int>(sql, new { BookingId = bookingId });
-
-            return Ok(exists > 0);
-        }
-
         // ================= ADMIN: APPROVE REVIEW =================
         [HttpPut("approve/{id}")]
         public async Task<IActionResult> ApproveReview(int id)
         {
             var sql = @"
                 UPDATE ReviewRatings
-                SET IsApproved = 1,
-                    UpdatedAt = GETDATE()
+                SET IsApproved = 1
                 WHERE Id = @Id
             ";
 
@@ -116,8 +115,7 @@ namespace PSBS.Controllers
         {
             var sql = @"
                 UPDATE ReviewRatings
-                SET IsDeleted = 1,
-                    UpdatedAt = GETDATE()
+                SET IsDeleted = 1
                 WHERE Id = @Id
             ";
 

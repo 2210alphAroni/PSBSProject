@@ -27,8 +27,12 @@ export class ReviewRating implements OnInit {
   reviews: any[] = [];
   alreadyReviewed = false;
 
-  isLoadingAvg = true;   // 🔥 added for UX
+  isLoadingAvg = true;
   isLoadingReviews = true;
+
+  // 🔐 UI SAFETY FLAGS
+  showCommentError = false;
+  isSubmitting = false;
 
   private api = 'https://localhost:7272/api/ReviewRating';
 
@@ -36,9 +40,12 @@ export class ReviewRating implements OnInit {
     private http: HttpClient,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    this.userId = user?.id || user?.userId || 0;
 
     this.route.queryParams.subscribe(params => {
       this.photographerId = Number(params['photographerId']);
@@ -49,27 +56,38 @@ export class ReviewRating implements OnInit {
       this.loadReviews();
       this.loadAverageRating();
     });
-
-    this.userId = Number(localStorage.getItem('userId'));
   }
 
-  // ================= PHOTOGRAPHER INFO =================
   loadPhotographer() {
     this.http
       .get<any>(`https://localhost:7272/api/UsersRegistration/${this.photographerId}`)
-      .subscribe({
-        next: res => this.photographer = res,
-        error: err => console.error(err),
-        complete: () => this.cdr.detectChanges()
-      });
+      .subscribe(res => this.photographer = res);
   }
 
-  // ================= ADD REVIEW =================
   submitReview() {
+
+    this.showCommentError = false;
+
+    if (!this.userId) {
+      alert('Please login to submit a review');
+      return;
+    }
+
+    if (!this.reviewComment.trim()) {
+      this.showCommentError = true;
+      return;
+    }
+
+    if (this.rating < 1 || this.rating > 5) {
+      alert('Please select a rating between 1 and 5');
+      return;
+    }
+
+    this.isSubmitting = true;
+
     const data = {
       userId: this.userId,
       photographerId: this.photographerId,
-      bookingId: 0,
       rating: this.rating,
       reviewComment: this.reviewComment
     };
@@ -80,13 +98,18 @@ export class ReviewRating implements OnInit {
         this.alreadyReviewed = true;
         this.loadReviews();
         this.loadAverageRating();
+        this.isSubmitting = false;
         this.cdr.detectChanges();
+        window.location.reload();
       },
-      error: err => alert(err.error)
+      error: err => {
+        console.error(err);
+        alert(err.error?.message || 'Failed to submit review');
+        this.isSubmitting = false;
+      }
     });
   }
 
-  // ================= LOAD REVIEWS =================
   loadReviews() {
     this.isLoadingReviews = true;
     this.http
@@ -98,38 +121,27 @@ export class ReviewRating implements OnInit {
       });
   }
 
-  // ================= AVERAGE RATING =================
   loadAverageRating() {
     this.isLoadingAvg = true;
     this.http
       .get<any>(`${this.api}/average/${this.photographerId}`)
-      .subscribe({
-        next: res => {
-          this.averageRating = Number(res?.averageRating) || 0;
-          this.totalReviews = Number(res?.totalReviews) || 0;
-          this.isLoadingAvg = false;
-        },
-        error: () => {
-          this.averageRating = 0;
-          this.totalReviews = 0;
-          this.isLoadingAvg = false;
-        }
+      .subscribe(res => {
+        this.averageRating = Number(res.AverageRating) || 0;
+        this.totalReviews = Number(res.TotalReviews) || 0;
+        this.isLoadingAvg = false;
+        this.cdr.detectChanges();
       });
   }
 
-  // ================= STAR CLICK =================
   setRating(value: number) {
     this.rating = value;
   }
 
-  // ⭐ helper for average stars
   getStarArray() {
-    return [1,2,3,4,5];
+    return [1, 2, 3, 4, 5];
   }
 
-  // ⭐ helper method
-getRoundedRating(): number {
-  return Math.round(this.averageRating || 0);
-}
-
+  getRoundedRating(): number {
+    return Math.round(this.averageRating || 0);
+  }
 }

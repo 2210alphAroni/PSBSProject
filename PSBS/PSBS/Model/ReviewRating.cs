@@ -5,7 +5,6 @@
         public int Id { get; set; }
         public int UserId { get; set; }
         public int PhotographerId { get; set; }
-        public int BookingId { get; set; }
         public int Rating { get; set; }
         public string? ReviewComment { get; set; }
         public bool IsApproved { get; set; }

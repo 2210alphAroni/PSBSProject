@@ -1,7 +1,7 @@
 <section class="py-5 bg-light">
   <div class="container py-5 mt-5">
 
-    <!-- ===== PHOTOGRAPHER INFO ===== -->
+    <!-- PHOTOGRAPHER INFO -->
     <div class="card shadow-sm mb-4" *ngIf="photographer">
       <div class="card-body d-flex align-items-center gap-3">
         <div
@@ -15,42 +15,40 @@
           <div class="text-muted small">
             {{ photographer.Email }} • {{ photographer.Phone }}
           </div>
-          <div class="small text-muted">
-            {{ photographer.Gender }}
-          </div>
+          <div class="small text-muted">{{ photographer.Gender }}</div>
         </div>
       </div>
     </div>
 
-    <!-- ===== HEADER ===== -->
-    <h2 class="fw-bold">Photographer Reviews</h2>
+    <!-- HEADER -->
+    <h2 class="fw-bold mb-3">Photographer Reviews</h2>
 
-    <!-- AVG RATING -->
-    <ng-container *ngIf="!isLoadingAvg; else avgLoading">
-      <p class="text-muted" *ngIf="totalReviews > 0; else noRating">
+    <!-- AVERAGE RATING (FIXED) -->
+    <ng-container *ngIf="!isLoadingAvg">
+      <p class="text-muted">
+
         <span class="fw-bold text-warning">
           {{ averageRating | number:'1.1-1' }}
         </span>
 
         <span class="ms-2 text-warning">
           <span *ngFor="let s of getStarArray()">
-           {{ s <= getRoundedRating() ? '★' : '☆' }}
+            {{ s <= getRoundedRating() ? '★' : '☆' }}
           </span>
         </span>
 
-        <span class="ms-1">({{ totalReviews }} reviews)</span>
+        <span class="ms-1">
+          ({{ totalReviews }} reviews)
+        </span>
+
+        <span *ngIf="totalReviews === 0" class="ms-2 fst-italic">
+          No ratings yet ⭐
+        </span>
+
       </p>
     </ng-container>
 
-    <ng-template #avgLoading>
-      <p class="text-muted">Loading rating…</p>
-    </ng-template>
-
-    <ng-template #noRating>
-      <p class="text-muted">No ratings yet ⭐</p>
-    </ng-template>
-
-    <!-- ===== ADD REVIEW ===== -->
+    <!-- ADD REVIEW -->
     <div class="card shadow-sm mb-5" *ngIf="!alreadyReviewed">
       <div class="card-body">
         <h5 class="fw-bold mb-3">Leave a Review</h5>
@@ -67,27 +65,36 @@
           </span>
         </div>
 
+        <!-- COMMENT -->
         <textarea
-          class="form-control mb-3"
+          class="form-control mb-2"
           rows="3"
           placeholder="Write your review..."
-          [(ngModel)]="reviewComment">
+          [(ngModel)]="reviewComment"
+          [class.is-invalid]="showCommentError">
         </textarea>
 
-        <button class="btn btn-primary" (click)="submitReview()">
-          Submit Review
+        <div class="invalid-feedback d-block" *ngIf="showCommentError">
+          Review comment is required.
+        </div>
+
+        <button
+          class="btn btn-primary mt-2"
+          [disabled]="isSubmitting"
+          (click)="submitReview()">
+          {{ isSubmitting ? 'Submitting...' : 'Submit Review' }}
         </button>
       </div>
     </div>
 
-    <!-- ===== ALREADY REVIEWED ===== -->
+    <!-- ALREADY REVIEWED -->
     <div class="alert alert-info text-center" *ngIf="alreadyReviewed">
       You have already submitted a review.
     </div>
 
-    <!-- ===== REVIEWS LIST ===== -->
+    <!-- REVIEWS LIST -->
     <div class="row g-4">
-      <ng-container *ngIf="!isLoadingReviews; else reviewLoading">
+      <ng-container *ngIf="!isLoadingReviews">
         <div class="col-md-6" *ngFor="let r of reviews">
           <div class="card shadow-sm h-100">
             <div class="card-body">
@@ -104,17 +111,11 @@
                 </span>
               </div>
 
-              <p class="mb-0 text-muted">
-                {{ r.ReviewComment }}
-              </p>
+              <p class="mb-0 text-muted">{{ r.ReviewComment }}</p>
             </div>
           </div>
         </div>
       </ng-container>
-
-      <ng-template #reviewLoading>
-        <p class="text-muted">Loading reviews…</p>
-      </ng-template>
     </div>
 
   </div>
