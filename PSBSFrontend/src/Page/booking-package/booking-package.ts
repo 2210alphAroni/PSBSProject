@@ -17,7 +17,7 @@ import jsPDF from 'jspdf';
 })
 export class BookingPackage implements OnInit {
 
-  userId = 0;
+ userId = 0;
   photographerId = 0;
   packageId!: number;
 
@@ -38,6 +38,9 @@ export class BookingPackage implements OnInit {
   mobileNumber: string = '';
   paymentCode: string = '';
   askForCode = false;
+
+  // ⭐ rating API
+  private ratingApi = 'https://localhost:7272/api/ReviewRating';
 
   booking = {
     EventDate: '',
@@ -70,15 +73,45 @@ export class BookingPackage implements OnInit {
     });
   }
 
+  // ================= PHOTOGRAPHERS =================
   loadPhotographers(): void {
     this.userService.getAvailablePhotographers().subscribe({
       next: res => {
         this.photographers = res;
+
+        // ADD: load rating for each photographer
+        this.photographers.forEach(p => {
+          this.loadRatingForPhotographer(p);
+        });
+
         this.cdr.detectChanges();
       }
     });
   }
 
+  // ⭐ ADD ONLY
+  loadRatingForPhotographer(p: any) {
+    this.http
+      .get<any>(`${this.ratingApi}/average/${p.Id}`)
+      .subscribe({
+        next: res => {
+          p.AverageRating = Number(res.AverageRating) || 0;
+          p.TotalReviews = Number(res.TotalReviews) || 0;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          p.AverageRating = 0;
+          p.TotalReviews = 0;
+        }
+      });
+  }
+
+  // ⭐ helper
+  getRoundedRating(rating: number): number {
+    return Math.round(rating || 0);
+  }
+
+  // ================= PACKAGE =================
   loadPackage(id: number) {
     this.http.get<any>(`https://localhost:7272/api/Packages/${id}`)
       .subscribe(res => {
@@ -92,8 +125,8 @@ export class BookingPackage implements OnInit {
       });
   }
 
+  // ================= AVAILABILITY =================
   checkAvailability() {
-
     if (!this.photographerId || !this.booking.EventDate || !this.booking.EventStartTime) {
       this.isPhotographerAvailable = true;
       this.availabilityMessage = '';
@@ -127,40 +160,16 @@ export class BookingPackage implements OnInit {
     });
   }
 
+  // ================= BOOKING =================
   submitBooking() {
-
-    if (!this.isPhotographerAvailable) {
-      alert('Photographer is already booked with this schedule.');
-      return;
-    }
-
-    if (this.photographerId === 0) {
-      alert('Please select a photographer');
-      return;
-    }
+    if (!this.isPhotographerAvailable) return alert('Photographer is already booked');
 
     const user = localStorage.getItem('user');
-    if (user) {
-      this.userId = JSON.parse(user).userId;
-    }
-
-    if (
-      !this.userId ||
-      !this.photographerId ||
-      !this.packageId ||
-      !this.booking.EventDate ||
-      !this.booking.EventStartTime ||
-      !this.booking.EventLocation ||
-      !this.booking.Price
-    ) {
-      alert('Please fill all required booking details.');
-      return;
-    }
+    if (user) this.userId = JSON.parse(user).userId;
 
     const payload = {
       UserId: this.userId,
       PhotographerId: this.photographerId,
-      PhotographerName: this.photographers.find(p => p.id === this.photographerId)?.name || '',
       PackageId: this.packageId,
       EventDate: new Date(this.booking.EventDate),
       EventStartTime: this.booking.EventStartTime,
@@ -179,16 +188,10 @@ export class BookingPackage implements OnInit {
           this.bookingSuccess = true;
           this.createdBookingId = res?.id || 0;
           this.showPayment = true;
-          alert('Booking Confirmed Successfully');
+          alert('Booking Confirmed');
           this.cdr.detectChanges();
         },
-        error: (err: HttpErrorResponse) => {
-          if (err.status === 409) {
-            alert('Photographer already booked');
-          } else {
-            alert('Booking Failed');
-          }
-        }
+        error: () => alert('Booking Failed')
       });
   }
 

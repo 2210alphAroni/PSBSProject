@@ -132,6 +132,7 @@
       </div>
 
       <!-- Photographer Selection -->
+      <!-- Photographer Selection -->
       <div class="col-12">
         <label class="form-label fw-semibold">Select Photographer</label>
 
@@ -143,9 +144,13 @@
           (change)="checkAvailability()">
 
           <option [ngValue]="0">-- Select Photographer --</option>
+
           <option *ngFor="let p of photographers" [ngValue]="p.Id">
             {{ p.FullName }}
+            ⭐ {{ p.AverageRating || 0 }}
+            ({{ p.TotalReviews || 0 }})
           </option>
+
         </select>
 
         <small class="text-danger"
