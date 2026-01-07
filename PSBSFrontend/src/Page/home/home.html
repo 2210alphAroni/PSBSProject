@@ -166,11 +166,12 @@
           <div class="card-body">
             <div
               class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
-               <!-- Font Awesome Icon -->
+              <!-- Font Awesome Icon -->
               <i class="fa-solid fa-box fs-4"></i>
             </div>
             <h6 class="fw-bold">Select Package</h6>
-            <p class="text-muted small mb-0">Duration, photos, add-ons & more.</p>
+            <p class="text-muted small mb-0">Duration, photos, add-ons &
+              more.</p>
           </div>
         </div>
       </div>
@@ -181,7 +182,7 @@
             <div
               class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
 
-               <!-- Font Awesome Icon -->
+              <!-- Font Awesome Icon -->
               <i class="fa-solid fa-alarm-clock fs-4"></i>
             </div>
             <h6 class="fw-bold">Choose Date</h6>
@@ -195,7 +196,7 @@
           <div class="card-body">
             <div
               class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
-               <!-- Font Awesome Icon -->
+              <!-- Font Awesome Icon -->
               <i class="fa-solid fa-money-bill fs-4"></i>
             </div>
             <h6 class="fw-bold">Pay & Confirm</h6>
@@ -402,6 +403,32 @@
               </span>
             </div>
 
+            <!-- RATING DISPLAY -->
+            <div class="d-flex align-items-center gap-2 mt-2">
+
+              <div class="text-warning">
+                <ng-container *ngFor="let star of [1,2,3,4,5]">
+                  <i
+                    class="bi"
+                    [ngClass]="
+          star <= getRoundedRating(p.AverageRating)
+            ? 'bi-star-fill'
+            : 'bi-star'
+        ">
+                  </i>
+                </ng-container>
+              </div>
+
+              <span class="fw-semibold">
+                {{ p.AverageRating || 0 }}
+              </span>
+
+              <span class="text-muted small">
+                ({{ p.TotalReviews || 0 }} reviews)
+              </span>
+
+            </div>
+
           </div>
         </div>
 
@@ -409,69 +436,7 @@
     </div>
 
   </div>
-</section>
 
-
-<!-- REVIEWS -->
-<section id="reviews" class="py-5"
-  style="background: linear-gradient(180deg, #f8fafc, #fff7ed);">
-  <div class="container">
-    <div class="text-center mb-5">
-      <h2 class="fw-bold">Reviews & Ratings</h2>
-      <p class="text-muted">Real feedback from our clients</p>
-    </div>
-
-    <div class="row g-4">
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-          <div class="card-body">
-            <div class="mb-2 text-warning">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                class="bi bi-star-fill"></i>
-            </div>
-            <p class="text-muted">“Amazing service and beautiful photos. Booking
-              was super easy!”</p>
-            <div class="fw-semibold">Rezwan Khan</div>
-            <div class="small text-muted">Wedding Photography</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-          <div class="card-body">
-            <div class="mb-2 text-warning">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                class="bi bi-star"></i>
-            </div>
-            <p class="text-muted">“Professional photographer, timely delivery
-              and good communication.”</p>
-            <div class="fw-semibold">Roni</div>
-            <div class="small text-muted">Corporate Event</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="col-md-4">
-        <div class="card border-0 shadow-sm rounded-4 h-100">
-          <div class="card-body">
-            <div class="mb-2 text-warning">
-              <i class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                class="bi bi-star-fill"></i><i class="bi bi-star-fill"></i><i
-                class="bi bi-star-fill"></i>
-            </div>
-            <p class="text-muted">“Loved the product photos—perfect for my
-              online store.”</p>
-            <div class="fw-semibold">Akash Islam</div>
-            <div class="small text-muted">Product Photography</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
 </section>
 
 <!-- FINAL CTA -->
@@ -487,5 +452,3 @@
     </a>
   </div>
 </section>
-
-
