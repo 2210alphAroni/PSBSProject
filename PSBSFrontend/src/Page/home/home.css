@@ -170,3 +170,176 @@ footer {
   }
 }
 
+
+
+/* for chat box */
+
+/* CHAT ICON */
+.chat-icon {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #0d6efd;
+  color: white;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  cursor: pointer;
+  box-shadow: 0 10px 30px rgba(0,0,0,.3);
+  z-index: 9999;
+}
+
+/* CHAT BOX */
+/* ==============================
+   CHAT ICON
+============================== */
+.chat-icon {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  width: 60px;
+  height: 60px;
+  background: linear-gradient(135deg, #79C821, #545375);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  cursor: pointer;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.35);
+  z-index: 9999;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+}
+
+.chat-icon:hover {
+  transform: scale(1.1);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* ==============================
+   CHAT BOX
+============================== */
+.chat-box {
+  position: fixed;
+  bottom: 95px;
+  right: 22px;
+  width: 320px;
+  background: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+  z-index: 9999;
+  animation: slideUp 0.3s ease;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ==============================
+   HEADER
+============================== */
+.chat-header {
+  background: linear-gradient(135deg, #79C821, #545375);
+  color: #fff;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+}
+
+.chat-header button {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* ==============================
+   MESSAGES AREA
+============================== */
+.chat-messages {
+  background: #f8f9fb;
+  padding: 12px;
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+/* CLIENT MESSAGE */
+.client {
+  background: #e7f1ff;
+  color: #0d6efd;
+  padding: 8px 10px;
+  border-radius: 12px 12px 12px 0;
+  margin-bottom: 8px;
+  width: fit-content;
+  max-width: 85%;
+  font-size: 14px;
+}
+
+/* ADMIN MESSAGE */
+.admin {
+  background: #ffe7e7;
+  color: #dc3545;
+  padding: 8px 10px;
+  border-radius: 12px 12px 0 12px;
+  margin-bottom: 8px;
+  margin-left: auto;
+  width: fit-content;
+  max-width: 85%;
+  font-size: 14px;
+}
+
+/* ==============================
+   INPUT AREA
+============================== */
+.chat-box input {
+  border: none;
+  border-top: 1px solid #eee;
+  padding: 10px;
+  width: 100%;
+  outline: none;
+  font-size: 14px;
+}
+
+.chat-box button {
+  border: none;
+  width: 100%;
+  padding: 10px;
+  background: linear-gradient(135deg, #79C821, #545375);
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.25s ease;
+}
+
+.chat-box button:hover {
+  opacity: 0.9;
+}
+
+/* ==============================
+   SCROLLBAR (PREMIUM TOUCH)
+============================== */
+.chat-messages::-webkit-scrollbar {
+  width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+  background: #cfd4da;
+  border-radius: 4px;
+}
+/* end */

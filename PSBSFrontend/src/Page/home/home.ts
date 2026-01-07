@@ -3,11 +3,13 @@ import { CommonModule } from '@angular/common';
 import { Router, RouterLink, RouterModule } from '@angular/router';
 import { UsersRegistrationService } from '../../app/Services/users-registration.service';
 import { HttpClient } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
+
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink],
+  imports: [CommonModule, RouterModule, RouterLink, FormsModule],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
@@ -15,20 +17,41 @@ export class Home implements OnInit {
 
   photographers: any[] = [];
   Math = Math;
+  messages: any[] = [];
+  message = '';
+  isChatOpen = false;
 
   // 🔹 rating API base
   private ratingApi = 'https://localhost:7272/api/ReviewRating';
+  chatService: any;
 
   constructor(
     private userService: UsersRegistrationService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private http: HttpClient
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.loadPhotographers();
+
+    this.chatService.startConnection();
+
+  this.chatService.receiveMessage(
+    (user: string, msg: string, isAdmin: boolean) => {
+      this.messages.push({ user, msg, isAdmin });
+    }
+  );
   }
+
+  toggleChat() {
+  this.isChatOpen = !this.isChatOpen;
+}
+
+  send() {
+  this.chatService.sendMessage('Client', this.message, false);
+  this.message = '';
+}
 
   // Load photographers
   loadPhotographers(): void {

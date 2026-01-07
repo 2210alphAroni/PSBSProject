@@ -60,6 +60,7 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<EmailService>();
+builder.Services.AddSignalR();
 
 // =========================
 // CORS
@@ -161,6 +162,7 @@ app.UseStaticFiles(new StaticFileOptions
 // =========================
 
 app.UseCors("SpecificOrigins");
+app.MapHub<ChatHub>("/chatHub");
 
 app.UseAuthentication();
 app.UseAuthorization();
