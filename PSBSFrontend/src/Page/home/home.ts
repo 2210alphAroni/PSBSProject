@@ -5,11 +5,13 @@ import { UsersRegistrationService } from '../../app/Services/users-registration.
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../../app/Services/chat.service';
+import { AllPackages } from '../all-packages/all-packages';
+
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, RouterModule, RouterLink, FormsModule],
+  imports: [CommonModule, RouterModule, RouterLink, FormsModule, AllPackages],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
@@ -20,6 +22,7 @@ export class Home implements OnInit {
   message = '';
   isChatOpen = false;
   isChatConnected = false;
+  showPackagePopup = false;
 
   private ratingApi = 'https://localhost:7272/api/ReviewRating';
 
@@ -32,25 +35,34 @@ export class Home implements OnInit {
   ) {}
 
   ngOnInit(): void {
+
+    /* ================= POPUP CONTROL LOGIC ================= */
+
+    const popupShown = localStorage.getItem('package_popup_shown');
+
+    if (!popupShown) {
+      this.showPackagePopup = true;
+
+      // mark as shown
+      localStorage.setItem('package_popup_shown', 'true');
+    }
+
+    /* ======================================================= */
+
     this.loadPhotographers();
 
-    // ✅ Start SignalR connection safely
     this.chatService.startConnection()
       .then(() => {
         this.isChatConnected = true;
 
-        // ✅ RECEIVE MESSAGE (FIXED + AUTO SCROLL)
         this.chatService.receiveMessage(
           (user: string, msg: string, isAdmin: boolean) => {
             this.messages.push({ user, msg, isAdmin });
             this.cdr.detectChanges();
 
-            // 🔽 auto scroll to latest message
             setTimeout(() => {
               const box = document.querySelector('.chat-messages') as HTMLElement;
-              if (box) {
-                box.scrollTop = box.scrollHeight;
-              }
+              if (box) box.scrollTop = box.scrollHeight;
             }, 0);
           }
         );
@@ -61,6 +73,12 @@ export class Home implements OnInit {
       });
   }
 
+  /* ================= OPTIONAL ================= */
+  closePackagePopup() {
+    this.showPackagePopup = false;
+  }
+  /* ============================================ */
+
   toggleChat() {
     this.isChatOpen = !this.isChatOpen;
   }
@@ -70,14 +88,12 @@ export class Home implements OnInit {
       alert('Chat is connecting, please wait...');
       return;
     }
-
     if (!this.message.trim()) return;
 
     this.chatService.sendMessage('Client', this.message, false);
     this.message = '';
   }
 
-  // ---------------------------
   loadPhotographers(): void {
     this.userService.getAvailablePhotographers().subscribe({
       next: res => {

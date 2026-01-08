@@ -41,7 +41,7 @@
         </p>
 
         <div class="d-flex flex-wrap gap-2 mt-4">
-          <a routerLink="/booking"
+          <a routerLink="/booking-package"
             class="btn btn-warning btn-lg fw-semibold px-4 shadow">
             <i class="bi bi-calendar2-check me-2"></i>
             Book a Service
@@ -453,7 +453,6 @@
   </div>
 </section>
 
-
 <!-- ================================
      CHAT ICON
 ================================ -->
@@ -472,8 +471,8 @@
 
   <div class="chat-messages">
     <div *ngFor="let m of messages"
-         [class.admin]="m.isAdmin"
-         [class.client]="!m.isAdmin">
+      [class.admin]="m.isAdmin"
+      [class.client]="!m.isAdmin">
       <b>{{ m.user }}:</b> {{ m.msg }}
     </div>
   </div>
@@ -481,8 +480,7 @@
   <input
     [(ngModel)]="message"
     placeholder="Type message..."
-    [disabled]="!isChatConnected"
-  />
+    [disabled]="!isChatConnected" />
 
   <button
     (click)="send()"
@@ -491,3 +489,101 @@
   </button>
 </div>
 <!-- ================================ -->
+
+<!-- ================= PACKAGE POPUP (AUTO ON LOGIN) ================= -->
+<div
+  class="modal fade show d-block"
+  *ngIf="showPackagePopup"
+  style="background: rgba(0,0,0,0.6);">
+  <div
+    class="modal-dialog modal-xl modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content rounded-4 shadow-lg">
+
+      <!-- HEADER -->
+      <div class="modal-header">
+        <h4 class="fw-bold mb-0">Our Photography Packages</h4>
+        <button
+          class="btn-close"
+          (click)="showPackagePopup = false">
+        </button>
+      </div>
+
+      <!-- BODY -->
+      <div class="modal-body p-0">
+        <!-- 🔥 REUSE EXISTING COMPONENT -->
+        <section class="mb-5 py-5">
+          <h3>Follow the Steps for booking...</h3>
+          <div class="row g-4">
+            <div class="col-md-3">
+              <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body">
+                  <div
+                    class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
+
+                    <!-- Font Awesome Icon -->
+                    <i class="fa-solid fa-user fs-4"></i>
+
+                  </div>
+                  <a routerLink="/registration" class="btn btn-light">Create
+                    Account</a>
+                  <p class="text-muted small mb-0">Registration & login.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body">
+                  <div
+                    class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
+                    <!-- Font Awesome Icon -->
+                    <i class="fa-solid fa-box fs-4"></i>
+                  </div>
+                  <a routerLink="/all-packages"><h6 class="btn btn-light">Select
+                      Package</h6></a>
+                  <p class="text-muted small mb-0">Duration, photos, add-ons &
+                    more.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body">
+                  <div
+                    class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
+
+                    <!-- Font Awesome Icon -->
+                    <i class="fa-solid fa-alarm-clock fs-4"></i>
+                  </div>
+                  <h6 class="fw-bold">Choose Date</h6>
+                  <p class="text-muted small mb-0">Check availability &
+                    slots.</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-md-3">
+              <div class="card border-0 shadow-sm h-100 rounded-4">
+                <div class="card-body">
+                  <div
+                    class="d-inline-flex align-items-center justify-content-center rounded-4 mb-3">
+                    <!-- Font Awesome Icon -->
+                    <i class="fa-solid fa-money-bill fs-4"></i>
+                  </div>
+                  <h6 class="fw-bold">Pay & Confirm</h6>
+                  <p class="text-muted small mb-0">Invoice + status
+                    tracking.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <app-all-packages></app-all-packages>
+
+      </div>
+
+    </div>
+  </div>
+</div>
+<!-- ================= END PACKAGE POPUP ================= -->
