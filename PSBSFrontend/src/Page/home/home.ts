@@ -4,7 +4,7 @@ import { Router, RouterLink, RouterModule } from '@angular/router';
 import { UsersRegistrationService } from '../../app/Services/users-registration.service';
 import { HttpClient } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
-
+import { ChatService } from '../../app/Services/chat.service';
 
 @Component({
   selector: 'app-home',
@@ -16,66 +16,81 @@ import { FormsModule } from '@angular/forms';
 export class Home implements OnInit {
 
   photographers: any[] = [];
-  Math = Math;
   messages: any[] = [];
   message = '';
   isChatOpen = false;
+  isChatConnected = false;
 
-  // 🔹 rating API base
   private ratingApi = 'https://localhost:7272/api/ReviewRating';
-  chatService: any;
 
   constructor(
     private userService: UsersRegistrationService,
+    private chatService: ChatService,
     private router: Router,
     private cdr: ChangeDetectorRef,
     private http: HttpClient
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.loadPhotographers();
 
-    this.chatService.startConnection();
+    // ✅ Start SignalR connection safely
+    this.chatService.startConnection()
+      .then(() => {
+        this.isChatConnected = true;
 
-  this.chatService.receiveMessage(
-    (user: string, msg: string, isAdmin: boolean) => {
-      this.messages.push({ user, msg, isAdmin });
-    }
-  );
+        // ✅ RECEIVE MESSAGE (FIXED + AUTO SCROLL)
+        this.chatService.receiveMessage(
+          (user: string, msg: string, isAdmin: boolean) => {
+            this.messages.push({ user, msg, isAdmin });
+            this.cdr.detectChanges();
+
+            // 🔽 auto scroll to latest message
+            setTimeout(() => {
+              const box = document.querySelector('.chat-messages') as HTMLElement;
+              if (box) {
+                box.scrollTop = box.scrollHeight;
+              }
+            }, 0);
+          }
+        );
+      })
+      .catch(() => {
+        this.isChatConnected = false;
+        console.error('Chat connection failed');
+      });
   }
 
   toggleChat() {
-  this.isChatOpen = !this.isChatOpen;
-}
+    this.isChatOpen = !this.isChatOpen;
+  }
 
   send() {
-  this.chatService.sendMessage('Client', this.message, false);
-  this.message = '';
-}
+    if (!this.isChatConnected) {
+      alert('Chat is connecting, please wait...');
+      return;
+    }
 
-  // Load photographers
+    if (!this.message.trim()) return;
+
+    this.chatService.sendMessage('Client', this.message, false);
+    this.message = '';
+  }
+
+  // ---------------------------
   loadPhotographers(): void {
     this.userService.getAvailablePhotographers().subscribe({
-      next: (res) => {
+      next: res => {
         this.photographers = res;
-
-        // EACH photographer → rating load
-        this.photographers.forEach(p => {
-          this.loadRatingForPhotographer(p);
-        });
-
+        this.photographers.forEach(p => this.loadRatingForPhotographer(p));
         this.cdr.detectChanges();
       },
-      error: (err) => {
-        console.error('Failed to load photographers', err);
-      }
+      error: err => console.error(err)
     });
   }
 
-  // ✅ NEW: load avg rating + total reviews
   loadRatingForPhotographer(p: any) {
-    this.http
-      .get<any>(`${this.ratingApi}/average/${p.Id}`)
+    this.http.get<any>(`${this.ratingApi}/average/${p.Id}`)
       .subscribe({
         next: res => {
           p.AverageRating = Number(res.AverageRating) || 0;
@@ -89,12 +104,6 @@ export class Home implements OnInit {
       });
   }
 
-  // Booking navigation
-  book(id: number): void {
-    this.router.navigate(['/booking', id]);
-  }
-
-  // helper
   getRoundedRating(rating: number): number {
     return Math.round(rating || 0);
   }

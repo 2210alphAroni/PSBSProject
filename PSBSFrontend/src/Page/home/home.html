@@ -457,14 +457,12 @@
 <!-- ================================
      CHAT ICON
 ================================ -->
+<!-- CHAT ICON -->
 <div class="chat-icon" (click)="toggleChat()">
-  <!-- 💬 -->
-   <i class="fa-brands fa-signal-messenger"></i>
+  <i class="fa-brands fa-signal-messenger"></i>
 </div>
 
-<!-- ================================
-     CHAT BOX (HOME ONLY)
-================================ -->
+<!-- CHAT BOX -->
 <div class="chat-box" *ngIf="isChatOpen">
 
   <div class="chat-header">
@@ -480,6 +478,16 @@
     </div>
   </div>
 
-  <input [(ngModel)]="message" placeholder="Type message..." />
-  <button (click)="send()">Send</button>
+  <input
+    [(ngModel)]="message"
+    placeholder="Type message..."
+    [disabled]="!isChatConnected"
+  />
+
+  <button
+    (click)="send()"
+    [disabled]="!isChatConnected">
+    {{ isChatConnected ? 'Send' : 'Connecting...' }}
+  </button>
 </div>
+<!-- ================================ -->
