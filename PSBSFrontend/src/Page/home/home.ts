@@ -81,6 +81,7 @@ export class Home implements OnInit {
 
   toggleChat() {
     this.isChatOpen = !this.isChatOpen;
+    this.cdr.detectChanges();
   }
 
   send() {
