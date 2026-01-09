@@ -64,6 +64,7 @@
 
 
 import { Routes } from '@angular/router';
+import { AuthGuard } from './Services/auth.guard';
 import { PublicLayoutComponent } from './shared/layout/layout';
 
 // PUBLIC PAGES
@@ -114,7 +115,7 @@ export const routes: Routes = [
       { path: 'photos-by-category', component: PhotoByCat },
       { path: 'privacy-policy', component: PrivacyPolicy },
       { path: 'terms-use', component: TermsUse },
-      { path: 'booking-package', component: BookingPackage },
+      { path: 'booking-package', component: BookingPackage, canActivate: [AuthGuard] },
       { path: 'review-rating', component: ReviewRating },
 
     ]
