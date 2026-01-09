@@ -275,6 +275,15 @@
               placeholder="Mobile Number"
               maxlength="11"
               [(ngModel)]="mobileNumber" />
+             
+            <!-- OTP Input (shows after Send OTP click) -->
+            <input
+              *ngIf="askForMobileOtp"
+              type="text"
+              class="form-control mb-3"
+              placeholder="Enter 6 digit code sent to your mobile"
+              [(ngModel)]="mobileOtp"
+              maxlength="6" />
 
             <!-- Payment Code (shows after Send Payment click) -->
             <input

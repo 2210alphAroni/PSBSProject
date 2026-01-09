@@ -17,7 +17,7 @@ import jsPDF from 'jspdf';
 })
 export class BookingPackage implements OnInit {
 
- userId = 0;
+  userId = 0;
   photographerId = 0;
   packageId!: number;
 
@@ -38,6 +38,9 @@ export class BookingPackage implements OnInit {
   mobileNumber: string = '';
   paymentCode: string = '';
   askForCode = false;
+  mobileOtp = '';
+  askForMobileOtp = false;
+
 
   // ⭐ rating API
   private ratingApi = 'https://localhost:7272/api/ReviewRating';
@@ -217,24 +220,42 @@ export class BookingPackage implements OnInit {
 
   onSendPayment() {
 
+    // STEP 1: Validate mobile number
     if (!this.mobileNumber || !this.isValidMobile()) {
       alert('Please enter a valid 11-digit mobile number');
       return;
     }
 
+    // STEP 2: Send 6-digit OTP to mobile
+    if (!this.askForMobileOtp) {
+      this.askForMobileOtp = true;
+      alert('A 6-digit code has been sent to your mobile number');
+      return;
+    }
+
+    // STEP 3: Verify 6-digit mobile OTP
+    if (!this.mobileOtp || this.mobileOtp.length !== 6) {
+      alert('Please enter the 6-digit code sent to your mobile');
+      return;
+    }
+
+    // STEP 4: Show existing paymentCode input (Bkash/Nagad/Card PIN)
     if (!this.askForCode) {
       this.askForCode = true;
       return;
     }
 
+    // STEP 5: Validate existing paymentCode (your logic stays)
     if (!this.paymentCode || !this.isValidCode()) {
       alert('Please enter a valid payment code');
       return;
     }
 
+    // STEP 6: Final payment
     this.generateInvoicePdf();
     this.makePayment();
   }
+
 
   makePayment() {
 
@@ -271,32 +292,32 @@ export class BookingPackage implements OnInit {
 
   // random transaction id generator
   generateTransactionId(): string {
-  return 'TXN-' + Math.random().toString(36).substring(2, 10).toUpperCase();
-}
+    return 'TXN-' + Math.random().toString(36).substring(2, 10).toUpperCase();
+  }
 
 
   generateInvoicePdf() {
-  const doc = new jsPDF();
-  const transactionId = this.generateTransactionId();
+    const doc = new jsPDF();
+    const transactionId = this.generateTransactionId();
 
-  doc.setFontSize(18);
-  doc.text('INVOICE', 105, 20, { align: 'center' });
+    doc.setFontSize(18);
+    doc.text('INVOICE', 105, 20, { align: 'center' });
 
-  doc.setFontSize(12);
-  doc.text(`Booking ID: ${this.createdBookingId}`, 20, 40);
-  doc.text(`Transaction ID: ${transactionId}`, 20, 50);
-  doc.text(`Payment Method: ${this.paymentMethod}`, 20, 60);
-  doc.text(`Mobile Number: ${this.mobileNumber}`, 20, 70);
-  doc.text(`Amount Paid: ৳ ${this.booking.Price}`, 20, 80);
-  doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 90);
+    doc.setFontSize(12);
+    doc.text(`Booking ID: ${this.createdBookingId}`, 20, 40);
+    doc.text(`Transaction ID: ${transactionId}`, 20, 50);
+    doc.text(`Payment Method: ${this.paymentMethod}`, 20, 60);
+    doc.text(`Mobile Number: ${this.mobileNumber}`, 20, 70);
+    doc.text(`Amount Paid: ৳ ${this.booking.Price}`, 20, 80);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 90);
 
-  doc.line(20, 100, 190, 100);
+    doc.line(20, 100, 190, 100);
 
-  doc.text('Thank you for your payment!', 20, 120);
-  doc.text('Photography Service Booking System', 20, 130);
+    doc.text('Thank you for your payment!', 20, 120);
+    doc.text('Photography Service Booking System', 20, 130);
 
-  doc.save(`Invoice_${this.createdBookingId}_${transactionId}.pdf`);
-}
+    doc.save(`Invoice_${this.createdBookingId}_${transactionId}.pdf`);
+  }
 
 
 }
