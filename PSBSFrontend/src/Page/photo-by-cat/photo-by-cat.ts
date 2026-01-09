@@ -1,7 +1,8 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpClientModule } from '@angular/common/http';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../app/Services/auth.service';
 
 @Component({
   selector: 'app-photo-by-cat',
@@ -18,15 +19,35 @@ export class PhotoByCat implements OnInit {
   constructor(
     private http: HttpClient,
     private route: ActivatedRoute,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private auth: AuthService
   ) {}
 
-  ngOnInit(): void {
-    this.route.queryParamMap.subscribe(params => {
-      this.category = params.get('cat') ?? 'Wedding';
-      this.loadImagesByCategory(this.category);
-    });
-  }
+ ngOnInit(): void {
+  this.route.queryParamMap.subscribe(params => {
+
+    this.category = params.get('cat') ?? 'Wedding';
+
+    const publicCategories = ['Wedding', 'Reception'];
+
+    // ❌ login required categories
+    if (!this.auth.isLoggedIn() && !publicCategories.includes(this.category)) {
+
+      this.router.navigate(['/login'], {
+        queryParams: {
+          reason: 'service_access',
+          category: this.category
+        }
+      });
+
+      return;
+    }
+
+    // ✅ allowed
+    this.loadImagesByCategory(this.category);
+  });
+}
 
   loadImagesByCategory(category: string): void {
     const apiUrl =
