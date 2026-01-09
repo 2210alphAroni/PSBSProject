@@ -1,8 +1,10 @@
 import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { HttpClient} from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { Package } from '../../app/models/package.model';
-import { RouterModule } from "@angular/router";
+import { RouterModule, Router } from "@angular/router";
+import { AuthService } from '../../app/Services/auth.service';
+
 
 @Component({
   selector: 'app-all-packages',
@@ -16,7 +18,11 @@ export class AllPackages implements OnInit {
   packages: Package[] = [];
   selectedPackage: Package | null = null;
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private router: Router,
+    private auth: AuthService) { }
 
   ngOnInit(): void {
     this.loadPackages();
@@ -34,8 +40,29 @@ export class AllPackages implements OnInit {
       });
   }
 
-  openModal(pkg: Package): void {
+
+  // Handle package click modal logic
+  handlePackageClick(pkg: Package): void {
+
+    // ❌ Not logged in → redirect to login
+    if (!this.auth.isLoggedIn()) {
+      this.router.navigate(['/login'], {
+        queryParams: { reason: 'booking_required' }
+      });
+      return;
+    }
+
+    // ✅ Logged in → open modal
     this.selectedPackage = pkg;
+    this.cdr.detectChanges();
+
+    const modalEl = document.getElementById('packageModal');
+    if (modalEl) {
+      // @ts-ignore
+      const modal = new bootstrap.Modal(modalEl);
+      modal.show();
+    }
   }
-  
+
+
 }

@@ -1,126 +1,125 @@
 <section class="py-5 bg-light">
-  
+
   <div class="container py-5">
 
-  <!-- ================= HEADER ================= -->
-  <div class="text-center mb-5 py-5">
-    <h1 class="fw-bold">Photography Packages</h1>
-    <p class="text-muted">Click any package to see full details</p>
+    <!-- ================= HEADER ================= -->
+    <div class="text-center mb-5 py-5">
+      <h1 class="fw-bold">Photography Packages</h1>
+      <p class="text-muted">Click any package to see full details</p>
+    </div>
+
+    <!-- ================= CARDS ================= -->
+    <div class="row g-4">
+
+      <div class="col-md-6 col-lg-4" *ngFor="let pkg of packages">
+        <div class="card shadow-sm h-100"
+          (click)="handlePackageClick(pkg)">
+
+          <div class="card-body">
+            <!-- ✅ FIXED -->
+            <h5 class="fw-bold">{{ pkg.packageName }}</h5>
+
+            <p class="text-muted">{{ pkg.description }}</p>
+
+            <ul class="list-unstyled">
+              <li>⏱ {{ pkg.coverageDurationHours }} Hours</li>
+              <li>📸 Up to {{ pkg.maxEditedPhotos }} Photos</li>
+
+              <li>
+                📁 Raw Files:
+                <span class="badge"
+                  [ngClass]="pkg.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
+                  {{ pkg.rawFilesAvailable ? 'Available' : 'Not Included' }}
+                </span>
+              </li>
+            </ul>
+
+            <h4 class="text-primary">
+              ৳{{ pkg.basePrice | number }}
+            </h4>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 
-  <!-- ================= CARDS ================= -->
-  <div class="row g-4">
+  <!-- ================= SINGLE DYNAMIC MODAL ================= -->
+  <div class="modal fade" id="packageModal" tabindex="-1">
+    <div
+      class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content" *ngIf="selectedPackage">
 
-    <div class="col-md-6 col-lg-4" *ngFor="let pkg of packages">
-      <div class="card shadow-sm h-100"
-           data-bs-toggle="modal"
-           data-bs-target="#packageModal"
-           (click)="openModal(pkg)">
+        <!-- ================= MODAL HEADER ================= -->
+        <div class="modal-header">
+          <h5 class="fw-bold">
+            {{ selectedPackage.packageName }} – Full Details
+          </h5>
+          <button class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
 
-        <div class="card-body">
-          <!-- ✅ FIXED -->
-          <h5 class="fw-bold">{{ pkg.packageName }}</h5>
+        <!-- ================= MODAL BODY ================= -->
+        <div class="modal-body">
 
-          <p class="text-muted">{{ pkg.description }}</p>
+          <p class="text-muted">
+            {{ selectedPackage.description }}
+          </p>
 
-          <ul class="list-unstyled">
-            <li>⏱ {{ pkg.coverageDurationHours }} Hours</li>
-            <li>📸 Up to {{ pkg.maxEditedPhotos }} Photos</li>
+          <ul class="list-group mb-3">
+            <li class="list-group-item">
+              <strong>Coverage Duration:</strong>
+              {{ selectedPackage.coverageDurationHours }} Hours
+            </li>
 
-            <li>
-              📁 Raw Files:
-              <span class="badge"
-                    [ngClass]="pkg.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
-                {{ pkg.rawFilesAvailable ? 'Available' : 'Not Included' }}
+            <li class="list-group-item">
+              <strong>Edited Photos:</strong>
+              Up to {{ selectedPackage.maxEditedPhotos }}
+            </li>
+
+            <li class="list-group-item">
+              <strong>Raw Files:</strong>
+              <span class="badge ms-2"
+                [ngClass]="selectedPackage.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
+                {{ selectedPackage.rawFilesAvailable ? 'Yes' : 'No' }}
               </span>
+            </li>
+
+            <li class="list-group-item">
+              <strong>Base Price:</strong>
+              ৳{{ selectedPackage.basePrice | number }}
             </li>
           </ul>
 
-          <h4 class="text-primary">
-            ৳{{ pkg.basePrice | number }}
-          </h4>
-        </div>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-<!-- ================= SINGLE DYNAMIC MODAL ================= -->
-<div class="modal fade" id="packageModal" tabindex="-1">
-  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
-    <div class="modal-content" *ngIf="selectedPackage">
-
-      <!-- ================= MODAL HEADER ================= -->
-      <div class="modal-header">
-        <h5 class="fw-bold">
-          {{ selectedPackage.packageName }} – Full Details
-        </h5>
-        <button class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <!-- ================= MODAL BODY ================= -->
-      <div class="modal-body">
-
-        <p class="text-muted">
-          {{ selectedPackage.description }}
-        </p>
-
-        <ul class="list-group mb-3">
-          <li class="list-group-item">
-            <strong>Coverage Duration:</strong>
-            {{ selectedPackage.coverageDurationHours }} Hours
-          </li>
-
-          <li class="list-group-item">
-            <strong>Edited Photos:</strong>
-            Up to {{ selectedPackage.maxEditedPhotos }}
-          </li>
-
-          <li class="list-group-item">
-            <strong>Raw Files:</strong>
-            <span class="badge ms-2"
-                  [ngClass]="selectedPackage.rawFilesAvailable ? 'bg-success' : 'bg-danger'">
-              {{ selectedPackage.rawFilesAvailable ? 'Yes' : 'No' }}
-            </span>
-          </li>
-
-          <li class="list-group-item">
-            <strong>Base Price:</strong>
-            ৳{{ selectedPackage.basePrice | number }}
-          </li>
-        </ul>
-
-        <!-- ================= ADD-ONS ================= -->
-        <h6 class="fw-bold"
+          <!-- ================= ADD-ONS ================= -->
+          <h6 class="fw-bold"
             *ngIf="selectedPackage.addOns && selectedPackage.addOns.length">
-          Available Add-ons
-        </h6>
+            Available Add-ons
+          </h6>
 
-        <div class="form-check"
-             *ngFor="let addon of selectedPackage.addOns">
-          <input class="form-check-input" type="checkbox">
-          <label class="form-check-label">
-            {{ addon.addOnName }} (+৳{{ addon.price | number }})
-          </label>
+          <div class="form-check"
+            *ngFor="let addon of selectedPackage.addOns">
+            <input class="form-check-input" type="checkbox">
+            <label class="form-check-label">
+              {{ addon.addOnName }} (+৳{{ addon.price | number }})
+            </label>
+          </div>
+
+        </div>
+
+        <!-- ================= MODAL FOOTER ================= -->
+        <div class="modal-footer">
+          <button class="btn btn-secondary" data-bs-dismiss="modal">
+            Close
+          </button>
+          <button class="btn btn-dark" routerLink="/booking-package"
+            [queryParams]="{ packageId: selectedPackage.id }"
+            data-bs-dismiss="modal">
+            Proceed to Booking
+          </button>
         </div>
 
       </div>
-
-      <!-- ================= MODAL FOOTER ================= -->
-      <div class="modal-footer">
-        <button class="btn btn-secondary" data-bs-dismiss="modal">
-          Close
-        </button>
-        <button class="btn btn-dark" routerLink="/booking-package"
-                [queryParams]="{ packageId: selectedPackage.id }"
-                data-bs-dismiss="modal">
-          Proceed to Booking
-        </button>
-      </div>
-
     </div>
   </div>
-</div>
 
 </section>
