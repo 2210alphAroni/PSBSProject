@@ -54,6 +54,7 @@ export class PhotographerDashboard {
     this.loadStats();
     this.loadTotalBookings();
     this.loadRecentActivity();
+    this.loadAverageRating();
   }
 
   loadPhotographerInfo() {
@@ -143,6 +144,24 @@ export class PhotographerDashboard {
       });
   }
 
+  loadAverageRating() {
+    if (!this.photographerId) {
+      console.error('Photographer ID missing for rating');
+      return;
+    }
+
+    this.http
+      .get<any>(`https://localhost:7272/api/ReviewRating/average/${this.photographerId}`)
+      .subscribe({
+        next: res => {
+          this.averageRating = res.AverageRating || 0;
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error('Failed to load rating', err);
+        }
+      });
+  }
 
 
 }
