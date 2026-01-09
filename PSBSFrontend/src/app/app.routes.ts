@@ -76,6 +76,7 @@ import { Contact } from '../Page/contact/contact';
 import { PrivacyPolicy } from '../Page/privacy-policy/privacy-policy';
 import { TermsUse } from '../Page/terms-use/terms-use';
 import { ReviewRating } from '../Page/review-rating/review-rating';
+import { PhotoByCat } from '../Page/photo-by-cat/photo-by-cat';
 
 
 // AUTH PAGES
@@ -96,7 +97,7 @@ import { AdminReviews } from '../Page/admin-reviews/admin-reviews';
 import { PhotographerDashboard } from '../Page/photographer-dashboard/photographer-dashboard';
 import { PhotographerProfile } from '../Page/photographer-profile/photographer-profile';
 import { PhotographerPortfolio } from '../Page/photographer-portfolio/photographer-portfolio';
-import { PhotoByCat } from '../Page/photo-by-cat/photo-by-cat';
+import { PhotographerSettings } from '../Page/photographer-settings/photographer-settings';
 
 export const routes: Routes = [
 
@@ -146,6 +147,7 @@ export const routes: Routes = [
     children: [
       { path: 'photographer-profile', component: PhotographerProfile },
       { path: 'photographer-portfolio', component: PhotographerPortfolio },
+      { path: 'photographer-settings', component: PhotographerSettings },
     ]
   },
   

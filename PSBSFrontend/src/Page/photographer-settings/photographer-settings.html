@@ -1,0 +1,103 @@
+<div class="container mt-4">
+  <div class="card shadow-sm p-4">
+
+    <!-- TOP BAR -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <h4 class="mb-0">Photographer Settings</h4>
+
+      <button class="btn btn-danger btn-sm" (click)="logout()">Logout</button>
+    </div>
+
+    <!-- PROFILE IMAGE -->
+    <div *ngIf="photographer" class="row">
+      <div class="col-md-6">
+
+        <h5 class="mb-3">Profile Photo</h5>
+
+        <div class="text-center py-4">
+          <img
+            width="20%"
+            [src]="'https://localhost:7272' + photographer.ProfileImage"
+            alt="Profile Image"
+            class="rounded-circle border border-3 border-light">
+
+          <div>
+            <input
+              type="file"
+              accept="image/*"
+              hidden
+              #fileInput
+              (change)="onImageSelected($event)">
+
+            <button
+              class="btn btn-outline-dark btn-sm mt-3"
+              (click)="fileInput.click()"
+              [disabled]="imageUploading">
+              {{ imageUploading ? 'Uploading...' : 'Change Photo' }}
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- CHANGE PASSWORD -->
+    <div *ngIf="!loading && photographer" class="row mt-4">
+      <div class="col-md-6">
+
+        <h5 class="mb-3">🔐 Change Password</h5>
+
+        <div *ngIf="alertMessage"
+             class="alert"
+             [ngClass]="{
+               'alert-success': alertType === 'success',
+               'alert-danger': alertType === 'error'
+             }">
+          {{ alertMessage }}
+        </div>
+
+        <form #changePasswordForm="ngForm" (ngSubmit)="updatePassword()">
+
+          <div class="mb-3">
+            <label class="form-label">Current Password</label>
+            <input
+              type="password"
+              class="form-control"
+              name="currentPassword"
+              [(ngModel)]="currentPassword"
+              required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              name="newPassword"
+              [(ngModel)]="newPassword"
+              required minlength="6">
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Confirm New Password</label>
+            <input
+              type="password"
+              class="form-control"
+              name="confirmPassword"
+              [(ngModel)]="confirmPassword"
+              required>
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-dark"
+            [disabled]="changePasswordForm.invalid || passwordLoading">
+            {{ passwordLoading ? 'Updating...' : 'Update Password' }}
+          </button>
+
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
