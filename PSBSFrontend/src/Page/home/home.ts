@@ -42,9 +42,11 @@ export class Home implements OnInit {
 
     if (!popupShown) {
       this.showPackagePopup = true;
+      this.cdr.detectChanges();
 
       // mark as shown
       localStorage.setItem('package_popup_shown', 'true');
+      this.cdr.detectChanges();
     }
 
     /* ======================================================= */
