@@ -1,1 +1,91 @@
-<p>admin-reviews works!</p>
+<div class="container py-4">
+    <h2 class="mb-4 fw-bold">Photographer Reviews</h2>
+
+    <!-- Search Input -->
+    <input
+        type="text"
+        class="form-control mb-4"
+        placeholder="Search photographer by name..." 
+        [(ngModel)]="searchText" />
+
+    <div *ngFor="let photographer of filteredPhotographers" class="mb-5">
+
+        <!-- Photographer Header -->
+        <div class="card shadow-sm mb-3">
+            <div class="card-body">
+                <h4 class="mb-1">
+                    👤 {{ photographer.FullName }}
+                </h4>
+
+                <!-- Average Rating -->
+                <div
+                    class="d-flex justify-content-between align-items-center"
+                    *ngIf="averageMap[photographer.Id]">
+                    <div>
+                        ⭐
+                        <strong>
+                            {{ averageMap[photographer.Id].AverageRating |
+                            number:'1.1-1' }}
+                        </strong>
+                        / 5
+                    </div>
+
+                    <div class="text-muted">
+                        🧮 {{ averageMap[photographer.Id].TotalReviews }}
+                        Reviews
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Reviews -->
+        <div
+            *ngIf="
+        reviewsMap[photographer.Id] &&
+        reviewsMap[photographer.Id].length > 0;
+        else noReview
+      ">
+            <div
+                *ngFor="let review of reviewsMap[photographer.Id]"
+                class="card mb-3 shadow-sm">
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between">
+                        <h6 class="fw-bold mb-1">
+                            🧑 User: {{ review.FullName }}
+                        </h6>
+                        <small class="text-muted">
+                            {{ review.CreatedAt | date: 'medium' }}
+                        </small>
+                    </div>
+
+                    <!-- Rating -->
+                    <div class="mb-2">
+                        <span
+                            *ngFor="let star of getStars(review.Rating)"
+                            class="text-warning fs-5">
+                            ★
+                        </span>
+                        <span class="text-muted ms-2">
+                            ({{ review.Rating }}/5)
+                        </span>
+                    </div>
+
+                    <!-- Comment -->
+                    <p class="mb-0 text-muted">
+                        "{{ review.ReviewComment }}"
+                    </p>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- No Review -->
+        <ng-template #noReview>
+            <div class="alert alert-secondary text-center">
+                No reviews yet for this photographer
+            </div>
+        </ng-template>
+
+    </div>
+</div>
