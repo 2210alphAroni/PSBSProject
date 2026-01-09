@@ -72,6 +72,7 @@ export class AdminReviews implements OnInit {
   // ================= FILTERED PHOTOGRAPHERS =================
   get filteredPhotographers() {
     if (!this.searchText) return this.photographers;
+    this.cdr.detectChanges();
 
     return this.photographers.filter(p =>
       p.FullName.toLowerCase().includes(this.searchText.toLowerCase())
