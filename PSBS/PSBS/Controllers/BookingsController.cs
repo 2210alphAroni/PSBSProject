@@ -152,59 +152,7 @@ namespace PSBS.Controllers
                 PhotographerId = booking.PhotographerId
             });
 
-            /* ================= ✅ EMAIL PART (NEW & SAFE) ================= */
-
-            var userInfo = await con.QueryFirstAsync<dynamic>(
-                "SELECT FullName, Email FROM UsersRegistration WHERE Id = @Id",
-                new { Id = booking.UserId }
-            );
-
-            var photographerInfo = await con.QueryFirstAsync<dynamic>(
-                "SELECT FullName, Email FROM UsersRegistration WHERE Id = @Id",
-                new { Id = booking.PhotographerId }
-            );
-
-            try
-            {
-                // USER EMAIL
-                await _emailService.SendEmailAsync(
-                    userInfo.Email,
-                    "Booking Confirmation",
-                    $@"
-                <h3>Hello {userInfo.FullName},</h3>
-                <p>Your booking has been successfully created.</p>
-                <p><b>Photographer:</b> {booking.PhotographerName}</p>
-                <p><b>Package:</b> {booking.PackageName}</p>
-                <p><b>Date:</b> {booking.EventDate:dd MMM yyyy}</p>
-                <p>Status: Pending</p>
-                <br>
-                <p>Regards,<br>PSBS Team</p>
-            ",
-                    userInfo.FullName
-                );
-
-                // PHOTOGRAPHER EMAIL
-                await _emailService.SendEmailAsync(
-                    photographerInfo.Email,
-                    "New Booking Received",
-                    $@"
-                <h3>Hello {photographerInfo.FullName},</h3>
-                <p>You have received a new booking.</p>
-                <p><b>Client:</b> {userInfo.FullName}</p>
-                <p><b>Package:</b> {booking.PackageName}</p>
-                <p><b>Date:</b> {booking.EventDate:dd MMM yyyy}</p>
-                <br>
-                <p>Please login to your dashboard.</p>
-            ",
-                    photographerInfo.FullName
-                );
-            }
-            catch
-            {
-                // email fail হলেও booking ঠিক থাকবে
-            }
-
-            /* ================= END EMAIL ================= */
+           
 
             return Ok(new
             {
@@ -236,6 +184,64 @@ namespace PSBS.Controllers
                 PaymentStatus = dto.PaymentStatus,
                 PaymentMethod = dto.PaymentMethod
             });
+            //var bookingSql = "Select * From Bookings Where Id = @Id";
+            var booking = await con.QueryFirstAsync<Booking>(
+                "Select * From Bookings Where Id = @Id",
+                new { Id = id }
+            );
+            /* ================= ✅ EMAIL PART (NEW & SAFE) ================= */
+
+            var userInfo = await con.QueryFirstAsync<dynamic>(
+                "SELECT FullName, Email FROM UsersRegistration WHERE Id = @Id",
+                new { Id = booking.UserId }
+            );
+
+            var photographerInfo = await con.QueryFirstAsync<dynamic>(
+                "SELECT FullName, Email FROM UsersRegistration WHERE Id = @Id",
+                new { Id = booking.PhotographerId }
+            );
+
+            try
+            {
+                // USER EMAIL
+                await _emailService.SendEmailAsync(
+                    userInfo.Email,
+                    "Booking Confirmation",
+                    $@"
+                <h3>Hello {userInfo.FullName},</h3>
+                <p>Your booking has been successfully created.</p>
+                <p><b>Photographer:</b> {booking.PhotographerName}</p>
+                <p><b>Package:</b> {booking.PackageName}</p>
+                <p><b>Date:</b> {booking.EventDate:dd MMM yyyy}</p>
+                <p>Status: Confirmed</p>
+                <br>
+                <p>Regards,<br>PSBS Team</p>
+            ",
+                    userInfo.FullName
+                );
+
+                // PHOTOGRAPHER EMAIL
+                await _emailService.SendEmailAsync(
+                    photographerInfo.Email,
+                    "New Booking Received",
+                    $@"
+                <h3>Hello {photographerInfo.FullName},</h3>
+                <p>You have received a new booking.</p>
+                <p><b>Client:</b> {userInfo.FullName}</p>
+                <p><b>Package:</b> {booking.PackageName}</p>
+                <p><b>Date:</b> {booking.EventDate:dd MMM yyyy}</p>
+                <br>
+                <p>Please login to your dashboard.</p>
+            ",
+                    photographerInfo.FullName
+                );
+            }
+            catch
+            {
+                // email fail হলেও booking ঠিক থাকবে
+            }
+
+            /* ================= END EMAIL ================= */
 
             if (rows == 0)
                 return NotFound("Booking not found.");
