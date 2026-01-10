@@ -10,10 +10,12 @@ namespace PSBS.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly DapperContext _context;
+        private readonly EmailService _emailService;
 
-        public BookingsController(DapperContext context)
+        public BookingsController(DapperContext context, EmailService emailService)
         {
             _context = context;
+            _emailService = emailService;
         }
 
         /* ================= CREATE BOOKING ================= */
@@ -54,13 +56,13 @@ namespace PSBS.Controllers
 
             // 🚫 TIME OVERLAP CHECK
             var conflictSql = @"
-                SELECT COUNT(1)
-                FROM Bookings
-                WHERE PhotographerId = @PhotographerId
-                AND BookingStatus != 'Rejected'
-                AND EventStartTime < @NewEnd
-                AND EventEndTime > @NewStart
-            ";
+        SELECT COUNT(1)
+        FROM Bookings
+        WHERE PhotographerId = @PhotographerId
+        AND BookingStatus != 'Rejected'
+        AND EventStartTime < @NewEnd
+        AND EventEndTime > @NewStart
+    ";
 
             var conflict = await con.ExecuteScalarAsync<int>(conflictSql, new
             {
@@ -77,85 +79,132 @@ namespace PSBS.Controllers
             booking.EventEndTime = endDateTime;
 
             var photographerName = await con.ExecuteScalarAsync<string>(
-            "SELECT FullName FROM UsersRegistration WHERE Id = @Id",
-            new { Id = booking.PhotographerId }
-        );
+                "SELECT FullName FROM UsersRegistration WHERE Id = @Id",
+                new { Id = booking.PhotographerId }
+            );
 
             booking.PhotographerName = photographerName;
 
             // ✅ INSERT BOOKING + RETURN ID
             var sql = @"
-                INSERT INTO Bookings
-                (
-                    UserId,
-                    PhotographerId,
-                    PhotographerName,
-                    PackageId,
-                    EventDate,
-                    EventStartTime,
-                    EventEndTime,
-                    EventLocation,
-                    Notes,
-                    PackageName,
-                    CoverageDurationHours,
-                    EditedPhotos,
-                    RawFilesAvailable,
-                    Price,
-                    BookingStatus,
-                    PaymentStatus,
-                    CreatedAt
-                )
-                VALUES
-                (
-                    @UserId,
-                    @PhotographerId,
-                    @PhotographerName,
-                    @PackageId,
-                    @EventDate,
-                    @EventStartTime,
-                    @EventEndTime,
-                    @EventLocation,
-                    @Notes,
-                    @PackageName,
-                    @CoverageDurationHours,
-                    @EditedPhotos,
-                    @RawFilesAvailable,
-                    @Price,
-                    'Pending',
-                    'Unpaid',
-                    GETDATE()
-                );
+        INSERT INTO Bookings
+        (
+            UserId,
+            PhotographerId,
+            PhotographerName,
+            PackageId,
+            EventDate,
+            EventStartTime,
+            EventEndTime,
+            EventLocation,
+            Notes,
+            PackageName,
+            CoverageDurationHours,
+            EditedPhotos,
+            RawFilesAvailable,
+            Price,
+            BookingStatus,
+            PaymentStatus,
+            CreatedAt
+        )
+        VALUES
+        (
+            @UserId,
+            @PhotographerId,
+            @PhotographerName,
+            @PackageId,
+            @EventDate,
+            @EventStartTime,
+            @EventEndTime,
+            @EventLocation,
+            @Notes,
+            @PackageName,
+            @CoverageDurationHours,
+            @EditedPhotos,
+            @RawFilesAvailable,
+            @Price,
+            'Pending',
+            'Unpaid',
+            GETDATE()
+        );
 
-                SELECT CAST(SCOPE_IDENTITY() as int);
-            ";
+        SELECT CAST(SCOPE_IDENTITY() as int);
+    ";
 
             var bookingId = await con.ExecuteScalarAsync<int>(sql, booking);
 
-            /* ================= NEW PART (SAFE ADDITION) ================= */
+            /* ================= ACTIVITY (AS IT IS) ================= */
 
-            // 🔹 GET USER FULL NAME
             var fullName = await con.ExecuteScalarAsync<string>(
                 "SELECT FullName FROM UsersRegistration WHERE Id = @Id",
                 new { Id = booking.UserId }
             );
 
-            // 🔹 INSERT RECENT BOOKING ACTIVITY
-            var activitySql = @"
-                INSERT INTO RecentActivities
-                (Message, ActivityType, CreatedAt, FullName, PhotographerId)
-                VALUES
-                (@Message, @ActivityType, GETDATE(), @FullName, @PhotographerId)
-            ";
-
-            await con.ExecuteAsync(activitySql, new
+            await con.ExecuteAsync(@"
+        INSERT INTO RecentActivities
+        (Message, ActivityType, CreatedAt, FullName, PhotographerId)
+        VALUES
+        (@Message, 'Booking', GETDATE(), @FullName, @PhotographerId)
+    ", new
             {
                 Message = $"New booking created for {booking.PackageName}",
-                ActivityType = "Booking",
                 FullName = fullName,
                 PhotographerId = booking.PhotographerId
             });
 
-            /* ================= END NEW PART ================= */
+            /* ================= ✅ EMAIL PART (NEW & SAFE) ================= */
+
+            var userInfo = await con.QueryFirstAsync<dynamic>(
+                "SELECT FullName, Email FROM UsersRegistration WHERE Id = @Id",
+                new { Id = booking.UserId }
+            );
+
+            var photographerInfo = await con.QueryFirstAsync<dynamic>(
+                "SELECT FullName, Email FROM UsersRegistration WHERE Id = @Id",
+                new { Id = booking.PhotographerId }
+            );
+
+            try
+            {
+                // USER EMAIL
+                await _emailService.SendEmailAsync(
+                    userInfo.Email,
+                    "Booking Confirmation",
+                    $@"
+                <h3>Hello {userInfo.FullName},</h3>
+                <p>Your booking has been successfully created.</p>
+                <p><b>Photographer:</b> {booking.PhotographerName}</p>
+                <p><b>Package:</b> {booking.PackageName}</p>
+                <p><b>Date:</b> {booking.EventDate:dd MMM yyyy}</p>
+                <p>Status: Pending</p>
+                <br>
+                <p>Regards,<br>PSBS Team</p>
+            ",
+                    userInfo.FullName
+                );
+
+                // PHOTOGRAPHER EMAIL
+                await _emailService.SendEmailAsync(
+                    photographerInfo.Email,
+                    "New Booking Received",
+                    $@"
+                <h3>Hello {photographerInfo.FullName},</h3>
+                <p>You have received a new booking.</p>
+                <p><b>Client:</b> {userInfo.FullName}</p>
+                <p><b>Package:</b> {booking.PackageName}</p>
+                <p><b>Date:</b> {booking.EventDate:dd MMM yyyy}</p>
+                <br>
+                <p>Please login to your dashboard.</p>
+            ",
+                    photographerInfo.FullName
+                );
+            }
+            catch
+            {
+                // email fail হলেও booking ঠিক থাকবে
+            }
+
+            /* ================= END EMAIL ================= */
 
             return Ok(new
             {
