@@ -288,10 +288,10 @@ namespace PSBS.Controllers
         /* ================= CHECK PHOTOGRAPHER AVAILABILITY ================= */
         [HttpGet("check-availability")]
         public async Task<IActionResult> CheckAvailability(
-            int photographerId,
-            DateTime eventDate,
-            TimeSpan startTime,
-            int durationHours)
+     int photographerId,
+     DateTime eventDate,
+     TimeSpan startTime,
+     int durationHours)
         {
             using var con = _context.CreateConnection();
 
@@ -299,13 +299,13 @@ namespace PSBS.Controllers
             var newEnd = newStart.AddHours(durationHours);
 
             var sql = @"
-                SELECT COUNT(1)
-                FROM Bookings
-                WHERE PhotographerId = @PhotographerId
-                AND BookingStatus != 'Rejected'
-                AND EventStartTime < @NewEnd
-                AND EventEndTime > @NewStart
-            ";
+        SELECT COUNT(1)
+        FROM Bookings
+        WHERE PhotographerId = @PhotographerId
+          AND BookingStatus != 'Rejected'
+          AND EventStartTime < @NewEnd
+          AND EventEndTime > @NewStart
+    ";
 
             var conflict = await con.ExecuteScalarAsync<int>(sql, new
             {
@@ -319,6 +319,7 @@ namespace PSBS.Controllers
                 isAvailable = conflict == 0
             });
         }
+
 
 
         /* ================= PUT : UPDATE BOOKING ================= */
