@@ -78,6 +78,7 @@ import { PrivacyPolicy } from '../Page/privacy-policy/privacy-policy';
 import { TermsUse } from '../Page/terms-use/terms-use';
 import { ReviewRating } from '../Page/review-rating/review-rating';
 import { PhotoByCat } from '../Page/photo-by-cat/photo-by-cat';
+import { CheckPhotographerAvailability } from '../Page/check-photographer-availability/check-photographer-availability';
 
 
 // AUTH PAGES
@@ -119,6 +120,7 @@ export const routes: Routes = [
       { path: 'terms-use', component: TermsUse },
       { path: 'booking-package', component: BookingPackage, canActivate: [AuthGuard] },
       { path: 'review-rating', component: ReviewRating },
+      { path: 'check-photographer-availability', component: CheckPhotographerAvailability },
 
     ]
   },

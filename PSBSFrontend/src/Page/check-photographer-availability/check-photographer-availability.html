@@ -1,0 +1,61 @@
+<div class="container mt-5 py-5">
+    <h3 class="mb-4 mt-5 py-5">Photographer Availability</h3>
+
+    <div class="row g-3" >
+
+        <!-- ✅ Event Date -->
+        <div class="col-md-3">
+            <label class="form-label">Event Date</label>
+            <input
+                type="date"
+                class="form-control"
+                [(ngModel)]="eventDate"
+                [min]="minDate"
+                required>
+
+        </div>
+
+        <!-- ✅ Start Time -->
+        <div class="col-md-3">
+            <label class="form-label">Start Time</label>
+            <input
+                type="time"
+                class="form-control"
+                [(ngModel)]="startTime"
+                step="900"
+                required>
+        </div>
+
+        <!-- ✅ Duration -->
+        <div class="col-md-3">
+            <label class="form-label">Duration (Hours)</label>
+            <input
+                type="number"
+                min="1"
+                max="24"
+                class="form-control"
+                [(ngModel)]="durationHours"
+                required>
+        </div>
+
+        <!-- ✅ Button -->
+        <div class="col-md-3 d-flex align-items-end">
+            <button
+                class="btn btn-primary w-100"
+                (click)="checkAvailability()"
+                [disabled]="!eventDate || !startTime || !durationHours">
+                Check
+            </button>
+        </div>
+
+    </div>
+
+    <!-- ✅ Result -->
+    <div class="mt-4" *ngIf="isAvailable !== null">
+        <span
+            class="badge px-4 py-2 fs-6"
+            [ngClass]="isAvailable ? 'bg-success' : 'bg-danger'">
+            {{ isAvailable ? 'Available' : 'Not Available' }}
+        </span>
+    </div>
+</div>

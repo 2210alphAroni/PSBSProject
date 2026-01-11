@@ -1,31 +1,55 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
-  selector: 'app-photographer-availabilitys',
-  standalone: true,
+  selector: 'app-check-photographer-availability',
   imports: [CommonModule, FormsModule],
-  templateUrl: './photographer-availabilitys.html',
-  styleUrl: './photographer-availabilitys.css'
+  templateUrl: './check-photographer-availability.html',
+  styleUrl: './check-photographer-availability.css'
 })
-export class PhotographerAvailabilitys {
+export class CheckPhotographerAvailability implements OnInit {
 
   photographerId!: number;
-
   eventDate: string = '';
   startTime: string = '';
   durationHours: number = 1;
+  minDate: string = '';
 
   isAvailable: boolean | null = null;
 
-  constructor(private http: HttpClient) {
-    this.loadPhotographerId();
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit() {
+
+    // ✅ SAME AS ReviewRating PAGE (QUERY PARAM)
+    this.route.queryParams.subscribe(params => {
+
+      const queryId = Number(params['photographerId']);
+
+      if (queryId && !isNaN(queryId)) {
+        this.photographerId = queryId;
+        return;
+      }
+
+      // 🔁 fallback (old logic untouched)
+      this.loadPhotographerId();
+    });
+
+    // ✅ FIX FOR MIN DATE
+    const today = new Date();
+    this.minDate = today.toISOString().split('T')[0];
   }
 
-  // ✅ SAFE photographerId LOAD
+  // 🔁 OLD LOGIC (UNCHANGED)
   loadPhotographerId() {
+
     const userData = localStorage.getItem('user');
 
     if (!userData) {
@@ -35,7 +59,6 @@ export class PhotographerAvailabilitys {
 
     const user = JSON.parse(userData);
 
-    // ✅ ALL POSSIBLE CASE HANDLED
     this.photographerId =
       user.id ??
       user.userId ??
@@ -47,7 +70,7 @@ export class PhotographerAvailabilitys {
     }
   }
 
-  // ✅ FINAL API CALL
+  // ✅ API CALL (UNCHANGED)
   checkAvailability() {
 
     if (!this.photographerId) {
@@ -72,8 +95,8 @@ export class PhotographerAvailabilitys {
       { params }
     ).subscribe({
       next: res => {
-        debugger;
         this.isAvailable = res.isAvailable;
+        this.cdr.detectChanges();
       },
       error: err => {
         console.error(err);

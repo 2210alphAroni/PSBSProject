@@ -150,6 +150,7 @@ export class BookingPackage implements OnInit {
       }
     ).subscribe({
       next: res => {
+        debugger;
         this.isPhotographerAvailable = res.isAvailable;
         this.availabilityMessage = res.isAvailable ? '' : 'Photographer is already booked';
         this.checkingAvailability = false;

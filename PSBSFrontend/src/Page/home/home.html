@@ -401,6 +401,11 @@
               <span class="badge bg-info-subtle text-info">
                 Portfolio
               </span>
+              <span [routerLink]="['/check-photographer-availability']"
+                [queryParams]="{ photographerId: p.Id }"
+                class="badge bg-info-subtle text-info">
+                Check-Availability
+              </span>
             </div>
 
             <!-- RATING DISPLAY -->
