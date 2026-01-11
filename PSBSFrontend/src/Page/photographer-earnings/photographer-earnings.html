@@ -1,0 +1,46 @@
+<div class="container py-4">
+  <h2 class="fw-bold mb-4">My Earnings</h2>
+
+  <!-- 🔍 Search -->
+  <input
+    type="text"
+    class="form-control mb-3"
+    placeholder="Search by package name..."
+    [(ngModel)]="searchText"
+  />
+
+  <table class="table table-bordered table-hover shadow-sm" *ngIf="filteredEarnings.length > 0">
+    <thead class="table-dark">
+      <tr>
+        <th>#</th>
+        <th>Package Name</th>
+        <th>Total Bookings</th>
+        <th>Total Earnings (৳)</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      <tr *ngFor="let e of filteredEarnings; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ e.PackageName }}</td>
+        <td>{{ e.TotalBookings }}</td>
+        <td class="fw-bold text-success">
+          ৳ {{ e.TotalEarnings }}
+        </td>
+      </tr>
+    </tbody>
+
+    <tfoot>
+      <tr class="table-light">
+        <td colspan="3" class="text-end fw-bold">Grand Total</td>
+        <td class="fw-bold text-primary">
+          ৳ {{ grandTotal }}
+        </td>
+      </tr>
+    </tfoot>
+  </table>
+
+  <div *ngIf="filteredEarnings.length === 0" class="alert alert-info text-center">
+    No earnings found yet.
+  </div>
+</div>

@@ -368,6 +368,32 @@ namespace PSBS.Controllers
 
             return Ok(new { message = "Booking deleted successfully" });
         }
+
+
+         // For individual photographes earnings 
+        [HttpGet("photographer-earnings/{photographerId}")]
+        public async Task<IActionResult> GetPhotographerEarnings(int photographerId)
+        {
+            using var con = _context.CreateConnection();
+
+            var sql = @"
+            SELECT 
+                PackageId,
+                PackageName,
+                COUNT(*) AS TotalBookings,
+                SUM(Price) AS TotalEarnings
+            FROM Bookings
+            WHERE PhotographerId = @PhotographerId
+              AND PaymentStatus = 'Paid'
+              AND BookingStatus = 'Confirmed'
+            GROUP BY PackageId, PackageName
+            ORDER BY TotalEarnings DESC
+        ";
+
+            var result = await con.QueryAsync(sql, new { PhotographerId = photographerId });
+
+            return Ok(result);
+        }
     }
 
     /* ================= PAYMENT DTO ================= */
