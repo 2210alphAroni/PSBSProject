@@ -36,7 +36,6 @@ export class AdminReviews implements OnInit {
           this.photographers.forEach(p => {
             this.loadReviewsByPhotographer(p.Id);
             this.loadAverageRating(p.Id);   // ✅ ADDED
-            this.cdr.detectChanges();
           });
         },
         error: (err) => console.error(err),
@@ -71,8 +70,8 @@ export class AdminReviews implements OnInit {
 
   // ================= FILTERED PHOTOGRAPHERS =================
   get filteredPhotographers() {
-    if (!this.searchText) return this.photographers;
-    this.cdr.detectChanges();
+    if (!this.searchText)
+      return this.photographers;
 
     return this.photographers.filter(p =>
       p.FullName.toLowerCase().includes(this.searchText.toLowerCase())
