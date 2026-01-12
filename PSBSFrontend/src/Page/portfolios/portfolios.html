@@ -1,26 +1,26 @@
 
 <!-- ================= PHOTOGRAPHER PROFILE SECTION ================= -->
-<div class="text-center mt-5 py-5" *ngIf="photographer">
+<section class="py-5">
+  <div class="text-center mt-5 py-5" *ngIf="photographer">
 
-  <img
-    [src]="photographer.profileImage || 'assets/default-user.png'"
-    class="rounded-circle shadow"
-    style="width:150px;height:150px;object-fit:cover">
+    <img
+      [src]="photographer.profileImage || 'assets/default-user.png'"
+      class="rounded-circle shadow"
+      style="width:150px;height:150px;object-fit:cover">
 
-  <h2 class="fw-bold mt-3">{{ photographer.fullName }}</h2>
+    <h2 class="fw-bold mt-3">{{ photographer.fullName }}</h2>
 
-  <p class="text-muted">{{ photographer.title }}</p>
+    <p class="text-muted">{{ photographer.title }}</p>
 
-</div>
+  </div>
+</section>
 <!-- ================= END PROFILE SECTION ================= -->
-
-<hr class="shadow-sm">
-
+ <hr class="soft-hr">
 <!-- ================= PORTFOLIO CATEGORY SECTION ================= -->
-<section class="container py-5 mt-5">
+<section class="container">
 
   <!-- CATEGORY TABS -->
-  <ul class="nav nav-pills justify-content-center mb-5 mt-5 py-5">
+  <ul class="nav nav-pills justify-content-center mb-5">
     <li class="nav-item" *ngFor="let c of categories">
       <button
         type="button"
