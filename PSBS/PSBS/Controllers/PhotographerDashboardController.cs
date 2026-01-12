@@ -71,6 +71,10 @@ namespace PSBS.Controllers
 
             using var con = _context.CreateConnection();
 
+            // ✅ Today range (server time)
+            var today = DateTime.Today;          // 00:00 today
+            var tomorrow = today.AddDays(1);     // 00:00 next day
+
             var sql = @"
         SELECT TOP 5
             Message,
@@ -78,12 +82,16 @@ namespace PSBS.Controllers
             CreatedAt
         FROM RecentActivities
         WHERE PhotographerId = @PhotographerId
+          AND CreatedAt >= @Today
+          AND CreatedAt < @Tomorrow
         ORDER BY CreatedAt DESC
     ";
 
             var activities = await con.QueryAsync(sql, new
             {
-                PhotographerId = photographerId
+                PhotographerId = photographerId,
+                Today = today,
+                Tomorrow = tomorrow
             });
 
             return Ok(activities);
