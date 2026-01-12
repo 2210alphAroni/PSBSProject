@@ -78,6 +78,7 @@ export class AllPackages implements OnInit {
     }
   }
 
+  // from navbar search to search all packages 
   applyFilter(): void {
 
   if (!this.searchKeyword) {
