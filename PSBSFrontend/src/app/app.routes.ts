@@ -103,6 +103,7 @@ import { PhotographerPortfolio } from '../Page/photographer-portfolio/photograph
 import { PhotographerSettings } from '../Page/photographer-settings/photographer-settings';
 import { PhotographerEarnings } from '../Page/photographer-earnings/photographer-earnings';
 import { PhotographerAvailabilitys } from '../Page/photographer-availabilitys/photographer-availabilitys';
+import { PhotographerReviews } from '../Page/photographer-reviews/photographer-reviews';
 
 export const routes: Routes = [
 
@@ -157,6 +158,7 @@ export const routes: Routes = [
       { path: 'photographer-settings', component: PhotographerSettings },
       { path: 'photographer-earnings', component: PhotographerEarnings },
       { path: 'photographer-availabilitys', component: PhotographerAvailabilitys },
+      { path: 'photographer-reviews', component: PhotographerReviews },
     ]
   },
   
