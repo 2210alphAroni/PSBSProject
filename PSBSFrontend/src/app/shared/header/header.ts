@@ -2,39 +2,61 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule, Router } from '@angular/router';
 import { AuthService } from '../../Services/auth.service';
+import { FormsModule } from '@angular/forms';
+
+
 @Component({
   selector: 'app-header',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, FormsModule],
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
 })
 export class HeaderComponent {
 
+  searchText = '';
+  showSearch = false;
+
   constructor(
     public auth: AuthService,
     private router: Router
-  ) {}
+  ) { }
+
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+  }
+
+  searchPackages() {
+    if (!this.searchText.trim()) return;
+
+    this.router.navigate(['/all-packages'], {
+      queryParams: { search: this.searchText }
+    });
+
+    this.showSearch = false;
+    this.searchText = '';
+  }
 
   goProfile() {
     this.router.navigate(['/profile']);
   }
 
   deleteAccount() {
-  if (!confirm('Are you sure you want to permanently delete your account?')) {
-    return;
-  }
-
-  this.auth.deleteMyAccount().subscribe({
-    next: () => {
-      alert('Your account has been deleted.');
-      this.auth.logout();                 // clear token
-      this.router.navigate(['/login']);   // navigate AFTER response
-    },
-    error: (err) => {
-      console.error(err);
-      alert('Failed to delete account.');
+    if (!confirm('Are you sure you want to permanently delete your account?')) {
+      return;
     }
-  });
-}
+
+    this.auth.deleteMyAccount().subscribe({
+      next: () => {
+        alert('Your account has been deleted.');
+        this.auth.logout();                 // clear token
+        this.router.navigate(['/login']);   // navigate AFTER response
+      },
+      error: (err) => {
+        console.error(err);
+        alert('Failed to delete account.');
+      }
+    });
+  }
 }

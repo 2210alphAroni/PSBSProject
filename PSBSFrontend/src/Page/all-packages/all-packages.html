@@ -11,7 +11,7 @@
     <!-- ================= CARDS ================= -->
     <div class="row g-4">
 
-      <div class="col-md-6 col-lg-4" *ngFor="let pkg of packages">
+      <div class="col-md-6 col-lg-4" *ngFor="let pkg of filteredPackages">
         <div class="card shadow-sm h-100"
           (click)="handlePackageClick(pkg)">
 

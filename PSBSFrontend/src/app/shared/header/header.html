@@ -34,7 +34,8 @@
         </li>
 
         <li class="nav-item">
-          <a class="nav-link fw-semibold" routerLink="/all-packages">Packages</a>
+          <a class="nav-link fw-semibold"
+            routerLink="/all-packages">Packages</a>
         </li>
 
         <li class="nav-item dropdown">
@@ -126,6 +127,36 @@
         <li class="nav-item">
           <a class="nav-link fw-semibold" routerLink="/contact">Contact us</a>
         </li>
+
+        <!-- SEARCH TOGGLE -->
+        <li class="nav-item position-relative me-2">
+
+          <!-- SEARCH ICON -->
+          <button class="btn btn-outline-warning"
+            (click)="toggleSearch()">
+            <i class="fa-solid fa-magnifying-glass"></i>
+          </button>
+
+          <!-- SEARCH BOX -->
+          <div class="search-box shadow"
+            *ngIf="showSearch">
+            <form class="d-flex"
+              (ngSubmit)="searchPackages()">
+              <input type="text"
+                class="form-control"
+                placeholder="Search Packages..."
+                [(ngModel)]="searchText"
+                name="searchText"
+                autofocus>
+            </form>
+          </div>
+
+        </li>
+
+        <!-- OUTSIDE CLICK OVERLAY -->
+        <div class="overlay"
+          *ngIf="showSearch"
+          (click)="showSearch = false"></div>
 
         <!-- BOOK NOW -->
         <li class="nav-item ms-2">
