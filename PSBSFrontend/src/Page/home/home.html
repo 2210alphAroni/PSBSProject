@@ -395,15 +395,17 @@
             </div>
 
             <div class="d-flex flex-wrap gap-2 mb-3">
-              <span class="badge bg-success-subtle text-success">
+              <!-- <span class="badge bg-success-subtle text-success">
                 Available
-              </span>
-              <span class="badge bg-info-subtle text-info">
+              </span> -->
+              <span [routerLink]="['/portfolios']"
+                [queryParams]="{ photographerId: p.Id }"
+                class="badge bg-info-subtle text-info cursor-pointer">
                 Portfolio
               </span>
               <span [routerLink]="['/check-photographer-availability']"
                 [queryParams]="{ photographerId: p.Id }"
-                class="badge bg-info-subtle text-info">
+                class="badge bg-success-subtle text-success cursor-pointer">
                 Check-Availability
               </span>
             </div>
