@@ -1,3 +1,21 @@
+
+<!-- ================= PHOTOGRAPHER PROFILE SECTION ================= -->
+<div class="text-center mt-5 py-5" *ngIf="photographer">
+
+  <img
+    [src]="photographer.profileImage || 'assets/default-user.png'"
+    class="rounded-circle shadow"
+    style="width:150px;height:150px;object-fit:cover">
+
+  <h2 class="fw-bold mt-3">{{ photographer.fullName }}</h2>
+
+  <p class="text-muted">{{ photographer.title }}</p>
+
+</div>
+<!-- ================= END PROFILE SECTION ================= -->
+
+<hr class="shadow-sm">
+
 <!-- ================= PORTFOLIO CATEGORY SECTION ================= -->
 <section class="container py-5 mt-5">
 

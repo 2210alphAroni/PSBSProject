@@ -33,6 +33,8 @@ export class Portfolios implements OnInit {
   // ===============================
   filteredPortfolios: any[] = [];
   photographerId: number | null = null;
+  photographer: any = null;
+
 
   // ===============================
   // API URL
@@ -43,7 +45,7 @@ export class Portfolios implements OnInit {
     private http: HttpClient,
     private route: ActivatedRoute,
     private cdr: ChangeDetectorRef
-  ) {}
+  ) { }
 
   // ===============================
   // INIT
@@ -53,11 +55,13 @@ export class Portfolios implements OnInit {
       const id = Number(params['photographerId']);
 
       if (!id) {
-        console.error('❌ Photographer ID not found in query params');
+        console.error('Photographer ID not found in query params');
         return;
       }
 
       this.photographerId = id;
+
+      this.loadPhotographerProfile(id);
       this.loadCategoryWise(this.activeCategory);
     });
   }
@@ -76,7 +80,7 @@ export class Portfolios implements OnInit {
         this.cdr.detectChanges();
       },
       error: err => {
-        console.error('❌ Failed to load portfolios', err);
+        console.error('Failed to load portfolios', err);
       }
     });
   }
@@ -88,4 +92,24 @@ export class Portfolios implements OnInit {
     this.activeCategory = category;
     this.loadCategoryWise(category);
   }
+
+  // profile uploadation logic call from backend 
+  loadPhotographerProfile(id: number): void {
+    this.http.get<any>(
+      `https://localhost:7272/api/UsersProfile/photographer/${id}`
+    ).subscribe({
+      next: res => {
+        
+        if (res.profileImage) {
+          res.profileImage = 'https://localhost:7272' + res.profileImage;
+        }
+        this.photographer = res;
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        console.error('Failed to load photographer profile', err);
+      }
+    });
+  }
+
 }

@@ -49,4 +49,33 @@ public class UsersProfileController : ControllerBase
         }
        
     }
+
+
+    [HttpGet("photographer/{id}")]
+    public async Task<IActionResult> GetPhotographerProfile(int id)
+    {
+        using var con = _context.CreateConnection();
+
+        var photographer = await con.QueryFirstOrDefaultAsync(
+            @"SELECT
+            Id,
+            FullName,
+            ProfileImage
+          FROM UsersRegistration
+          WHERE Id = @id
+            AND RegisterAS = 'Photographer'",
+            new { id }
+        );
+
+        if (photographer == null)
+            return NotFound("Photographer not found");
+
+        return Ok(new
+        {
+            photographer.Id,
+            photographer.FullName,
+            photographer.ProfileImage,
+            Title = "Professional Photographer"
+        });
+    }
 }
