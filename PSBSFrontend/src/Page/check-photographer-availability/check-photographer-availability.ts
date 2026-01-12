@@ -6,6 +6,7 @@ import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-check-photographer-availability',
+  standalone: true,
   imports: [CommonModule, FormsModule],
   templateUrl: './check-photographer-availability.html',
   styleUrl: './check-photographer-availability.css'
@@ -13,6 +14,8 @@ import { ActivatedRoute } from '@angular/router';
 export class CheckPhotographerAvailability implements OnInit {
 
   photographerId!: number;
+  photographer: any = null;
+
   eventDate: string = '';
   startTime: string = '';
   durationHours: number = 1;
@@ -22,32 +25,53 @@ export class CheckPhotographerAvailability implements OnInit {
 
   constructor(
     private http: HttpClient,
-    private cdr: ChangeDetectorRef,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private cdr: ChangeDetectorRef
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
 
-    // ✅ SAME AS ReviewRating PAGE (QUERY PARAM)
+    // ✅ SAME PATTERN AS REVIEW RATING PAGE
     this.route.queryParams.subscribe(params => {
 
       const queryId = Number(params['photographerId']);
 
       if (queryId && !isNaN(queryId)) {
         this.photographerId = queryId;
+        this.loadPhotographer();
         return;
       }
 
-      // 🔁 fallback (old logic untouched)
+      // 🔁 fallback (old logic safe)
       this.loadPhotographerId();
+      this.loadPhotographer();
     });
 
-    // ✅ FIX FOR MIN DATE
+    // ✅ Min date fix
     const today = new Date();
     this.minDate = today.toISOString().split('T')[0];
   }
 
-  // 🔁 OLD LOGIC (UNCHANGED)
+  // ================= LOAD PHOTOGRAPHER =================
+  loadPhotographer() {
+
+    if (!this.photographerId) return;
+
+    this.http
+      .get<any>(`https://localhost:7272/api/UsersRegistration/${this.photographerId}`)
+      .subscribe({
+        next: res => {
+          this.photographer = res;
+          this.cdr.detectChanges();
+        },
+        error: err => {
+          console.error(err);
+          alert('Failed to load photographer info');
+        }
+      });
+  }
+
+  // ================= OLD LOCAL STORAGE LOGIC =================
   loadPhotographerId() {
 
     const userData = localStorage.getItem('user');
@@ -70,7 +94,7 @@ export class CheckPhotographerAvailability implements OnInit {
     }
   }
 
-  // ✅ API CALL (UNCHANGED)
+  // ================= CHECK AVAILABILITY =================
   checkAvailability() {
 
     if (!this.photographerId) {
