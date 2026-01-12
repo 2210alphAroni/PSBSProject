@@ -302,7 +302,7 @@ export class BookingPackage implements OnInit {
     const transactionId = this.generateTransactionId();
 
     doc.setFontSize(18);
-    doc.text('INVOICE', 105, 20, { align: 'center' });
+    doc.text('INVOICE FOR BOOKING PACKAGES', 105, 20, { align: 'center' });
 
     doc.setFontSize(12);
     doc.text(`Booking ID: ${this.createdBookingId}`, 20, 40);
@@ -314,11 +314,23 @@ export class BookingPackage implements OnInit {
 
     doc.line(20, 100, 190, 100);
 
-    doc.text('Thank you for your payment!', 20, 120);
+    doc.text('Thank you for your payment! Stay With Us.', 20, 120);
     doc.text('Photography Service Booking System', 20, 130);
 
-    doc.save(`Invoice_${this.createdBookingId}_${transactionId}.pdf`);
-  }
+    const logo = new Image();
+    logo.src = '/assets/img/Application_logo.png';
 
+    logo.onload = () => {
+      const logoWidth = 70;   // 🔹 একটু বড়
+      const logoHeight = 35;  // 🔹 proportional
 
+      const pageWidth = doc.internal.pageSize.getWidth();
+      const xCenter = (pageWidth - logoWidth) / 2;
+
+      doc.addImage(logo, 'PNG', xCenter, 145, logoWidth, logoHeight);
+      doc.save(`BookingInvoice_${this.createdBookingId}_${transactionId}.pdf`);
+    };
+
+  };
 }
+
