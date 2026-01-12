@@ -1,1 +1,64 @@
-<p>portfolios works!</p>
+<!-- ================= PORTFOLIO CATEGORY SECTION ================= -->
+<section class="container py-5 mt-5">
+
+  <!-- CATEGORY TABS -->
+  <ul class="nav nav-pills justify-content-center mb-5 mt-5 py-5">
+    <li class="nav-item" *ngFor="let c of categories">
+      <button
+        type="button"
+        class="nav-link"
+        [class.active]="activeCategory === c"
+        (click)="changeCategory(c)">
+        {{ c }}
+      </button>
+    </li>
+  </ul>
+
+  <!-- CATEGORY TITLE -->
+  <div class="text-center mb-4">
+    <h2 class="fw-bold">{{ activeCategory }} Photography</h2>
+    <p class="text-muted">
+      Showing portfolio for {{ activeCategory }} category
+    </p>
+  </div>
+
+  <!-- PORTFOLIO GRID -->
+  <div class="row g-4">
+
+    <div
+      class="col-md-4"
+      *ngFor="let item of filteredPortfolios">
+
+      <div class="card shadow h-100">
+
+        <img
+          [src]="item.ImageUrl"
+          class="card-img-top"
+          alt="Portfolio Image"
+          style="height:220px; object-fit:cover;">
+
+        <div class="card-body">
+          <h5 class="fw-bold">{{ item.Title }}</h5>
+          <span class="badge bg-dark mb-2">
+            {{ item.Category }}
+          </span>
+          <p class="small text-muted">
+            {{ item.Description }}
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- EMPTY STATE -->
+    <div
+      *ngIf="filteredPortfolios.length === 0"
+      class="text-center text-muted py-5">
+      No portfolio found for {{ activeCategory }}
+    </div>
+
+  </div>
+
+</section>
+<!-- ================= END PORTFOLIO CATEGORY SECTION ================= -->

@@ -51,6 +51,34 @@ namespace PSBS.Controllers
             return Ok(data);
         }
 
+
+        // GET BY PHOTOGRAPHER + CATEGORY
+        // (INDIVIDUAL PORTFOLIO PAGE)
+        // ===============================
+        [HttpGet("by-photographer")]
+                public async Task<IActionResult> GetByPhotographer(
+            int photographerId,
+            string category)
+                {
+                    var sql = @"
+                SELECT *
+                FROM PhotographerPortfolio
+                WHERE IsActive = 1
+                AND IsApproved = 1
+                AND PhotographerId = @PhotographerId
+                AND Category = @Category
+                ORDER BY CreatedAt DESC";
+
+                    using var con = _context.CreateConnection();
+                    var data = await con.QueryAsync(sql, new
+                    {
+                        PhotographerId = photographerId,
+                        Category = category
+                    });
+
+                    return Ok(data);
+                }
+
         // ===============================
         // CREATE (UPLOAD → PENDING)
         // ===============================
