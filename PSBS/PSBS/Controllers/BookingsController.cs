@@ -47,6 +47,30 @@ namespace PSBS.Controllers
             if (booking.CoverageDurationHours <= 0)
                 return BadRequest("Invalid package duration.");
 
+            // ================= DATE & DURATION RULE (CRITICAL) =================
+
+            var today = DateTime.Today;
+            var bookingDate = booking.EventDate.Date;
+
+            // ❌ Past date booking not allowed
+            if (bookingDate < today)
+            {
+                return BadRequest("You cannot book for past dates.");
+            }
+
+            // ⚠️ Same-day booking rule
+            if (bookingDate == today)
+            {
+                if (booking.CoverageDurationHours > 2)
+                {
+                    return BadRequest(
+                        "For same-day bookings, only packages up to 2 hours are allowed."
+                    );
+                }
+            }
+
+            // ==================================================================
+
             // 🧠 CALCULATE START & END DATETIME
             var startDateTime = booking.EventDate.Date
                                 .Add(booking.EventStartTime.Value.TimeOfDay);

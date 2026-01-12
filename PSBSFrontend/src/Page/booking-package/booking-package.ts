@@ -166,6 +166,9 @@ export class BookingPackage implements OnInit {
 
   // ================= BOOKING =================
   submitBooking() {
+    // remove previous date and add 2 hours duration packages allow for current date 
+    if (!this.isBookingDateValid()) return;
+
     if (!this.isPhotographerAvailable) return alert('Photographer is already booked');
 
     const user = localStorage.getItem('user');
@@ -218,6 +221,37 @@ export class BookingPackage implements OnInit {
     this.mobileNumber = '';
     this.paymentSuccess = false;
   }
+
+  // remove previous date and add 2 hours duration packages allow for current date 
+  isBookingDateValid(): boolean {
+
+    if (!this.booking.EventDate) return false;
+
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const selectedDate = new Date(this.booking.EventDate);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    // ❌ Past date
+    if (selectedDate < today) {
+      alert('You cannot book for past dates');
+      return false;
+    }
+
+    // ⚠️ Same day booking rule
+    if (selectedDate.getTime() === today.getTime()) {
+
+      if (this.booking.CoverageDurationHours > 2) {
+        alert('For today, only 2-hour packages are allowed');
+        return false;
+      }
+    }
+
+    // ✅ Future date or valid today booking
+    return true;
+  }
+
 
   onSendPayment() {
 
