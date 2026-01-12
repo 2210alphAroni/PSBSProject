@@ -1,10 +1,10 @@
 .search-box {
   position: absolute;
-  top: 110%;
+  top: 170%;
   right: 0;
-  width: 260px;
-  background: #fff;
-  padding: 10px;
+  width: 690px;
+  background: #FFC107;
+  padding: 3px;
   border-radius: 12px;
   animation: fadeSlide 0.25s ease-in-out;
   z-index: 1000;
