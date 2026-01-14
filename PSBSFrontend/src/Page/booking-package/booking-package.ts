@@ -42,6 +42,83 @@ export class BookingPackage implements OnInit {
   askForMobileOtp = false;
 
 
+  // 🔹 ADD BELOW YOUR EXISTING VARIABLES
+  showBkashModal = false;
+
+  bkashStep = 1;
+  bkashNumber = '';
+  bkashOtp = '';
+  bkashPin = '';
+
+  bkashProcessing = false;
+  bkashSuccess = false;
+
+  openBkashModal() {
+    if (this.paymentMethod !== 'Bkash') {
+      alert('Please select bKash payment');
+      return;
+    }
+    this.resetBkash();
+    this.showBkashModal = true;
+  }
+
+  closeBkashModal() {
+    this.showBkashModal = false;
+  }
+
+  resetBkash() {
+    this.bkashStep = 1;
+    this.bkashNumber = '';
+    this.bkashOtp = '';
+    this.bkashPin = '';
+    this.bkashProcessing = false;
+    this.bkashSuccess = false;
+  }
+
+  /* STEP 1 → STEP 2 */
+  sendOtp() {
+    if (!/^01\d{9}$/.test(this.bkashNumber)) {
+      alert('Enter valid 11 digit bKash number');
+      return;
+    }
+    this.bkashStep = 2;
+  }
+
+  /* STEP 2 → STEP 3 */
+  verifyOtp() {
+    if (!/^\d{6}$/.test(this.bkashOtp)) {
+      alert('Enter valid 6 digit code');
+      return;
+    }
+    this.bkashStep = 3;
+  }
+
+  /* FINAL PAYMENT */
+  confirmBkashPayment() {
+    if (!/^\d{5}$/.test(this.bkashPin)) {
+      alert('Enter valid 5 digit bKash PIN');
+      return;
+    }
+
+    this.bkashProcessing = true;
+
+    setTimeout(() => {
+      this.bkashProcessing = false;
+      this.bkashSuccess = true;
+
+      this.paymentMethod = 'Bkash';
+      this.makePayment();
+
+      setTimeout(() => {
+        this.showBkashModal = false;
+      }, 1200);
+
+    }, 2000);
+  }
+
+
+  // end bkash modal connection
+
 
   // ⭐ rating API
   private ratingApi = 'https://localhost:7272/api/ReviewRating';
@@ -193,19 +270,11 @@ export class BookingPackage implements OnInit {
     this.http.post<any>('https://localhost:7272/api/Bookings', payload)
       .subscribe({
         next: res => {
-          console.log(res);
-          if (res?.payment?.success && res?.payment?.paymentUrl) {
-            // 🔴 Redirect to bKash payment page
-            window.location.href = res.payment.paymentUrl;
-          } else {
-            alert('Payment session failed');
-          }
-
-          // this.bookingSuccess = true;
-          // this.createdBookingId = res?.id || 0;
-          // this.showPayment = true;
-          // alert('Booking Confirmed');
-          // this.cdr.detectChanges();
+          this.bookingSuccess = true;
+          this.createdBookingId = res?.id || 0;
+          this.showPayment = true;
+          alert('Booking Confirmed');
+          this.cdr.detectChanges();
         },
         error: () => alert('Booking Failed')
       });
@@ -295,6 +364,11 @@ export class BookingPackage implements OnInit {
     //   return;
     // }
 
+    if (this.paymentMethod === 'Bkash') {
+      this.openBkashModal();
+      return;
+    }
+
     // STEP 6: Final payment
     this.generateInvoicePdf();
     this.makePayment();
@@ -311,25 +385,17 @@ export class BookingPackage implements OnInit {
     this.processingPayment = true;
 
     setTimeout(() => {
-      this.http.put<any>(
+      this.http.put(
         `https://localhost:7272/api/Bookings/payment/${this.createdBookingId}`,
         {
           paymentStatus: 'Paid',
           paymentMethod: this.paymentMethod
         }
       ).subscribe({
-        next: res => {
-
-          // 🔥 EXACTLY LIKE FIRST CONTROLLER
-          if (res?.data?.PaymentUrl) {
-            window.open(res.data.PaymentUrl, '_blank');
-          }
-
+        next: () => {
           this.processingPayment = false;
           this.paymentSuccess = true;
-
           alert('Payment Successful');
-
           setTimeout(() => {
             this.router.navigate(['/home']);
           }, 1500);
@@ -341,7 +407,6 @@ export class BookingPackage implements OnInit {
       });
     }, 2000);
   }
-
 
   // random transaction id generator
   generateTransactionId(): string {

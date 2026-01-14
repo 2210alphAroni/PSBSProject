@@ -184,20 +184,20 @@ namespace PSBS.Controllers
 
             // ================= BKASH PAYMENT INITIATE =================
 
-            var bkash = await _bKashService.InitiatePaymentAsync(new PaymentRequest
-            {
-                Amount = booking.Price, // Booking price
-                Currency = "BDT",
-                MerchantInvoiceNumber = $"BOOK-{bookingId}-{DateTime.UtcNow.Ticks}",
-                SuccessUrl = "https://localhost:4200/payment-confirmation"
-            });
+            //var bkash = await _bKashService.InitiatePaymentAsync(new PaymentRequest
+            //{
+            //    Amount = booking.Price, // Booking price
+            //    Currency = "BDT",
+            //    MerchantInvoiceNumber = $"BOOK-{bookingId}-{DateTime.UtcNow.Ticks}",
+            //    SuccessUrl = "https://localhost:4200/payment-confirmation"
+            //});
 
             // ==========================================================
 
             return Ok(new
             {
                 id = bookingId,
-                payment = bkash,
+                //payment = bkash,
                 message = "Booking created. Proceed to payment."
             });
 
@@ -205,13 +205,13 @@ namespace PSBS.Controllers
 
 
         // success url build for bkash 
-        [HttpGet("Success_URL")]
-        public async Task<IActionResult> SuccessUrl(string paymemtId)
-        {
-            var bkash = await _bKashService.ConfirmPaymentAsync(paymemtId);
+        //[HttpGet("Success_URL")]
+        //public async Task<IActionResult> SuccessUrl(string paymemtId)
+        //{
+        //    var bkash = await _bKashService.ConfirmPaymentAsync(paymemtId);
            
-            return Ok(bkash);
-        }
+        //    return Ok(bkash);
+        //}
 
         /* ================= UPDATE PAYMENT ================= */
         [HttpPut("payment/{id}")]

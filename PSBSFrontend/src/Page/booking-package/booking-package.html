@@ -322,3 +322,103 @@
 
   </div>
 </section>
+
+<!-- ================= BKASH MODAL ================= -->
+<div class="bkash-backdrop" *ngIf="showBkashModal">
+  <div class="bkash-modal">
+
+    <!-- HEADER -->
+    <div class="bkash-header">
+      <img src="/assets/img/BKash-Icon2-Logo.wine.svg" alt="bKash">
+      <span>Payment</span>
+    </div>
+
+    <!-- MERCHANT -->
+    <div class="bkash-merchant">
+      <div>
+        <strong>CheckoutPSBSMerchant</strong>
+        <div class="small text-muted">Invoice: {{ createdBookingId }}</div>
+      </div>
+      <div class="fw-bold">৳ {{ booking.Price }}</div>
+    </div>
+
+    <!-- BODY -->
+    <div class="bkash-body">
+
+      <!-- STEP 1 -->
+      <div *ngIf="bkashStep === 1">
+        <label class="form-label">Your bKash Account Number</label>
+        <input
+          type="text"
+          class="form-control"
+          placeholder="01XXXXXXXXX"
+          maxlength="11"
+          [(ngModel)]="bkashNumber">
+      </div>
+
+      <!-- STEP 2 -->
+      <div *ngIf="bkashStep === 2">
+        <label class="form-label">Enter 6 Digit Verification Code</label>
+        <input
+          type="text"
+          class="form-control otp-input text-center"
+          placeholder="● ● ● ● ● ●"
+          maxlength="6"
+          [(ngModel)]="bkashOtp">
+        <small class="text-muted d-block mt-2">
+          Code sent to {{ bkashNumber }}
+        </small>
+      </div>
+
+      <!-- STEP 3 -->
+      <div *ngIf="bkashStep === 3">
+        <label class="form-label">Enter bKash PIN</label>
+        <input
+          type="password"
+          class="form-control text-center pin-input"
+          placeholder="● ● ● ● ●"
+          maxlength="5"
+          [(ngModel)]="bkashPin">
+      </div>
+
+      <!-- STATUS -->
+      <div *ngIf="bkashProcessing" class="text-center text-muted mt-3">
+        Processing payment...
+      </div>
+
+      <div *ngIf="bkashSuccess" class="text-center text-success fw-bold mt-3">
+        ✔ Payment Successful
+      </div>
+
+    </div>
+
+    <!-- FOOTER -->
+    <div class="bkash-footer">
+      <button class="btn btn-light" (click)="closeBkashModal()">Close</button>
+
+      <button *ngIf="bkashStep === 1"
+        class="btn btn-bkash"
+        (click)="sendOtp()">
+        Continue
+      </button>
+
+      <button *ngIf="bkashStep === 2"
+        class="btn btn-bkash"
+        (click)="verifyOtp()">
+        Verify Code
+      </button>
+
+      <button *ngIf="bkashStep === 3"
+        class="btn btn-bkash"
+        (click)="confirmBkashPayment()">
+        Confirm
+      </button>
+    </div>
+
+    <!-- HOTLINE -->
+    <div class="bkash-hotline">
+      <i class="fa-solid fa-phone"></i> 16247
+    </div>
+
+  </div>
+</div>
