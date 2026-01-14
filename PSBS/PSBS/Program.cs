@@ -7,6 +7,13 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+
+// Add services to the Bkashhhh.
+builder.Services.AddHttpClient<PSBS.Services.BKashService>(client =>
+{
+    client.Timeout = TimeSpan.FromSeconds(30);
+});
+
 // =========================
 // ADD SERVICES
 // =========================
@@ -61,6 +68,11 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddSingleton<DapperContext>();
 builder.Services.AddScoped<EmailService>();
 builder.Services.AddSignalR();
+
+//Bkashshsss
+builder.Services.AddScoped<PSBS.Services.IBKashService,
+    PSBS.Services.BKashService>();
+
 
 // =========================
 // CORS

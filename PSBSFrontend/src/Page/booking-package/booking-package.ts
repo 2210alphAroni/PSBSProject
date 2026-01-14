@@ -41,6 +41,9 @@ export class BookingPackage implements OnInit {
   mobileOtp = '';
   askForMobileOtp = false;
 
+  // 🔥 NEW (SAFE)
+  bkashPaymentUrl: string | null = null;
+
 
   // ⭐ rating API
   private ratingApi = 'https://localhost:7272/api/ReviewRating';
@@ -254,6 +257,13 @@ export class BookingPackage implements OnInit {
 
 
   onSendPayment() {
+
+
+    // 🔥 REAL BKASH REDIRECT (NO BREAKING)
+    if (this.paymentMethod === 'Bkash' && this.bkashPaymentUrl) {
+      window.location.href = this.bkashPaymentUrl;
+      return;
+    }
 
     // STEP 1: Validate mobile number
     if (!this.mobileNumber || !this.isValidMobile()) {

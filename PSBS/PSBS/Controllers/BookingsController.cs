@@ -2,8 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using PSBS.Context;
 using PSBS.Model;
-using static PSBS.Model.Payment;
-using static PSBS.Services.Ibkash;
+using PSBS.Services;
 
 namespace PSBS.Controllers
 {

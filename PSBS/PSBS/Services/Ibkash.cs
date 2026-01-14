@@ -1,15 +1,12 @@
-﻿using static PSBS.Model.Payment;
+﻿using PSBS.Model;
 
 namespace PSBS.Services
 {
-    public class Ibkash
+    public interface IBKashService
     {
-        public interface IBKashService
-        {
-            Task<PaymentResponse> InitiatePaymentAsync(PaymentRequest request);
-            Task<PaymentResponse> ExecutePaymentAsync(string paymentId);
-            Task<PaymentResponse> QueryPaymentAsync(string paymentId);
-            Task<bool> VerifyPaymentAsync(PaymentCallback callback);
-        }
+        Task<PaymentResponse> InitiatePaymentAsync(PaymentRequest request);
+        Task<PaymentResponse> ExecutePaymentAsync(string paymentId);
+        Task<PaymentResponse> QueryPaymentAsync(string paymentId);
+        Task<bool> VerifyPaymentAsync(PaymentCallback callback);
     }
 }
