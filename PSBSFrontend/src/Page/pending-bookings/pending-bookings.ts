@@ -1,11 +1,132 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { HttpClient, HttpClientModule } from '@angular/common/http';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-pending-bookings',
-  imports: [],
+  standalone: true,
+  imports: [CommonModule, HttpClientModule, FormsModule],
   templateUrl: './pending-bookings.html',
   styleUrl: './pending-bookings.css'
 })
-export class PendingBookings {
+export class PendingBookings implements OnInit {
+
+  userId!: number;
+  pendingBookings: any[] = [];
+  loading = false;
+
+  // 🔹 BKASH MODAL STATE
+  showBkashModal = false;
+  bkashStep = 1;
+
+  bkashNumber = '';
+  bkashOtp = '';
+  bkashPin = '';
+
+  bkashProcessing = false;
+  bkashSuccess = false;
+
+  selectedBookingId!: number;
+  selectedAmount = 0;
+
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) { }
+
+  ngOnInit(): void {
+    const userStr = localStorage.getItem('user');
+    if (!userStr) {
+      alert('User not logged in');
+      return;
+    }
+
+    this.userId = JSON.parse(userStr).userId;
+    this.loadPendingBookings();
+  }
+
+ loadPendingBookings() {
+  this.http
+    .get<any[]>(
+      `https://localhost:7272/api/Bookings/user/${this.userId}/pending`
+    )
+    .subscribe(res => {
+      this.pendingBookings = [...res]; 
+      this.cdr.detectChanges();
+    });
+}
+
+
+  // ================= BKASH =================
+
+  payNow(booking: any) {
+    this.selectedBookingId = booking.id;
+    this.selectedAmount = booking.price; // 🔥 now works
+    this.resetBkash();
+    this.showBkashModal = true;
+  }
+
+
+  resetBkash() {
+    this.bkashStep = 1;
+    this.bkashNumber = '';
+    this.bkashOtp = '';
+    this.bkashPin = '';
+    this.bkashProcessing = false;
+    this.bkashSuccess = false;
+  }
+
+  closeBkashModal() {
+    this.showBkashModal = false;
+  }
+
+  sendOtp() {
+    if (!/^01\d{9}$/.test(this.bkashNumber)) {
+      alert('Enter valid bKash number');
+      return;
+    }
+    this.bkashStep = 2;
+  }
+
+  verifyOtp() {
+    if (!/^\d{6}$/.test(this.bkashOtp)) {
+      alert('Invalid OTP');
+      return;
+    }
+    this.bkashStep = 3;
+  }
+
+  confirmBkashPayment() {
+    if (!/^\d{5}$/.test(this.bkashPin)) {
+      alert('Invalid bKash PIN');
+      return;
+    }
+
+    this.bkashProcessing = true;
+
+    this.http.put(
+      `https://localhost:7272/api/Bookings/payment/${this.selectedBookingId}`,
+      {
+        paymentStatus: 'Paid',
+        paymentMethod: 'Bkash'
+      }
+    ).subscribe({
+      next: () => {
+        this.bkashProcessing = false;
+        this.bkashSuccess = true;
+
+        // 🔥 close modal + refresh list
+        setTimeout(() => {
+          this.showBkashModal = false;
+          this.loadPendingBookings(); // 🔥 DB updated → reload
+        }, 1000);
+      },
+      error: () => {
+        this.bkashProcessing = false;
+        alert('Payment failed');
+      }
+    });
+  }
 
 }

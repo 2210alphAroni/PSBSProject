@@ -1,0 +1,176 @@
+/* ===== PREMIUM BKASH OVERLAY ===== */
+.bkash-backdrop {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top, rgba(226,19,110,0.25), rgba(0,0,0,0.75));
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+}
+
+/* ===== MODAL ===== */
+.bkash-modal {
+  width: 380px;
+  background: #ffffff;
+  border-radius: 18px;
+  overflow: hidden;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.35);
+  animation: bkashPop 0.35s cubic-bezier(.17,.67,.35,1.28);
+}
+
+/* ===== HEADER ===== */
+.bkash-header {
+  background: linear-gradient(135deg, #e2136e, #c60f5c);
+  padding: 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.bkash-header img {
+  height: 34px;
+}
+
+.bkash-header span {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: .3px;
+}
+
+/* ===== MERCHANT ===== */
+.bkash-merchant {
+  background: #fff;
+  padding: 14px 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.bkash-merchant strong {
+  font-size: 15px;
+  color: #222;
+}
+
+.bkash-merchant .fw-bold {
+  font-size: 18px;
+  color: #111;
+}
+
+/* ===== BODY ===== */
+.bkash-body {
+  padding: 20px 18px 16px;
+}
+
+.bkash-body label {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.bkash-body input {
+  height: 44px;
+  border-radius: 10px;
+  border: 1.5px solid #ddd;
+  padding: 0 14px;
+  font-size: 15px;
+}
+
+.bkash-body input:focus {
+  border-color: #e2136e;
+  box-shadow: 0 0 0 3px rgba(226,19,110,0.15);
+}
+
+.bkash-body small {
+  font-size: 12px;
+  color: #777;
+}
+
+/* ===== STATUS ===== */
+.bkash-body .text-success {
+  font-size: 16px;
+}
+
+.bkash-body .text-muted {
+  font-size: 14px;
+}
+
+/* ===== FOOTER ===== */
+.bkash-footer {
+  padding: 16px 18px;
+  display: flex;
+  gap: 12px;
+  background: #fafafa;
+}
+
+.bkash-footer button {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-bkash {
+  background: linear-gradient(135deg, #e2136e, #c60f5c);
+  color: #fff;
+  border: none;
+  box-shadow: 0 8px 20px rgba(226,19,110,0.35);
+}
+
+.btn-bkash:hover {
+  filter: brightness(1.05);
+}
+
+.bkash-footer .btn-light {
+  border: 1px solid #ddd;
+}
+
+/* ===== HOTLINE ===== */
+.bkash-hotline {
+  text-align: center;
+  font-size: 13px;
+  padding: 10px;
+  color: #e2136e;
+  font-weight: 500;
+  background: #fff;
+}
+
+.otp-input {
+  font-size: 22px;
+  letter-spacing: 8px;
+  font-weight: 600;
+}
+
+.pin-input {
+  font-size: 22px;
+  letter-spacing: 10px;
+}
+
+.btn-bkash {
+  background: #e2136e;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 25px;
+  padding: 8px 24px;
+}
+
+.btn-bkash:hover {
+  background: #c70f5f;
+}
+
+/* ===== ANIMATION ===== */
+@keyframes bkashPop {
+  0% {
+    transform: scale(0.85) translateY(20px);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
+}

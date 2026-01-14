@@ -1,1 +1,156 @@
-<p>pending-bookings works!</p>
+<div class="container my-5 mt-5 py-5">
+
+    <div class="row mb-4 py-5 mt-5">
+        <div class="col text-center">
+            <h3 class="fw-bold">
+                <i class="bi bi-clock-history"></i>
+                Pending Bookings
+            </h3>
+            <p class="text-muted mb-0">
+                Complete your payment to confirm booking
+            </p>
+        </div>
+    </div>
+
+    <!-- Empty -->
+    <div *ngIf="pendingBookings.length === 0"
+        class="alert alert-success text-center">
+        🎉 No pending bookings found
+    </div>
+
+    <!-- Booking Cards -->
+    <div class="row" *ngFor="let b of pendingBookings">
+        <div class="col-12">
+            <div class="card shadow-sm mb-4">
+
+                <div class="card-header bg-light">
+                    <div
+                        class="d-flex justify-content-between align-items-center">
+                        <span class="fw-semibold">
+                            {{ b.packageName }}
+                        </span>
+                        <span class="badge bg-warning text-dark">
+                            Unpaid
+                        </span>
+                    </div>
+                </div>
+
+                <div class="card-body">
+
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <strong>Photographer:</strong> {{ b.photographerName
+                            }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Location:</strong> {{ b.eventLocation }}
+                        </div>
+                    </div>
+
+                    <div class="row mb-2">
+                        <div class="col-md-6">
+                            <strong>Event Date:</strong>
+                            {{ b.eventDate | date:'mediumDate' }}
+                        </div>
+                        <div class="col-md-6">
+                            <strong>Time:</strong>
+                            {{ b.eventStartTime | date:'shortTime' }} –
+                            {{ b.eventEndTime | date:'shortTime' }}
+                        </div>
+                    </div>
+
+                    <div class="row align-items-center mt-3">
+                        <div class="col-md-6">
+                            <h5 class="text-danger mb-0">
+                                ৳ {{ b.price }}
+                            </h5>
+                        </div>
+
+                        <div class="col-md-6 text-md-end mt-3 mt-md-0">
+                            <button class="btn btn-danger px-4"
+                                (click)="payNow(b)">
+                                <i class="bi bi-credit-card"></i>
+                                Pay with bKash
+                            </button>
+
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- ================= BKASH MODAL ================= -->
+<div class="bkash-backdrop" *ngIf="showBkashModal">
+    <div class="bkash-modal">
+
+        <div class="bkash-header">
+            <img src="/assets/img/BKash-Icon2-Logo.wine.svg">
+            <span>Payment</span>
+        </div>
+
+        <div class="bkash-merchant">
+            <div>
+                <strong>CheckoutPSBSMerchant</strong>
+                <div class="small text-muted">Booking #{{ selectedBookingId }}</div>
+            </div>
+            <div class="fw-bold">৳ {{ selectedAmount }}</div>
+        </div>
+
+        <div class="bkash-body">
+
+            <div *ngIf="bkashStep === 1">
+                <input class="form-control"
+                    placeholder="01XXXXXXXXX"
+                    maxlength="11"
+                    [(ngModel)]="bkashNumber">
+            </div>
+
+            <div *ngIf="bkashStep === 2">
+                <input class="form-control text-center"
+                    placeholder="OTP"
+                    maxlength="6"
+                    [(ngModel)]="bkashOtp">
+            </div>
+
+            <div *ngIf="bkashStep === 3">
+                <input class="form-control text-center"
+                    type="password"
+                    placeholder="PIN"
+                    maxlength="5"
+                    [(ngModel)]="bkashPin">
+            </div>
+
+            <div *ngIf="bkashProcessing" class="text-center mt-3">
+                Processing payment...
+            </div>
+
+            <div *ngIf="bkashSuccess"
+                class="text-center text-success fw-bold mt-3">
+                ✔ Payment Successful
+            </div>
+
+        </div>
+
+        <div class="bkash-footer">
+            <button class="btn btn-light"
+                (click)="closeBkashModal()">Close</button>
+
+            <button *ngIf="bkashStep === 1"
+                class="btn btn-bkash"
+                (click)="sendOtp()">Continue</button>
+
+            <button *ngIf="bkashStep === 2"
+                class="btn btn-bkash"
+                (click)="verifyOtp()">Verify</button>
+
+            <button *ngIf="bkashStep === 3"
+                class="btn btn-bkash"
+                (click)="confirmBkashPayment()">Confirm</button>
+        </div>
+
+    </div>
+</div>

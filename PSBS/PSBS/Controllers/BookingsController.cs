@@ -481,6 +481,37 @@ namespace PSBS.Controllers
 
             return Ok(result);
         }
+
+        /* ================= USER PENDING BOOKINGS (TODAY ONLY) ================= */
+        [HttpGet("user/{userId}/pending")]
+        public async Task<IActionResult> GetUserPendingBookings(int userId)
+        {
+            using var con = _context.CreateConnection();
+
+            // 🧹 AUTO DELETE:
+            // Any unpaid + pending booking NOT created today
+            await con.ExecuteAsync(@"
+        DELETE FROM Bookings
+        WHERE PaymentStatus = 'Unpaid'
+          AND BookingStatus = 'Pending'
+          AND CAST(CreatedAt AS DATE) < CAST(GETDATE() AS DATE)
+    ");
+
+            // ✅ SHOW ONLY TODAY'S UNPAID BOOKINGS
+            var sql = @"
+        SELECT *
+        FROM Bookings
+        WHERE UserId = @UserId
+          AND PaymentStatus = 'Unpaid'
+          AND BookingStatus = 'Pending'
+          AND CAST(CreatedAt AS DATE) = CAST(GETDATE() AS DATE)
+        ORDER BY CreatedAt DESC
+    ";
+
+            var bookings = await con.QueryAsync<Booking>(sql, new { UserId = userId });
+
+            return Ok(bookings);
+        }
     }
 
     /* ================= PAYMENT DTO ================= */
