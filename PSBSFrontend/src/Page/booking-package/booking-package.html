@@ -263,30 +263,30 @@
               (change)="resetPaymentStep()">
               <option value>-- Select Payment Method --</option>
               <option value="Bkash">bKash</option>
-              <option value="Nagad">Nagad</option>
-              <option value="Card">Debit / Credit Card</option>
+              <!-- <option value="Nagad">Nagad</option>
+              <option value="Card">Debit / Credit Card</option> -->
             </select>
 
             <!-- Mobile Number (shows after method select) -->
-            <input
+            <!-- <input
               *ngIf="paymentMethod"
               type="text"
               class="form-control mb-3"
               placeholder="Mobile Number"
               maxlength="11"
-              [(ngModel)]="mobileNumber" />
+              [(ngModel)]="mobileNumber" /> -->
              
             <!-- OTP Input (shows after Send OTP click) -->
-            <input
+            <!-- <input
               *ngIf="askForMobileOtp"
               type="text"
               class="form-control mb-3"
               placeholder="Enter 6 digit code sent to your mobile"
               [(ngModel)]="mobileOtp"
-              maxlength="6" />
+              maxlength="6" /> -->
 
             <!-- Payment Code (shows after Send Payment click) -->
-            <input
+            <!-- <input
               *ngIf="askForCode"
               type="text"
               class="form-control mb-3"
@@ -296,7 +296,7 @@
             paymentMethod === 'Bkash' ? 5 :
             paymentMethod === 'Nagad' ? 4 :
             paymentMethod === 'Card' ? 16 : 16
-          " />
+          " /> -->
 
             <button
               class="btn btn-success btn-lg px-5 rounded-pill"

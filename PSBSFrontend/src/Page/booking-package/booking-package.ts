@@ -257,35 +257,35 @@ export class BookingPackage implements OnInit {
   onSendPayment() {
 
     // STEP 1: Validate mobile number
-    if (!this.mobileNumber || !this.isValidMobile()) {
-      alert('Please enter a valid 11-digit mobile number');
-      return;
-    }
+    // if (!this.mobileNumber || !this.isValidMobile()) {
+    //   alert('Please enter a valid 11-digit mobile number');
+    //   return;
+    // }
 
     // STEP 2: Send 6-digit OTP to mobile
-    if (!this.askForMobileOtp) {
-      this.askForMobileOtp = true;
-      alert('A 6-digit code has been sent to your mobile number');
-      return;
-    }
+    // if (!this.askForMobileOtp) {
+    //   this.askForMobileOtp = true;
+    //   alert('A 6-digit code has been sent to your mobile number');
+    //   return;
+    // }
 
     // STEP 3: Verify 6-digit mobile OTP
-    if (!this.mobileOtp || this.mobileOtp.length !== 6) {
-      alert('Please enter the 6-digit code sent to your mobile');
-      return;
-    }
+    // if (!this.mobileOtp || this.mobileOtp.length !== 6) {
+    //   alert('Please enter the 6-digit code sent to your mobile');
+    //   return;
+    // }
 
     // STEP 4: Show existing paymentCode input (Bkash/Nagad/Card PIN)
-    if (!this.askForCode) {
-      this.askForCode = true;
-      return;
-    }
+    // if (!this.askForCode) {
+    //   this.askForCode = true;
+    //   return;
+    // }
 
     // STEP 5: Validate existing paymentCode (your logic stays)
-    if (!this.paymentCode || !this.isValidCode()) {
-      alert('Please enter a valid payment code');
-      return;
-    }
+    // if (!this.paymentCode || !this.isValidCode()) {
+    //   alert('Please enter a valid payment code');
+    //   return;
+    // }
 
     // STEP 6: Final payment
     this.generateInvoicePdf();
@@ -313,8 +313,8 @@ export class BookingPackage implements OnInit {
         next: res => {
 
           // 🔥 EXACTLY LIKE FIRST CONTROLLER
-          if (res?.data?.paymentUrl) {
-            window.open(res.data.paymentUrl, '_blank');
+          if (res?.data?.PaymentUrl) {
+            window.open(res.data.PaymentUrl, '_blank');
           }
 
           this.processingPayment = false;
