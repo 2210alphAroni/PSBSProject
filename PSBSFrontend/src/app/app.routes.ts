@@ -80,6 +80,7 @@ import { ReviewRating } from '../Page/review-rating/review-rating';
 import { PhotoByCat } from '../Page/photo-by-cat/photo-by-cat';
 import { CheckPhotographerAvailability } from '../Page/check-photographer-availability/check-photographer-availability';
 import { Portfolios } from '../Page/portfolios/portfolios';
+import { PendingBookings } from '../Page/pending-bookings/pending-bookings';
 
 
 // AUTH PAGES
@@ -125,6 +126,7 @@ export const routes: Routes = [
       { path: 'review-rating', component: ReviewRating },
       { path: 'check-photographer-availability', component: CheckPhotographerAvailability },
       { path: 'portfolios', component: Portfolios },
+      { path: 'pending-bookings', component: PendingBookings},
 
     ]
   },
