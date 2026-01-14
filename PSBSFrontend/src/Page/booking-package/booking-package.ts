@@ -114,6 +114,8 @@ export class BookingPackage implements OnInit {
       }, 1200);
 
     }, 2000);
+
+     this.generateInvoicePdf();
   }
 
 
