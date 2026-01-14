@@ -41,8 +41,6 @@ export class BookingPackage implements OnInit {
   mobileOtp = '';
   askForMobileOtp = false;
 
-  // 🔥 NEW (SAFE)
-  bkashPaymentUrl: string | null = null;
 
 
   // ⭐ rating API
@@ -258,13 +256,6 @@ export class BookingPackage implements OnInit {
 
   onSendPayment() {
 
-
-    // 🔥 REAL BKASH REDIRECT (NO BREAKING)
-    if (this.paymentMethod === 'Bkash' && this.bkashPaymentUrl) {
-      window.location.href = this.bkashPaymentUrl;
-      return;
-    }
-
     // STEP 1: Validate mobile number
     if (!this.mobileNumber || !this.isValidMobile()) {
       alert('Please enter a valid 11-digit mobile number');
@@ -312,17 +303,25 @@ export class BookingPackage implements OnInit {
     this.processingPayment = true;
 
     setTimeout(() => {
-      this.http.put(
+      this.http.put<any>(
         `https://localhost:7272/api/Bookings/payment/${this.createdBookingId}`,
         {
           paymentStatus: 'Paid',
           paymentMethod: this.paymentMethod
         }
       ).subscribe({
-        next: () => {
+        next: res => {
+
+          // 🔥 EXACTLY LIKE FIRST CONTROLLER
+          if (res?.data?.paymentUrl) {
+            window.open(res.data.paymentUrl, '_blank');
+          }
+
           this.processingPayment = false;
           this.paymentSuccess = true;
+
           alert('Payment Successful');
+
           setTimeout(() => {
             this.router.navigate(['/home']);
           }, 1500);
@@ -334,6 +333,7 @@ export class BookingPackage implements OnInit {
       });
     }, 2000);
   }
+
 
   // random transaction id generator
   generateTransactionId(): string {
