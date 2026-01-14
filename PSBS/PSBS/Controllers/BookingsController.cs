@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using PSBS.Context;
 using PSBS.Model;
+using static PSBS.Model.Payment;
+using static PSBS.Services.Ibkash;
 
 namespace PSBS.Controllers
 {
@@ -11,11 +13,13 @@ namespace PSBS.Controllers
     {
         private readonly DapperContext _context;
         private readonly EmailService _emailService;
+        private IBKashService _bKashService;
 
-        public BookingsController(DapperContext context, EmailService emailService)
+        public BookingsController(DapperContext context, EmailService emailService, IBKashService bKashService)
         {
             _context = context;
             _emailService = emailService;
+            _bKashService = bKashService;
         }
 
         /* ================= CREATE BOOKING ================= */
@@ -176,12 +180,38 @@ namespace PSBS.Controllers
                 PhotographerId = booking.PhotographerId
             });
 
-           
+
+
+            // ================= BKASH PAYMENT INITIATE =================
+
+            var bkash = await _bKashService.InitiatePaymentAsync(new PaymentRequest
+            {
+                Amount = booking.Price, // Booking price
+                Currency = "BDT",
+                MerchantInvoiceNumber = $"BOOK-{bookingId}-{DateTime.UtcNow.Ticks}",
+                SuccessUrl = "https://localhost:7290/api/Bookings/Success_URL"
+            });
+
+            // ==========================================================
 
             return Ok(new
             {
-                id = bookingId,
-                message = "Booking created successfully"
+                bookingId = bookingId,
+                payment = bkash,
+                message = "Booking created. Proceed to payment."
+            });
+
+        }
+
+
+        // success url build for bkash 
+        [HttpGet("Success_URL")]
+        public IActionResult SuccessUrl([FromQuery] PaymentCallback callback)
+        {
+
+            return Ok(new
+            {
+                Message = "Payment was successful!"
             });
         }
 
