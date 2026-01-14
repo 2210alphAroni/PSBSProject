@@ -188,7 +188,7 @@ namespace PSBS.Controllers
                 Amount = booking.Price, // Booking price
                 Currency = "BDT",
                 MerchantInvoiceNumber = $"BOOK-{bookingId}-{DateTime.UtcNow.Ticks}",
-                SuccessUrl = "https://localhost:7290/api/Bookings/Success_URL"
+                SuccessUrl = "https://localhost:7272/api/Bookings/Success_URL"
             });
 
             // ==========================================================
