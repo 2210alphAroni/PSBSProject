@@ -86,6 +86,7 @@ import { Portfolios } from '../Page/portfolios/portfolios';
 import { Login } from '../Page/login/login';
 import { Registration } from '../Page/registration/registration';
 import { ForgotPassword } from '../Page/forgot-password/forgot-password';
+import { PaymentConfirmation } from '../Page/payment-confirmation/payment-confirmation';
 
 // ADMIN PAGES
 import { AdminDashboard } from '../Page/admin-dashboard/admin-dashboard';
@@ -133,6 +134,7 @@ export const routes: Routes = [
   { path: 'registration', component: Registration },
   { path: 'forgot-password', component: ForgotPassword },
   { path: 'profile', component: Profile },
+  { path: 'payment-confirmation', component: PaymentConfirmation},
 
   // 🛠 ADMIN PAGES → NO HEADER / FOOTER
   {

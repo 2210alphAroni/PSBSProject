@@ -1,0 +1,7 @@
+<div class="payment-container">
+  <h2 *ngIf="loading">Processing payment...</h2>
+
+  <p class="error" *ngIf="errorMessage">
+    {{ errorMessage }}
+  </p>
+</div>

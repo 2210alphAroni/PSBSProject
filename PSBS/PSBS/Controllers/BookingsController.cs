@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PSBS.Context;
 using PSBS.Model;
 using PSBS.Services;
+using System.Collections.Generic;
 
 namespace PSBS.Controllers
 {
@@ -188,7 +189,7 @@ namespace PSBS.Controllers
                 Amount = booking.Price, // Booking price
                 Currency = "BDT",
                 MerchantInvoiceNumber = $"BOOK-{bookingId}-{DateTime.UtcNow.Ticks}",
-                SuccessUrl = "https://localhost:7272/api/Bookings/Success_URL"
+                SuccessUrl = "https://localhost:4200/payment-confirmation"
             });
 
             // ==========================================================
@@ -205,13 +206,11 @@ namespace PSBS.Controllers
 
         // success url build for bkash 
         [HttpGet("Success_URL")]
-        public IActionResult SuccessUrl([FromQuery] PaymentCallback callback)
+        public async Task<IActionResult> SuccessUrl(string paymemtId)
         {
-
-            return Ok(new
-            {
-                Message = "Payment was successful!"
-            });
+            var bkash = await _bKashService.ConfirmPaymentAsync(paymemtId);
+           
+            return Ok(bkash);
         }
 
         /* ================= UPDATE PAYMENT ================= */

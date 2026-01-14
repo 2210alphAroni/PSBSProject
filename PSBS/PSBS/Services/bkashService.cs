@@ -126,82 +126,98 @@ namespace PSBS.Services
             }
         }
 
-        public async Task<PaymentResponse> ExecutePaymentAsync(string paymentId)
+        public async Task<PaymentResponse> ConfirmPaymentAsync(string paymentId)
         {
             try
             {
-                var appKey = _configuration["bKash:AppKey"] ?? string.Empty;
-                var appSecret = _configuration["bKash:AppSecret"] ?? string.Empty;
-                var username = _configuration["bKash:Username"] ?? string.Empty;
-                var password = _configuration["bKash:Password"] ?? string.Empty;
-                var baseUrl = _configuration["bKash:BaseUrl"] ?? "https://tokenized.sandbox.bka.sh/v1.2.0-beta";
+                var appKey = _configuration["bKash:AppKey"]!;
+                var appSecret = _configuration["bKash:AppSecret"]!;
+                var username = _configuration["bKash:Username"]!;
+                var password = _configuration["bKash:Password"]!;
+                var baseUrl = _configuration["bKash:BaseUrl"]
+                              ?? "https://tokenized.sandbox.bka.sh/v1.2.0-beta";
 
-                // PHP: getPaymentDetils($paymentID) - getAuthToken() first
+                // 1️⃣ Get Access Token
                 var token = await GetAccessTokenAsync(baseUrl, appKey, appSecret, username, password);
                 if (string.IsNullOrEmpty(token))
                 {
                     return new PaymentResponse
                     {
                         Success = false,
-                        ErrorMessage = "Auth Failed"
+                        ErrorMessage = "bKash authentication failed"
                     };
                 }
 
-                // PHP: BKS_URL . '/execute' = baseUrl + "/tokenized/checkout/execute"
-                // PHP: BKS_URL = 'https://tokenized.pay.bka.sh/v1.2.0-beta/tokenized/checkout'
+                // 2️⃣ Execute Payment
                 var executeUrl = $"{baseUrl}/tokenized/checkout/execute";
 
-                // PHP: POST with json_encode(['paymentID' => $paymentID])
-                var executeRequest = new
+                var payload = new
                 {
                     paymentID = paymentId
                 };
-                var jsonContent = JsonSerializer.Serialize(executeRequest);
-                var content = new StringContent(jsonContent, Encoding.UTF8, "application/json");
 
-                // PHP: Headers: Content-Type:application/json, Authorization:token, X-APP-Key:appKey
+                var content = new StringContent(
+                    JsonSerializer.Serialize(payload),
+                    Encoding.UTF8,
+                    "application/json"
+                );
+
                 _httpClient.DefaultRequestHeaders.Clear();
                 _httpClient.DefaultRequestHeaders.Add("Authorization", token);
                 _httpClient.DefaultRequestHeaders.Add("X-APP-Key", appKey);
 
                 var response = await _httpClient.PostAsync(executeUrl, content);
-                var responseContent = await response.Content.ReadAsStringAsync();
+                var responseJson = await response.Content.ReadAsStringAsync();
 
-                _logger.LogInformation("bKash Payment Execute Response: {Response}", responseContent);
+                _logger.LogInformation("bKash Execute Response: {Response}", responseJson);
 
-                var apiResponse = JsonSerializer.Deserialize<BKashApiResponse>(responseContent, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
+                var bkashResponse = JsonSerializer.Deserialize<BKashApiResponse>(
+                    responseJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                );
 
-                // PHP: if ($response['statusCode'] == "0000")
-                if (apiResponse?.StatusCode == "0000")
+                // 3️⃣ Validate Payment
+                if (bkashResponse == null)
                 {
                     return new PaymentResponse
                     {
-                        Success = true,
-                        PaymentId = apiResponse.PaymentId,
-                        Status = apiResponse.StatusCode,
-                        StatusMessage = apiResponse.StatusMessage
+                        Success = false,
+                        ErrorMessage = "Invalid response from bKash"
                     };
                 }
 
-                // PHP: else return statusMessage
+                if (bkashResponse.StatusCode != "0000")
+                {
+                    return new PaymentResponse
+                    {
+                        Success = false,
+                        Status = bkashResponse.StatusCode,
+                        ErrorMessage = bkashResponse.StatusMessage
+                    };
+                }
+
+                // 4️⃣ (IMPORTANT) Update Booking / Order Status
+                // Example:
+                // await _bookingService.MarkAsPaidAsync(bkashResponse.PaymentId);
+
+                // 5️⃣ Final Success Response
                 return new PaymentResponse
                 {
-                    Success = false,
-                    Status = apiResponse?.StatusCode,
-                    ErrorMessage = apiResponse?.StatusMessage,
-                    Message = apiResponse?.StatusMessage
+                    Success = true,
+                    PaymentId = bkashResponse.PaymentId,
+                    
+                    Status = bkashResponse.StatusCode,
+                    Message = "Payment confirmed successfully"
                 };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error executing bKash payment");
+                _logger.LogError(ex, "Error confirming bKash payment");
+
                 return new PaymentResponse
                 {
                     Success = false,
-                    ErrorMessage = ex.Message
+                    ErrorMessage = "Payment confirmation failed"
                 };
             }
         }

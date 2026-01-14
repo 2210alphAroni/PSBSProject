@@ -193,11 +193,19 @@ export class BookingPackage implements OnInit {
     this.http.post<any>('https://localhost:7272/api/Bookings', payload)
       .subscribe({
         next: res => {
-          this.bookingSuccess = true;
-          this.createdBookingId = res?.id || 0;
-          this.showPayment = true;
-          alert('Booking Confirmed');
-          this.cdr.detectChanges();
+          console.log(res);
+          if (res?.payment?.success && res?.payment?.paymentUrl) {
+            // 🔴 Redirect to bKash payment page
+            window.location.href = res.payment.paymentUrl;
+          } else {
+            alert('Payment session failed');
+          }
+
+          // this.bookingSuccess = true;
+          // this.createdBookingId = res?.id || 0;
+          // this.showPayment = true;
+          // alert('Booking Confirmed');
+          // this.cdr.detectChanges();
         },
         error: () => alert('Booking Failed')
       });
