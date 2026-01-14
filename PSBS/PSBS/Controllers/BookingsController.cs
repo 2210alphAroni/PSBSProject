@@ -195,7 +195,7 @@ namespace PSBS.Controllers
 
             return Ok(new
             {
-                bookingId = bookingId,
+                id = bookingId,
                 payment = bkash,
                 message = "Booking created. Proceed to payment."
             });
