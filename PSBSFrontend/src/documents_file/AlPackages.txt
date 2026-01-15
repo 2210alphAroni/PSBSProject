@@ -124,3 +124,171 @@ CREATE TABLE PackageAddOns (
 
     CONSTRAINT UQ_Package_AddOn UNIQUE (package_id, addon_id)
 );
+
+
+
+
+
+// ERD Diagram code for my project 
+
+// =====================================================
+// USERS (Client / Photographer / Admin)
+// =====================================================
+Table UsersRegistration {
+  Id int [pk, increment]
+  RegisterAS enum('CLIENT','PHOTOGRAPHER','ADMIN')
+  FullName varchar
+  Email varchar [unique]
+  Phone varchar
+  UserName varchar [unique]
+  Password varchar
+  ConfirmPassword varchar
+  Gender varchar
+  ProfileImage varchar
+  IsAvailable bit              // Photographer availability toggle
+  CreatedAT datetime
+}
+
+// =====================================================
+// PHOTOGRAPHER PROFILE (EXTENSION OF USER)
+// =====================================================
+Table PhotographerProfiles {
+  Id int [pk, increment]
+  UserId int [ref: > UsersRegistration.Id]
+  AverageRating float
+}
+
+// =====================================================
+// PHOTOGRAPHER AVAILABILITY (DATE BASED)
+// =====================================================
+Table PhotographerAvailability {
+  Id int [pk, increment]
+  PhotographerId int [ref: > UsersRegistration.Id]
+  AvailableDate date
+  IsAvailable bit
+}
+
+// =====================================================
+// SERVICE CATEGORIES
+// =====================================================
+Table ServiceCategories {
+  Id int [pk, increment]
+  Name varchar                 // Wedding, Birthday, Fashion etc.
+  IsActive bit
+}
+
+// =====================================================
+// PACKAGES / SERVICES
+// =====================================================
+Table Packages {
+  Id int [pk, increment]
+  CategoryId int [ref: > ServiceCategories.Id]
+  PackageName varchar
+  Description text
+  CoverageDurationHours int
+  MaxEditedPhotos int
+  RawFilesAvailable bit
+  BasePrice decimal
+  CreatedAt datetime
+  UpdatedAt datetime
+}
+
+// =====================================================
+// BOOKINGS
+// =====================================================
+Table Bookings {
+  Id int [pk, increment]
+  UserId int                   // Client
+  PhotographerId int
+  PackageId int
+  EventDate date
+  EventStartTime time
+  EventEndTime time
+  EventLocation varchar
+  Notes text
+
+  PackageName varchar
+  CoverageDurationHours int
+  EditedPhotos int
+  RawFilesAvailable bit
+  Price decimal
+
+  BookingStatus enum('PENDING','CONFIRMED','CANCELLED')
+  PaymentStatus enum('PAID','UNPAID')
+  PaymentMethod enum('BKASH')
+
+  PhotographerName varchar
+  CreatedAt datetime
+}
+
+// =====================================================
+// PAYMENTS / TRANSACTIONS
+// =====================================================
+Table Payments {
+  Id int [pk, increment]
+  BookingId int [ref: > Bookings.Id]
+  TransactionId varchar
+  Amount decimal
+  PaymentMethod enum('BKASH','NAGAD','CARD')
+  PaymentStatus enum('PAID','UNPAID')
+  CreatedAt datetime
+}
+
+// =====================================================
+// INVOICES
+// =====================================================
+Table Invoices {
+  Id int [pk, increment]
+  BookingId int [ref: > Bookings.Id]
+  CustomerContactNumber varchar
+  ServicePackageName varchar
+  EventDateTime datetime
+  TotalAmount decimal
+  PaymentStatus varchar
+  CreatedAt datetime
+}
+
+// =====================================================
+// PHOTOGRAPHER PORTFOLIO (ADMIN APPROVAL REQUIRED)
+// =====================================================
+Table PhotographerPortfolio {
+  Id int [pk, increment]
+  PhotographerId int [ref: > UsersRegistration.Id]
+  Title varchar
+  Category varchar
+  Description text
+  ImageName varchar
+  ImageUrl varchar
+  IsActive bit
+  IsApproved bit              // ❗ Without this = NOT visible to clients
+  RejectReason text
+  CreatedAt datetime
+  UpdatedAt datetime
+}
+
+// =====================================================
+// REVIEWS & RATINGS
+// =====================================================
+Table ReviewRatings {
+  Id int [pk, increment]
+  UserId int [ref: > UsersRegistration.Id]
+  PhotographerId int [ref: > UsersRegistration.Id]
+  BookingId int [ref: > Bookings.Id]
+  Rating int
+  ReviewComment text
+  IsApproved bit
+  IsDeleted bit
+  CreatedAt datetime
+}
+
+// =====================================================
+// RECENT ACTIVITIES (PHOTOGRAPHER DASHBOARD)
+// =====================================================
+Table RecentActivities {
+  Id int [pk, increment]
+  PhotographerId int [ref: > UsersRegistration.Id]
+  ActivityType varchar
+  Message text
+  FullName varchar
+  CreatedAt datetime
+}
