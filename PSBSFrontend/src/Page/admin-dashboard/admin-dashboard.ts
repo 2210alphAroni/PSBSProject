@@ -91,8 +91,6 @@ export class AdminDashboard{
     this.httpRequest.get<any[]>('https://localhost:7272/api/Bookings')
       .subscribe(res => {
         this.bookingCount = res.length;
-        // for line charts
-        this.createBookingLineChart(res); 
         // for pie charts
         this.createOverviewPieChart();
         this.cdr.detectChanges();
@@ -136,53 +134,6 @@ export class AdminDashboard{
       responsive: true,
       plugins: {
         legend: { display: false }
-      }
-    }
-  });
-}
-
-createBookingLineChart(bookings: any[]) {
-
-  if (this.bookingLineChart) {
-    this.bookingLineChart.destroy();
-    this.cdr.detectChanges();
-  }
-
-  const grouped: any = {};
-
-  bookings.forEach(b => {
-    const rawDate = b.createdAt || b.bookingDate;
-    const date = new Date(rawDate).toLocaleDateString();
-    grouped[date] = (grouped[date] || 0) + 1;
-  });
-
-  const labels = Object.keys(grouped);
-
-  let runningTotal = 0;
-  const data = Object.values(grouped).map((count: any) => {
-    runningTotal += count;
-    return runningTotal;
-  });
-
-  this.bookingLineChart = new Chart('bookingLineChart', {
-    type: 'line',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Total Bookings',
-        data: data,
-        borderColor: '#198754',
-        tension: 0.3,
-        fill: false
-      }]
-    },
-    options: {
-      responsive: true,
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { precision: 0 }
-        }
       }
     }
   });
