@@ -25,11 +25,29 @@ namespace PSBS.Controllers
 
             var sql = @"
             SELECT
-                COUNT(*) AS TotalBookings,
-                SUM(CASE WHEN BookingStatus = 'Pending' THEN 1 ELSE 0 END) AS PendingBookings,
-                ISNULL(SUM(CASE WHEN PaymentStatus = 'Paid' THEN Price ELSE 0 END), 0) AS TotalEarnings
-            FROM Bookings
-            WHERE PhotographerId = @PhotographerId
+    COUNT(*) AS TotalBookings,
+
+    SUM(
+        CASE 
+            WHEN BookingStatus = 'Pending' THEN 1 
+            ELSE 0 
+        END
+    ) AS PendingBookings,
+
+    ISNULL(
+        SUM(
+            CASE
+                WHEN PaymentStatus IN ('InProgress', 'Paid')
+                     AND BookingStatus = 'Confirmed'
+                THEN Price
+                ELSE 0
+            END
+        ), 
+    0) AS TotalEarnings
+
+FROM Bookings
+WHERE PhotographerId = @PhotographerId;
+
         ";
 
             var stats = await con.QueryFirstAsync(sql, new { PhotographerId = photographerId });

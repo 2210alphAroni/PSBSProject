@@ -152,7 +152,7 @@ namespace PSBS.Controllers
             @EditedPhotos,
             @RawFilesAvailable,
             @Price,
-            'Pending',
+            'Confirmed',
             'Unpaid',
             GETDATE(),
             @TotalPrice
@@ -478,16 +478,16 @@ namespace PSBS.Controllers
 
             var sql = @"
             SELECT 
-                PackageId,
-                PackageName,
-                COUNT(*) AS TotalBookings,
-                SUM(Price) AS TotalEarnings
-            FROM Bookings
-            WHERE PhotographerId = @PhotographerId
-              AND PaymentStatus = 'Paid'
-              AND BookingStatus = 'Confirmed'
-            GROUP BY PackageId, PackageName
-            ORDER BY TotalEarnings DESC
+            PackageId,
+            PackageName,
+            COUNT(*) AS TotalBookings,
+            ISNULL(SUM(Price), 0) AS TotalEarnings
+        FROM Bookings
+        WHERE PhotographerId = @PhotographerId
+          AND BookingStatus = 'Confirmed'
+          AND PaymentStatus IN ('Paid', 'InProgress')
+        GROUP BY PackageId, PackageName
+        ORDER BY TotalEarnings DESC;
         ";
 
             var result = await con.QueryAsync(sql, new { PhotographerId = photographerId });

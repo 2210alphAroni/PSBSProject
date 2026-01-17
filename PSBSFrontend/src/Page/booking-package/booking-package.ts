@@ -53,6 +53,7 @@ export class BookingPackage implements OnInit {
   bkashProcessing = false;
   bkashSuccess = false;
 
+  
   openBkashModal() {
     if (this.paymentMethod !== 'Bkash') {
       alert('Please select bKash payment');
@@ -115,7 +116,7 @@ export class BookingPackage implements OnInit {
 
     }, 2000);
 
-     this.generateInvoicePdf();
+    this.generateInvoicePdf();
   }
 
 
@@ -135,9 +136,9 @@ export class BookingPackage implements OnInit {
     EditedPhotos: 0,
     RawFilesAvailable: false,
     Price: 0,
-    TotalPrice:0,
-    paymentMethod : '',
-    AccountNumber : ''
+    TotalPrice: 0,
+    paymentMethod: '',
+    AccountNumber: ''
   };
 
   constructor(
@@ -249,6 +250,8 @@ export class BookingPackage implements OnInit {
 
   // ================= BOOKING =================
   submitBooking() {
+
+    this.bkashProcessing = true;
     // remove previous date and add 2 hours duration packages allow for current date 
     if (!this.isBookingDateValid()) return;
 
@@ -269,10 +272,10 @@ export class BookingPackage implements OnInit {
       CoverageDurationHours: this.booking.CoverageDurationHours,
       EditedPhotos: this.booking.EditedPhotos,
       RawFilesAvailable: this.booking.RawFilesAvailable,
-      Price:  this.booking.Price * (30/100 ),
-      TotalPrice:this.booking.Price,
-      AccountNumber:this.bkashNumber,
-      paymentMethod :this.paymentMethod
+      Price: this.booking.Price * (30 / 100),
+      TotalPrice: this.booking.Price,
+      AccountNumber: this.bkashNumber,
+      paymentMethod: this.paymentMethod
     };
 
     this.http.post<any>('https://localhost:7272/api/Bookings', payload)
@@ -283,9 +286,9 @@ export class BookingPackage implements OnInit {
           this.showPayment = true;
           alert('Booking Confirmed');
           this.generateInvoicePdf();
-      
+
           this.cdr.detectChanges();
-                this.router.navigate(['/home']);
+          this.router.navigate(['/home']);
         },
         error: () => alert('Booking Failed')
       });
@@ -384,9 +387,9 @@ export class BookingPackage implements OnInit {
     this.generateInvoicePdf();
     this.makePayment();
   }
-paymentSectionShow(){
-  this.showPayment = true;
-}
+  paymentSectionShow() {
+    this.showPayment = true;
+  }
 
   makePayment() {
 
@@ -438,9 +441,10 @@ paymentSectionShow(){
     doc.text(`Booking ID: ${this.createdBookingId}`, 20, 40);
     doc.text(`Transaction ID: ${transactionId}`, 20, 50);
     doc.text(`Payment Method: ${this.paymentMethod}`, 20, 60);
-    doc.text(`Mobile Number: ${this.mobileNumber}`, 20, 70);
-    doc.text(`Amount Paid: ৳ ${this.booking.Price}`, 20, 80);
-    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 90);
+    doc.text(`Mobile Number: ${this.bkashNumber}`, 20, 70);
+    doc.text(`Amount Paid 30%: ৳ ${this.booking.Price * (30 / 100)}`, 20, 80);
+    doc.text(`Total Amount will be Paid:৳ ${this.booking.Price}`, 20, 90);
+    doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 100);
 
     doc.line(20, 100, 190, 100);
 
