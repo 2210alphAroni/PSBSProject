@@ -133,7 +133,8 @@ namespace PSBS.Controllers
             Price,
             BookingStatus,
             PaymentStatus,
-            CreatedAt
+            CreatedAt,
+            TotalPrice
         )
         VALUES
         (
@@ -153,7 +154,8 @@ namespace PSBS.Controllers
             @Price,
             'Pending',
             'Unpaid',
-            GETDATE()
+            GETDATE(),
+            @TotalPrice
         );
 
         SELECT CAST(SCOPE_IDENTITY() as int);
@@ -161,6 +163,12 @@ namespace PSBS.Controllers
 
             var bookingId = await con.ExecuteScalarAsync<int>(sql, booking);
 
+
+            var Paymentsql = @$"
+                                INSERT INTO   PaymentHistory (BookingId,PaymentMethod,AccountNumber,Amount,CreatedAT)
+                                VALUES({bookingId},'{booking.PaymentMethod}','{booking.AccountNumber}',{booking.Price},'{DateTime.UtcNow.AddHours(6)}')
+                               ";
+            var payment = await con.ExecuteScalarAsync<int>(Paymentsql);
             /* ================= ACTIVITY (AS IT IS) ================= */
 
             var fullName = await con.ExecuteScalarAsync<string>(
@@ -194,6 +202,11 @@ namespace PSBS.Controllers
 
             // ==========================================================
 
+            await UpdatePayment(bookingId, new PaymentDto
+            {
+                PaymentStatus = "InProgress",
+                PaymentMethod = booking.PaymentMethod
+            });
             return Ok(new
             {
                 id = bookingId,

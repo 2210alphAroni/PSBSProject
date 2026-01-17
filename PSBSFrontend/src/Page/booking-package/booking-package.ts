@@ -134,7 +134,10 @@ export class BookingPackage implements OnInit {
     CoverageDurationHours: 0,
     EditedPhotos: 0,
     RawFilesAvailable: false,
-    Price: 0
+    Price: 0,
+    TotalPrice:0,
+    paymentMethod : '',
+    AccountNumber : ''
   };
 
   constructor(
@@ -266,7 +269,10 @@ export class BookingPackage implements OnInit {
       CoverageDurationHours: this.booking.CoverageDurationHours,
       EditedPhotos: this.booking.EditedPhotos,
       RawFilesAvailable: this.booking.RawFilesAvailable,
-      Price: this.booking.Price
+      Price:  this.booking.Price * (30/100 ),
+      TotalPrice:this.booking.Price,
+      AccountNumber:this.bkashNumber,
+      paymentMethod :this.paymentMethod
     };
 
     this.http.post<any>('https://localhost:7272/api/Bookings', payload)
@@ -276,7 +282,10 @@ export class BookingPackage implements OnInit {
           this.createdBookingId = res?.id || 0;
           this.showPayment = true;
           alert('Booking Confirmed');
+          this.generateInvoicePdf();
+      
           this.cdr.detectChanges();
+                this.router.navigate(['/home']);
         },
         error: () => alert('Booking Failed')
       });
@@ -375,7 +384,9 @@ export class BookingPackage implements OnInit {
     this.generateInvoicePdf();
     this.makePayment();
   }
-
+paymentSectionShow(){
+  this.showPayment = true;
+}
 
   makePayment() {
 

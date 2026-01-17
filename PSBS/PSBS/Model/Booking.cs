@@ -32,5 +32,8 @@
 
         // Audit
         public DateTime CreatedAt { get; set; }
+        public decimal TotalPrice { get; set; }
+        public string? PaymentMethod { get; set; }
+        public string? AccountNumber { get; set; }
     }
 }

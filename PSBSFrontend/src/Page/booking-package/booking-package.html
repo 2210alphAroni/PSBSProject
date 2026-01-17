@@ -76,7 +76,7 @@
     <form
       #bookingForm="ngForm"
       class="row g-4 py-5"
-      (ngSubmit)="submitBooking()">
+      (ngSubmit)="paymentSectionShow()">
 
       <!-- Event Date -->
       <div class="col-md-6">
@@ -410,7 +410,7 @@
 
       <button *ngIf="bkashStep === 3"
         class="btn btn-bkash"
-        (click)="confirmBkashPayment()">
+        (click)="submitBooking()">
         Confirm
       </button>
     </div>
