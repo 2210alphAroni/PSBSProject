@@ -9,7 +9,6 @@
         public int MaxEditedPhotos { get; set; }
         public bool RawFilesAvailable { get; set; }
         public decimal BasePrice { get; set; }
-        public List<AddOn> AddOns { get; set; } = new();
     }
 
 }

@@ -16,55 +16,28 @@ namespace PSBS.Controllers
             _context = context;
         }
 
-        // ================= GET ALL PACKAGES WITH ADD-ONS =================
+        // ================= GET ALL PACKAGES =================
         [HttpGet]
         public async Task<IActionResult> GetPackages()
         {
             var sql = @"
-                SELECT
-                    p.id,
-                    p.package_name AS PackageName,
-                    p.description,
-                    p.coverage_duration_hours AS CoverageDurationHours,
-                    p.max_edited_photos AS MaxEditedPhotos,
-                    p.raw_files_available AS RawFilesAvailable,
-                    p.base_price AS BasePrice,
-
-                    a.id AS AddOnId,
-                    a.addon_name AS AddOnName,
-                    a.addon_price AS Price
-                FROM Packages p
-                LEFT JOIN PackageAddOns pa ON p.id = pa.package_id
-                LEFT JOIN AddOns a ON pa.addon_id = a.id
-                ORDER BY p.id;
-            ";
-
-            var packageDict = new Dictionary<int, Package>();
+        SELECT
+            id,
+            package_name AS PackageName,
+            description,
+            coverage_duration_hours AS CoverageDurationHours,
+            max_edited_photos AS MaxEditedPhotos,
+            raw_files_available AS RawFilesAvailable,
+            base_price AS BasePrice
+        FROM Packages
+        ORDER BY id;
+    ";
 
             using var connection = _context.CreateConnection();
 
-            await connection.QueryAsync<Package, AddOn, Package>(
-                sql,
-                (pkg, addon) =>
-                {
-                    if (!packageDict.TryGetValue(pkg.Id, out var current))
-                    {
-                        current = pkg;
-                        current.AddOns = new List<AddOn>();
-                        packageDict.Add(current.Id, current);
-                    }
+            var packages = await connection.QueryAsync<Package>(sql);
 
-                    if (addon != null && addon.Id != 0)
-                    {
-                        current.AddOns.Add(addon);
-                    }
-
-                    return current;
-                },
-                splitOn: "AddOnId"
-            );
-
-            return Ok(packageDict.Values);
+            return Ok(packages);
         }
 
         // new get method using id 

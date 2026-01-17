@@ -47,8 +47,9 @@ export class AllPackages implements OnInit {
         next: (res) => {
           console.log('Packages:', res); // helpful debug
           this.packages = res;
-          this.applyFilter();   
-          this.cdr.detectChanges();
+          this.filteredPackages = res;
+          this.applyFilter(); 
+          this.cdr.detectChanges();  
         },
         error: (err) => console.error('API error:', err)
       });
