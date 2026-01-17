@@ -147,7 +147,7 @@
 
           <option *ngFor="let p of photographers" [ngValue]="p.Id">
             {{ p.FullName }}
-            ⭐ {{ p.AverageRating || 0 }}
+            ⭐ {{ p.AverageRating | number:'1.1-1' }}
             ({{ p.TotalReviews || 0 }})
           </option>
 

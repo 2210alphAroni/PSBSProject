@@ -427,7 +427,7 @@
               </div>
 
               <span class="fw-semibold">
-                {{ p.AverageRating || 0 }}
+                {{ p.AverageRating | number:'1.1-1' }}
               </span>
 
               <span class="text-muted small">
