@@ -197,27 +197,47 @@ namespace PSBS.Controllers
         [HttpDelete("delete-my-account")]
         public async Task<IActionResult> DeleteMyAccount()
         {
-            // 1️⃣ Get user id from JWT (CORRECT CLAIM)
             var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
             if (userIdClaim == null)
                 return Unauthorized("User ID not found in token");
 
             int userId = int.Parse(userIdClaim);
 
             using var connection = _context.CreateConnection();
+            connection.Open(); // ✅ CORRECT (IDbConnection)
 
-            // 2️⃣ DELETE FROM CORRECT TABLE
-            var rows = await connection.ExecuteAsync(
-                "DELETE FROM UsersRegistration WHERE Id = @UserId",
-                new { UserId = userId }
-            );
+            using var transaction = connection.BeginTransaction();
 
-            if (rows == 0)
-                return BadRequest("User not found");
+            try
+            {
+                // 1️⃣ Delete child table first
+                await connection.ExecuteAsync(
+                    "DELETE FROM ReviewRatings WHERE UserId = @UserId",
+                    new { UserId = userId },
+                    transaction
+                );
 
-            return Ok("Account deleted successfully");
+                // 2️⃣ Delete main user
+                var rows = await connection.ExecuteAsync(
+                    "DELETE FROM UsersRegistration WHERE Id = @UserId",
+                    new { UserId = userId },
+                    transaction
+                );
+
+                transaction.Commit();
+
+                if (rows == 0)
+                    return BadRequest("User not found");
+
+                return Ok("Account deleted successfully");
+            }
+            catch (Exception ex)
+            {
+                transaction.Rollback();
+                return StatusCode(500, ex.Message);
+            }
         }
+
 
     }
 
