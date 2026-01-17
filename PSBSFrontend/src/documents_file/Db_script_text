@@ -1,0 +1,338 @@
+ami erd diagram banabo amake ami projecter sql qurey share korteci relation soho 
+
+tmi amake akdom instruction diba ami jate korte pari khub sohosjei 
+
+
+USE [PSBS]
+GO
+
+/****** Object:  Table [dbo].[UsersRegistration]    Script Date: 1/17/2026 8:59:20 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[UsersRegistration](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[RegisterAS] [nvarchar](200) NULL,
+	[FullName] [nvarchar](200) NULL,
+	[Email] [nvarchar](200) NULL,
+	[Phone] [nvarchar](50) NULL,
+	[UserName] [nvarchar](100) NULL,
+	[Password] [nvarchar](200) NULL,
+	[ConfirmPassword] [nvarchar](200) NULL,
+	[Gender] [nvarchar](10) NULL,
+	[CreatedAT] [datetime] NULL,
+	[IsAvailable] [bit] NULL,
+	[ProfileImage] [nvarchar](255) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[UsersRegistration] ADD  DEFAULT (getdate()) FOR [CreatedAT]
+GO
+
+ALTER TABLE [dbo].[UsersRegistration] ADD  DEFAULT ((1)) FOR [IsAvailable]
+GO  
+
+
+USE [PSBS]
+GO
+
+/****** Object:  Table [dbo].[ReviewRatings]    Script Date: 1/17/2026 8:59:50 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[ReviewRatings](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
+	[PhotographerId] [int] NOT NULL,
+	[Rating] [int] NOT NULL,
+	[ReviewComment] [nvarchar](500) NULL,
+	[IsApproved] [bit] NULL,
+	[IsDeleted] [bit] NULL,
+	[CreatedAt] [datetime] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[ReviewRatings] ADD  DEFAULT ((1)) FOR [IsApproved]
+GO
+
+ALTER TABLE [dbo].[ReviewRatings] ADD  DEFAULT ((0)) FOR [IsDeleted]
+GO
+
+ALTER TABLE [dbo].[ReviewRatings] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+
+ALTER TABLE [dbo].[ReviewRatings]  WITH CHECK ADD  CONSTRAINT [FK_Review_Photographer] FOREIGN KEY([PhotographerId])
+REFERENCES [dbo].[UsersRegistration] ([Id])
+GO
+
+ALTER TABLE [dbo].[ReviewRatings] CHECK CONSTRAINT [FK_Review_Photographer]
+GO
+
+ALTER TABLE [dbo].[ReviewRatings]  WITH CHECK ADD  CONSTRAINT [FK_Review_User] FOREIGN KEY([UserId])
+REFERENCES [dbo].[UsersRegistration] ([Id])
+GO
+
+ALTER TABLE [dbo].[ReviewRatings] CHECK CONSTRAINT [FK_Review_User]
+GO
+
+ALTER TABLE [dbo].[ReviewRatings]  WITH CHECK ADD CHECK  (([Rating]>=(1) AND [Rating]<=(5)))
+GO
+
+
+
+
+USE [PSBS]
+GO
+
+/****** Object:  Table [dbo].[RecentActivities]    Script Date: 1/17/2026 9:00:03 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[RecentActivities](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Message] [nvarchar](255) NOT NULL,
+	[ActivityType] [nvarchar](50) NULL,
+	[CreatedAt] [datetime] NULL,
+	[FullName] [nvarchar](150) NULL,
+	[PhotographerId] [int] NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[RecentActivities] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+
+
+
+
+USE [PSBS]
+GO
+
+/****** Object:  Table [dbo].[PhotographerPortfolio]    Script Date: 1/17/2026 9:00:16 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[PhotographerPortfolio](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[PhotographerId] [int] NOT NULL,
+	[Title] [nvarchar](150) NOT NULL,
+	[Category] [nvarchar](100) NOT NULL,
+	[Description] [nvarchar](500) NULL,
+	[ImageName] [nvarchar](255) NOT NULL,
+	[ImageUrl] [nvarchar](500) NOT NULL,
+	[IsActive] [bit] NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[UpdatedAt] [datetime] NULL,
+	[IsApproved] [bit] NOT NULL,
+	[RejectReason] [nvarchar](500) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[PhotographerPortfolio] ADD  DEFAULT ((1)) FOR [IsActive]
+GO
+
+ALTER TABLE [dbo].[PhotographerPortfolio] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+
+ALTER TABLE [dbo].[PhotographerPortfolio] ADD  DEFAULT ((0)) FOR [IsApproved]
+GO
+
+
+
+
+USE [PSBS]
+GO
+
+/****** Object:  Table [dbo].[PaymentHistory]    Script Date: 1/17/2026 9:00:32 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[PaymentHistory](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[BookingId] [int] NULL,
+	[PaymentMethod] [nvarchar](max) NULL,
+	[AccountNumber] [nvarchar](max) NULL,
+	[Amount] [decimal](18, 2) NULL,
+	[CreatedAT] [datetime2](7) NULL,
+ CONSTRAINT [PK_PaymentHistory] PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+
+
+
+USE [PSBS]
+GO
+
+/****** Object:  Table [dbo].[Packages]    Script Date: 1/17/2026 9:00:45 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Packages](
+	[id] [int] IDENTITY(1,1) NOT NULL,
+	[package_name] [nvarchar](100) NOT NULL,
+	[description] [nvarchar](max) NOT NULL,
+	[coverage_duration_hours] [int] NOT NULL,
+	[max_edited_photos] [int] NOT NULL,
+	[raw_files_available] [bit] NOT NULL,
+	[base_price] [decimal](10, 2) NOT NULL,
+	[created_at] [datetime2](7) NOT NULL,
+	[updated_at] [datetime2](7) NOT NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Packages] ADD  DEFAULT ((0)) FOR [raw_files_available]
+GO
+
+ALTER TABLE [dbo].[Packages] ADD  DEFAULT (getdate()) FOR [created_at]
+GO
+
+ALTER TABLE [dbo].[Packages] ADD  DEFAULT (getdate()) FOR [updated_at]
+GO
+
+
+
+
+USE [PSBS]
+GO
+
+/****** Object:  Table [dbo].[ContactMessages]    Script Date: 1/17/2026 9:01:02 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[ContactMessages](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Name] [nvarchar](100) NOT NULL,
+	[Email] [nvarchar](150) NOT NULL,
+	[Subject] [nvarchar](200) NULL,
+	[Message] [nvarchar](max) NOT NULL,
+	[CreatedAt] [datetime2](7) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[ContactMessages] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+
+
+
+
+USE [PSBS]
+GO
+
+/****** Object:  Table [dbo].[Bookings]    Script Date: 1/17/2026 9:01:14 PM ******/
+SET ANSI_NULLS ON
+GO
+
+SET QUOTED_IDENTIFIER ON
+GO
+
+CREATE TABLE [dbo].[Bookings](
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[UserId] [int] NOT NULL,
+	[PhotographerId] [int] NOT NULL,
+	[PackageId] [int] NOT NULL,
+	[EventDate] [date] NOT NULL,
+	[EventLocation] [nvarchar](255) NOT NULL,
+	[Notes] [nvarchar](max) NULL,
+	[PackageName] [nvarchar](150) NOT NULL,
+	[CoverageDurationHours] [int] NOT NULL,
+	[EditedPhotos] [int] NOT NULL,
+	[RawFilesAvailable] [bit] NOT NULL,
+	[Price] [decimal](10, 2) NOT NULL,
+	[BookingStatus] [nvarchar](50) NOT NULL,
+	[PaymentStatus] [nvarchar](50) NOT NULL,
+	[CreatedAt] [datetime] NOT NULL,
+	[EventStartTime] [datetime] NULL,
+	[EventEndTime] [datetime] NULL,
+	[PaymentMethod] [nvarchar](50) NULL,
+	[PhotographerName] [nvarchar](150) NULL,
+	[TotalPrice] [decimal](10, 2) NULL,
+PRIMARY KEY CLUSTERED 
+(
+	[Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+
+ALTER TABLE [dbo].[Bookings] ADD  DEFAULT ('Pending') FOR [BookingStatus]
+GO
+
+ALTER TABLE [dbo].[Bookings] ADD  DEFAULT ('Unpaid') FOR [PaymentStatus]
+GO
+
+ALTER TABLE [dbo].[Bookings] ADD  DEFAULT (getdate()) FOR [CreatedAt]
+GO
+
+ALTER TABLE [dbo].[Bookings]  WITH CHECK ADD  CONSTRAINT [FK_Bookings_Package] FOREIGN KEY([PackageId])
+REFERENCES [dbo].[Packages] ([id])
+GO
+
+ALTER TABLE [dbo].[Bookings] CHECK CONSTRAINT [FK_Bookings_Package]
+GO
+
+ALTER TABLE [dbo].[Bookings]  WITH CHECK ADD  CONSTRAINT [FK_Bookings_Photographer] FOREIGN KEY([PhotographerId])
+REFERENCES [dbo].[UsersRegistration] ([Id])
+GO
+
+ALTER TABLE [dbo].[Bookings] CHECK CONSTRAINT [FK_Bookings_Photographer]
+GO
+
+ALTER TABLE [dbo].[Bookings]  WITH CHECK ADD  CONSTRAINT [FK_Bookings_User] FOREIGN KEY([UserId])
+REFERENCES [dbo].[UsersRegistration] ([Id])
+GO
+
+ALTER TABLE [dbo].[Bookings] CHECK CONSTRAINT [FK_Bookings_User]
+GO
+
+
+
+ 
+
+
