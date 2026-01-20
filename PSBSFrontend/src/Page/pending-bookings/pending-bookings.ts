@@ -118,7 +118,8 @@ export class PendingBookings implements OnInit {
       {
         paymentMethod: 'Bkash',
         amount: this.selectedAmount,
-        paymentType: this.selectedPaymentType
+        paymentType: this.selectedPaymentType,
+        accountNumber: this.bkashNumber   // ✅ MUST
       }
     ).subscribe({
       next: () => {
