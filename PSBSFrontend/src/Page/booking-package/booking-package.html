@@ -253,7 +253,7 @@
 
             <h4 class="fw-bold mb-3">Complete Payment</h4>
             <p class="text-muted">
-              Pay <strong>৳ {{ booking.Price }}</strong> to confirm booking
+              Pay <strong>৳ {{ booking.Price * (30 / 100) }} in {{booking.Price}}</strong> to confirm booking
             </p>
 
             <!-- Payment Method -->
@@ -338,7 +338,7 @@
       <div>
         <strong><span><img width="10%" src="/assets/img/merchant.png" alt="merchantlogo"></span>CheckoutPSBSMerchant</strong><br>
       </div>
-      <div class="fw-bold">৳ {{ booking.Price }}</div>
+      <div class="fw-bold">৳ {{booking.Price * (30 / 100)}}</div>
     </div>
 
     <!-- BODY -->

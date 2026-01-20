@@ -446,8 +446,8 @@ export class BookingPackage implements OnInit {
     doc.text(`Total Amount will be Paid:৳ ${this.booking.Price}`, 20, 90);
     doc.text(`Date: ${new Date().toLocaleDateString()}`, 20, 100);
 
-    doc.line(20, 100, 190, 120);
-
+    doc.line(20, 110, 190, 110);
+    
     doc.text('Thank you for your payment! Stay With Us.', 20, 120);
     doc.text('Photography Service Booking System', 20, 130);
 
