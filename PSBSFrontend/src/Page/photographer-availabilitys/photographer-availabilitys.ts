@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectorRef, Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -20,7 +20,7 @@ export class PhotographerAvailabilitys {
 
   isAvailable: boolean | null = null;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
     this.loadPhotographerId();
   }
 
@@ -74,6 +74,7 @@ export class PhotographerAvailabilitys {
       next: res => {
         debugger;
         this.isAvailable = res.isAvailable;
+        this.cdr.detectChanges();
       },
       error: err => {
         console.error(err);
