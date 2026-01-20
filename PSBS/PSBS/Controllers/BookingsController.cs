@@ -339,6 +339,72 @@ namespace PSBS.Controllers
         }
 
 
+        // payment history get apply
+        [HttpGet("payment")]
+        public async Task<IActionResult> GetPaymentHistory()
+        {
+            using var con = _context.CreateConnection();
+
+            var payments = await con.QueryAsync<dynamic>(
+                @"SELECT *
+          FROM PaymentHistory
+          ORDER BY CreatedAT ASC"
+            );
+
+            if (!payments.Any())
+                return NotFound("No payment history found for this booking");
+
+            return Ok(payments);
+        }
+
+
+        // Update payment 
+        [HttpPut("payment-history/{id}")]
+        public async Task<IActionResult> UpdatePaymentHistory(int id, [FromBody] PaymentDto dto)
+        {
+            using var con = _context.CreateConnection();
+
+            var sql = @"
+                UPDATE PaymentHistory
+                SET 
+                    PaymentMethod = @PaymentMethod,
+                    AccountNumber = @AccountNumber,
+                    Amount = @Amount
+                WHERE Id = @Id
+            ";
+
+            var rowsAffected = await con.ExecuteAsync(sql, new
+            {
+                Id = id,
+                dto.PaymentMethod,
+                dto.AccountNumber,
+                dto.Amount
+            });
+
+            if (rowsAffected == 0)
+                return NotFound("Payment not found");
+
+            return Ok("Payment History updated successfully");
+        }
+
+
+        // Delete Payment
+        [HttpDelete("payment-history/{id}")]
+        public async Task<IActionResult> DeletePaymentHistory(int id)
+        {
+            using var con = _context.CreateConnection();
+
+            var sql = @"DELETE FROM PaymentHistory WHERE Id = @Id";
+
+            var rowsAffected = await con.ExecuteAsync(sql, new { Id = id });
+
+            if (rowsAffected == 0)
+                return NotFound("Payment not found");
+
+            return Ok("Payment History deleted successfully");
+        }
+
+
         /* ================= USER BOOKINGS ================= */
         [HttpGet("user/{userId}")]
         public async Task<IActionResult> GetUserBookings(int userId)

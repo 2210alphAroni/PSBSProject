@@ -1,1 +1,117 @@
-<p>payment-history works!</p>
+<div class="payment-container">
+
+    <h2>Payment History</h2>
+
+    <!--  Search Option -->
+    <div class="mb-3">
+        <input
+            type="text"
+            class="form-control"
+            placeholder="Search by Booking ID, Method, Account, Amount..."
+            [(ngModel)]="searchText">
+    </div>
+
+    <div *ngIf="errorMessage" class="error">
+        {{ errorMessage }}
+    </div>
+
+    <!--  Edit Modal  -->
+    <div *ngIf="editMode" class="card shadow-sm mt-4 edit-box">
+        <div class="card-header bg-primary text-white">
+            <h5 class="mb-0">Edit Payment</h5>
+        </div>
+
+        <div class="card-body">
+            <form (ngSubmit)="updatePayment()">
+
+                <div class="mb-3">
+                    <label class="form-label">Payment Method</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="paymentForm.paymentMethod"
+                        name="paymentMethod"
+                        required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Account Number</label>
+                    <input
+                        type="text"
+                        class="form-control"
+                        [(ngModel)]="paymentForm.accountNumber"
+                        name="accountNumber"
+                        required />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Amount</label>
+                    <input
+                        type="number"
+                        class="form-control"
+                        [(ngModel)]="paymentForm.amount"
+                        name="amount"
+                        required />
+                </div>
+
+                <div class="d-flex justify-content-end gap-2">
+                    <button type="button" class="btn btn-secondary"
+                        (click)="editMode = false">
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        Update
+                    </button>
+                </div>
+
+            </form>
+        </div>
+    </div>
+
+    <!--  Table start -->
+    <table *ngIf="paymentHistory.length > 0">
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>Booking ID</th>
+                <th>Payment Method</th>
+                <th>Account Number</th>
+                <th>Amount</th>
+                <th>Paid At</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            <tr *ngFor="let payment of getFilteredPayments(); let i = index">
+                <td>{{ i + 1 }}</td>
+                <td>{{ payment.bookingId || payment.BookingId }}</td>
+                <td>{{ payment.paymentMethod || payment.PaymentMethod }}</td>
+                <td>{{ payment.accountNumber || payment.AccountNumber }}</td>
+                <td>{{ payment.amount || payment.Amount }} ৳</td>
+                <td>
+                    {{ (payment.createdAT || payment.CreatedAT) | date:'medium'
+                    }}
+                </td>
+
+                <td>
+                    <button class="btn btn-edit"
+                        (click)="editPayment(payment)">
+                        Edit
+                    </button>
+
+                    <button class="btn btn-delete"
+                        (click)="deletePayment(payment.id || payment.Id)">
+                        Delete
+                    </button>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    
+    <div
+        *ngIf="getFilteredPayments().length === 0 && paymentHistory.length > 0">
+        No payment history found.
+    </div>
+
+</div>
