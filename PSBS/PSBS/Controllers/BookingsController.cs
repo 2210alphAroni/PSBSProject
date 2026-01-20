@@ -153,7 +153,7 @@ namespace PSBS.Controllers
             @RawFilesAvailable,
             @Price,
             'Confirmed',
-            'Unpaid',
+            'InProgress',
             GETDATE(),
             @TotalPrice
         );
@@ -202,11 +202,11 @@ namespace PSBS.Controllers
 
             // ==========================================================
 
-            await UpdatePayment(bookingId, new PaymentDto
-            {
-                PaymentStatus = "InProgress",
-                PaymentMethod = booking.PaymentMethod
-            });
+            //await UpdatePayment(bookingId, new PaymentDto
+            //{
+            //    PaymentStatus = "InProgress",
+            //    PaymentMethod = booking.PaymentMethod
+            //});
             return Ok(new
             {
                 id = bookingId,
@@ -234,13 +234,11 @@ namespace PSBS.Controllers
 
             var sql = @"
                 UPDATE Bookings
-                SET PaymentStatus = @PaymentStatus,
-                    PaymentMethod = @PaymentMethod,
-                    BookingStatus = CASE
-                        WHEN @PaymentStatus = 'Paid' THEN 'Confirmed'
-                        ELSE BookingStatus
-                    END
-                WHERE Id = @Id
+                    SET PaymentStatus = @PaymentStatus,
+                        PaymentMethod = @PaymentMethod,
+                        BookingStatus = BookingStatus
+                    WHERE Id = @Id
+
             ";
 
             var rows = await con.ExecuteAsync(sql, new
@@ -524,6 +522,35 @@ namespace PSBS.Controllers
             var bookings = await con.QueryAsync<Booking>(sql, new { UserId = userId });
 
             return Ok(bookings);
+        }
+
+
+
+        // pending payments in progress
+        [HttpGet("user/{userId}/pending-payments")]
+        public async Task<IActionResult> GetUserPendingPayments(int userId)
+        {
+            using var con = _context.CreateConnection();
+
+            var sql = @"
+        SELECT 
+            Id,
+            PhotographerName,
+            PackageName,
+            TotalPrice,
+            Price AS PaidAmount,
+            (TotalPrice - Price) AS RemainingAmount,
+            PaymentStatus
+        FROM Bookings
+        WHERE UserId = @UserId
+          AND BookingStatus = 'Confirmed'
+          AND PaymentStatus = 'InProgress'
+        ORDER BY CreatedAt DESC
+    ";
+
+            var result = await con.QueryAsync(sql, new { UserId = userId });
+
+            return Ok(result);
         }
     }
 

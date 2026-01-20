@@ -24,13 +24,12 @@
             <div class="card shadow-sm mb-4">
 
                 <div class="card-header bg-light">
-                    <div
-                        class="d-flex justify-content-between align-items-center">
+                    <div class="d-flex justify-content-between align-items-center">
                         <span class="fw-semibold">
                             {{ b.packageName }}
                         </span>
                         <span class="badge bg-warning text-dark">
-                            Unpaid
+                            Payment Pending
                         </span>
                     </div>
                 </div>
@@ -39,8 +38,7 @@
 
                     <div class="row mb-2">
                         <div class="col-md-6">
-                            <strong>Photographer:</strong> {{ b.photographerName
-                            }}
+                            <strong>Photographer:</strong> {{ b.photographerName }}
                         </div>
                         <div class="col-md-6">
                             <strong>Location:</strong> {{ b.eventLocation }}
@@ -59,18 +57,41 @@
                         </div>
                     </div>
 
-                    <div class="row align-items-center mt-3">
-                        <div class="col-md-6">
-                            <h5 class="text-danger mb-0">
-                                ৳ {{ b.price }}
-                            </h5>
-                        </div>
+                    <hr>
 
-                        <div class="col-md-6 text-md-end mt-3 mt-md-0">
-                            <button class="btn btn-danger px-4"
-                                (click)="payNow(b)">
+                    <!-- PRICE INFO -->
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6>Total Price</h6>
+                            <strong>৳ {{ b.price }}</strong>
+                        </div>
+                        <div class="col-md-6">
+                            <h6>Payment Status</h6>
+                            <span class="text-success">
+                                Paid: ৳ {{ b.paidAmount }}
+                            </span><br>
+                            <span class="text-danger">
+                                Due: ৳ {{ b.price - b.paidAmount }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <!-- PAYMENT BUTTONS -->
+                    <div class="row align-items-center mt-3">
+                        <div class="col-md-12 text-md-end">
+
+                            <!-- FULL DUE PAYMENT -->
+                            <button class="btn btn-danger px-4 me-2"
+                                (click)="payNow(b, 'FULL')">
                                 <i class="bi bi-credit-card"></i>
-                                Pay with bKash
+                                Pay Full Due
+                            </button>
+
+                            <!-- 30% PAYMENT -->
+                            <button class="btn btn-outline-danger px-4"
+                                (click)="payNow(b, 'PARTIAL')">
+                                <i class="bi bi-cash"></i>
+                                Pay 30%
                             </button>
 
                         </div>
@@ -95,9 +116,13 @@
         <div class="bkash-merchant">
             <div>
                 <strong>CheckoutPSBSMerchant</strong>
-                <div class="small text-muted">Booking #{{ selectedBookingId }}</div>
+                <div class="small text-muted">
+                    Booking #{{ selectedBookingId }}
+                </div>
             </div>
-            <div class="fw-bold">৳ {{ selectedAmount }}</div>
+            <div class="fw-bold">
+                ৳ {{ selectedAmount }}
+            </div>
         </div>
 
         <div class="bkash-body">

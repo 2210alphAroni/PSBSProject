@@ -29,6 +29,7 @@ export class PendingBookings implements OnInit {
 
   selectedBookingId!: number;
   selectedAmount = 0;
+  selectedPaymentType: 'FULL' | 'PARTIAL' = 'FULL';
 
   constructor(
     private http: HttpClient,
@@ -46,27 +47,32 @@ export class PendingBookings implements OnInit {
     this.loadPendingBookings();
   }
 
- loadPendingBookings() {
-  this.http
-    .get<any[]>(
-      `https://localhost:7272/api/Bookings/user/${this.userId}/pending`
+  loadPendingBookings() {
+    this.http.get<any[]>(
+      `https://localhost:7272/api/Bookings/user/${this.userId}/pending-payments`
     )
-    .subscribe(res => {
-      this.pendingBookings = [...res]; 
-      this.cdr.detectChanges();
-    });
-}
-
+      .subscribe(res => {
+        this.pendingBookings = [...res];
+        this.cdr.detectChanges();
+      });
+  }
 
   // ================= BKASH =================
 
-  payNow(booking: any) {
+  payNow(booking: any, type: 'FULL' | 'PARTIAL') {
+
     this.selectedBookingId = booking.id;
-    this.selectedAmount = booking.price; // 🔥 now works
+    this.selectedPaymentType = type;
+
+    if (type === 'FULL') {
+      this.selectedAmount = booking.price - booking.paidAmount;
+    } else {
+      this.selectedAmount = booking.price * 0.3;
+    }
+
     this.resetBkash();
     this.showBkashModal = true;
   }
-
 
   resetBkash() {
     this.bkashStep = 1;
@@ -108,18 +114,18 @@ export class PendingBookings implements OnInit {
     this.http.put(
       `https://localhost:7272/api/Bookings/payment/${this.selectedBookingId}`,
       {
-        paymentStatus: 'Paid',
-        paymentMethod: 'Bkash'
+        paymentMethod: 'Bkash',
+        amount: this.selectedAmount,
+        paymentType: this.selectedPaymentType
       }
     ).subscribe({
       next: () => {
         this.bkashProcessing = false;
         this.bkashSuccess = true;
 
-        // 🔥 close modal + refresh list
         setTimeout(() => {
           this.showBkashModal = false;
-          this.loadPendingBookings(); // 🔥 DB updated → reload
+          this.loadPendingBookings();
         }, 1000);
       },
       error: () => {
