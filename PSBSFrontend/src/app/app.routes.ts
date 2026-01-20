@@ -97,6 +97,7 @@ import { AdminBookings } from '../Page/admin-bookings/admin-bookings';
 import { AdminPayments } from '../Page/admin-payments/admin-payments';
 import { AdminSettings } from '../Page/admin-settings/admin-settings';
 import { AdminReviews } from '../Page/admin-reviews/admin-reviews';
+import { PaymentHistory } from '../Page/payment-history/payment-history';
 
 //Photographer Dashboard can be added similarly
 import { PhotographerDashboard } from '../Page/photographer-dashboard/photographer-dashboard';
@@ -149,6 +150,7 @@ export const routes: Routes = [
       { path: 'admin-payments', component: AdminPayments },
       { path: 'admin-settings', component: AdminSettings },
       { path: 'admin-reviews', component: AdminReviews },
+      { path: 'payment-history', component: PaymentHistory},
     ]
   },
 
