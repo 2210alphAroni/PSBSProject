@@ -4,10 +4,10 @@
         <div class="col text-center">
             <h3 class="fw-bold">
                 <i class="bi bi-clock-history"></i>
-                Pending Bookings
+                Pending Payments
             </h3>
             <p class="text-muted mb-0">
-                Complete your payment to confirm booking
+                Complete your due payment for bookings bellow
             </p>
         </div>
     </div>
@@ -15,7 +15,7 @@
     <!-- Empty -->
     <div *ngIf="pendingBookings.length === 0"
         class="alert alert-success text-center">
-        🎉 No pending bookings found
+        🎉 No pending payments found
     </div>
 
     <!-- Booking Cards -->
@@ -38,22 +38,21 @@
 
                     <div class="row mb-2">
                         <div class="col-md-6">
-                            <strong>Photographer:</strong> {{ b.photographerName }}
+                            <strong>Photographer:</strong> {{ b.PhotographerName }}
                         </div>
                         <div class="col-md-6">
-                            <strong>Location:</strong> {{ b.eventLocation }}
+                            <strong>Location:</strong> {{ b.EventLocation }}
                         </div>
                     </div>
 
                     <div class="row mb-2">
                         <div class="col-md-6">
                             <strong>Event Date:</strong>
-                            {{ b.eventDate | date:'mediumDate' }}
+                            {{ b.EventDate | date:'mediumDate' }}
                         </div>
                         <div class="col-md-6">
                             <strong>Time:</strong>
-                            {{ b.eventStartTime | date:'shortTime' }} –
-                            {{ b.eventEndTime | date:'shortTime' }}
+                            {{ b.CreatedAt | date:'shortTime' }}
                         </div>
                     </div>
 
@@ -63,15 +62,15 @@
                     <div class="row mb-3">
                         <div class="col-md-6">
                             <h6>Total Price</h6>
-                            <strong>৳ {{ b.price }}</strong>
+                            <strong>৳ {{ b.TotalPrice }}</strong>
                         </div>
                         <div class="col-md-6">
                             <h6>Payment Status</h6>
                             <span class="text-success">
-                                Paid: ৳ {{ b.paidAmount }}
+                                Paid: ৳ {{ b.PaidAmount }}
                             </span><br>
                             <span class="text-danger">
-                                Due: ৳ {{ b.price - b.paidAmount }}
+                                Due: ৳ {{ b.TotalPrice - b.PaidAmount }}
                             </span>
                         </div>
                     </div>

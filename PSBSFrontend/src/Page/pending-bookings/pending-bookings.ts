@@ -52,22 +52,24 @@ export class PendingBookings implements OnInit {
       `https://localhost:7272/api/Bookings/user/${this.userId}/pending-payments`
     )
       .subscribe(res => {
+        console.log(res)
         this.pendingBookings = [...res];
         this.cdr.detectChanges();
       });
   }
 
+
   // ================= BKASH =================
 
   payNow(booking: any, type: 'FULL' | 'PARTIAL') {
 
-    this.selectedBookingId = booking.id;
+    this.selectedBookingId = booking.Id;
     this.selectedPaymentType = type;
 
     if (type === 'FULL') {
-      this.selectedAmount = booking.price - booking.paidAmount;
+      this.selectedAmount = booking.TotalPrice - booking.PaidAmount;
     } else {
-      this.selectedAmount = booking.price * 0.3;
+      this.selectedAmount = booking.TotalPrice * 0.3;
     }
 
     this.resetBkash();
