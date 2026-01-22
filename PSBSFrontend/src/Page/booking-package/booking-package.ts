@@ -288,7 +288,7 @@ export class BookingPackage implements OnInit {
           this.generateInvoicePdf();
 
           this.cdr.detectChanges();
-          this.router.navigate(['/home']);
+          this.router.navigate(['/pending-bookings']);
         },
         error: () => alert('Booking Failed')
       });
